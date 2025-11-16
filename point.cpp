@@ -1,29 +1,31 @@
 #include "point.h"
+#include "screen.h"
+#include "keys.h"
 
-void Point::move() {
-	x = (x + diff_x + Screen::MAX_X) % Screen::MAX_X;
-	y = (y + diff_y + Screen::MAX_Y) % Screen::MAX_Y;
+void point::move() {
+	x = (x + diff_x + screen::MAX_X) % screen::MAX_X;
+	y = (y + diff_y + screen::MAX_Y) % screen::MAX_Y;
 }
 
-void Point::setDirection(Direction dir) {
+void point::setDirection(keys dir) {
 	switch (dir) {
-	case Direction::UP:
+	case keys::UP:
 		diff_x = 0;
 		diff_y = -1;
 		break;
-	case Direction::RIGHT:
+	case keys::RIGHT:
 		diff_x = 1;
 		diff_y = 0;
 		break;
-	case Direction::DOWN:
+	case keys::DOWN:
 		diff_x = 0;
 		diff_y = 1;
 		break;
-	case Direction::LEFT:
+	case keys::LEFT:
 		diff_x = -1;
 		diff_y = 0;
 		break;
-	case Direction::STAY:
+	case keys::STAY:
 		diff_x = 0;
 		diff_y = 0;
 		break;

@@ -4,26 +4,16 @@
 int const INVENTORY_SIZE = 1; //player can hold up to one item
 class player
 {
-public:
-	enum direction { UP, DOWN, LEFT, RIGHT, STAY };
+
 private:
 	point position; //player's position on the map
-	direction dir;
-	//possible movement directions, will be edited for exact keys later
-	char symbol; //character symbol representing the player on the map
+		//possible movement directions, will be edited for exact keys later
 	char inventory[INVENTORY_SIZE]; //player can hold up to one item
+	screen& screen; //reference to the game screen
 public:
-	player(int startX = 1, int startY = 1, char pSymbol = '@') { //default constructor
-		position = point(startX, startY); //default position at (1,1)
-		symbol = pSymbol; //default symbol for the player
-		dir = STAY; //default direction
-	}
-	void setDirection(direction newDir) {
-		dir = newDir;
-	}
+	Player::Player(const point& point, const char(&the_keys)[NUM_KEYS + 1], screen& theScreen): screen(theScreen);
 	void move(); //function to move the player in the current direction
 	void draw(); //function to draw the player on the map using gotoxy
-	void stop() { setDirection(STAY); } //function to stop the player's movement
-
+	void handleKeyPressed(char key_pressed)
 };
 

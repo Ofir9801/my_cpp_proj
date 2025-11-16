@@ -22,7 +22,7 @@ public:
 		std::cout << c;
 	}
 	void move();
-	void setDirection(Direction dir);
+	void point::setDirection(keys dir);
 
 };
 

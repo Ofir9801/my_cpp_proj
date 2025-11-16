@@ -1,7 +1,9 @@
 #include "screen.h"
 #include <iostream>
 #include <windows.h>
-using std::cout, std::endl;
+#include "utils.h"
+using std::cout;
+using std::endl;
 
 screen::screen()
 {
@@ -17,8 +19,14 @@ screen::screen()
 					}
 	}
 }
-void screen::draw()
-{
+void screen::draw(){
+	utils::cls(); //clear the console
+	gotoxy(0, 0);
+	for (size_t i = 0; i < MAX_Y - 1; ++i) {
+		cout << map[i] << endl;
+	}
+	cout << map[MAX_Y - 1];
+	cout.flush();
 	//draw the map to the console
 	for (int y = 0; y < MAX_Y; y++) {
 		for (int x = 0; x < MAX_X; x++) {
