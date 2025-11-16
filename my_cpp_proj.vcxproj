@@ -135,6 +135,7 @@
     <ClInclude Include="player.h" />
     <ClInclude Include="point.h" />
     <ClInclude Include="screen.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
