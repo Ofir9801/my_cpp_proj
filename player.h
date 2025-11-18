@@ -11,6 +11,9 @@ class player
 	char p_keys[NUM_KEYS];
 	screen& map; //reference to the game screen
 public:	
+	player() : position(0, 0, ' '), map(*(new screen())) {
+		inventory[0] = ' '; //empty inventory
+	}
 	player(const point& point, const char(&the_keys)[NUM_KEYS + 1], screen& theScreen) :map(theScreen) {
 		memcpy(p_keys, the_keys, NUM_KEYS * sizeof(p_keys[0]));
 		position = point;

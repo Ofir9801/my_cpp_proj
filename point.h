@@ -1,7 +1,6 @@
 #pragma once
 #include "utils.h"
 #include <iostream>
-#include "point.h"
 #include "keys.h"
 
 class point //classic point class for 2D coordinates
@@ -19,7 +18,7 @@ public:
 	void setY(int _y) { y = _y; }
 	void setChar(char _ch) { ch = _ch; }
 	
-	void draw() {
+	void const draw() {
 		draw(ch);
 	}
 	void draw(char c) {
