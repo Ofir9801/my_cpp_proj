@@ -18,12 +18,13 @@ public:
 	void setY(int _y) { y = _y; }
 	void setChar(char _ch) { ch = _ch; }
 	
-	void const draw() {
-		draw(ch);
-	}
 	void draw(char c) {
 		gotoxy(x, y);
 		std::cout << c;
+	}
+
+	void draw() {
+		draw(ch);
 	}
 	void move();
 	void setDirection(keys dir);

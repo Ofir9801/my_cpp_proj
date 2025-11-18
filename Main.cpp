@@ -3,5 +3,5 @@
 using std::cout;
 int main() {
 	Game mygame;
-	
+	mygame.run();
 }
