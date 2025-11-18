@@ -1,7 +1,7 @@
 #pragma once
 #include "screen.h"
 
-const char* room1[screen::MAX_Y] = {
+static const char* room1[screen::MAX_Y] = {
 		//   01234567890123456789012345678901234567890123456789012345678901234567890123456789
 			"player 1:                                                   player 2:           ",  // 0
 			"inventory:                                                  inventory:          ",  // 1
@@ -29,7 +29,7 @@ const char* room1[screen::MAX_Y] = {
 			"|                           |           |                                      |",  // 23
 			"--------------------------------------------------------------------------------"   // 24
 	};
-const char* menu[screen::MAX_Y] = {
+static const char* menu[screen::MAX_Y] = {
 		//   01234567890123456789012345678901234567890123456789012345678901234567890123456789
 			"						Welcome to the adventure world!                          ",  // 0
 			"                                                                                ",  // 1
@@ -57,7 +57,7 @@ const char* menu[screen::MAX_Y] = {
 			"                                                                                ",  // 23
 			"                                                                                "   // 24	
 	};
-const char* instructions[screen::MAX_Y] = {
+static const char* instructions[screen::MAX_Y] = {
 	//   01234567890123456789012345678901234567890123456789012345678901234567890123456789
 		"						Instructions of the game:                                ",  // 0
 		"                                                                                ",  // 1

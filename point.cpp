@@ -3,8 +3,8 @@
 #include "keys.h"
 
 void point::move() {
-	x = (x + diff_x + screen::MAX_X) % screen::MAX_X;
-	y = (y + diff_y + screen::MAX_Y) % screen::MAX_Y;
+	x = (x + diff_x);// + screen::MAX_X) % screen::MAX_X;//OFIR: is this okay with the wall logic?
+	y = (y + diff_y);// + screen::MAX_Y) % screen::MAX_Y;
 }
 
 void point::setDirection(keys dir) {

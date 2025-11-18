@@ -18,6 +18,8 @@ int main() {
 	board.draw();
 	hideCursor();
 	bool won = false;
+	Game game;
+	game.run();
 	/*
 	while (!won) {
 		for (auto& p : players) {

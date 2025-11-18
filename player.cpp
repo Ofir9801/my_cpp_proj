@@ -1,4 +1,4 @@
-#include "player.h"
+﻿#include "player.h"
 #include "screen.h"
 #include "keys.h"
 
@@ -31,8 +31,10 @@ void player::move() {
 	position.draw(' ');
 	point body0orig = position;
 	position.move();
+
 	if (map.isWall(position)) {
 		position = body0orig;
+		position.setDirection(keys::STAY);//OFIR ADDITION if hit wall, stay in place
 	}
 	position.draw();
 }
