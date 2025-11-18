@@ -20,10 +20,10 @@ screen::screen()
 	}
 }
 void screen::draw(){
-	utils::cls(); //clear the console
+	cls(); //clear the console
 	gotoxy(0, 0);
 	for (size_t i = 0; i < MAX_Y - 1; ++i) {
-		cout << map[i] << endl;
+		cout << map[i] << endl;		
 	}
 	cout << map[MAX_Y - 1];
 	cout.flush();

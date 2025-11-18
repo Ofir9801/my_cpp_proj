@@ -1,39 +1,25 @@
 #include "player.h"
 #include "screen.h"
+#include "keys.h"
 
-Player::Player(const point& point, const char(&the_keys)[NUM_KEYS + 1], screen& theScreen)
-	: screen(theScreen)
-{
-	for (auto& p : body) {
-		p = point;
-	}
-	memcpy(keys, the_keys, NUM_KEYS * sizeof(keys[0]));
-}
-void Player::handleKeyPressed(char key_pressed) {
+
+void player::handleKeyPressed(char key_pressed) {
 	size_t index = 0;
-	for (char k : keys) {
+	for (char k : p_keys) {
 		if (std::tolower(k) == std::tolower(key_pressed)) {
-			body[0].setDirection((Direction)index);
+			position.setDirection((keys)index);
 			return;
 		}
 		++index;
 	}
 }
-void Player::draw() {
-	for (auto& p : body) {
-		p.draw();
-	}
-}
 
-void Player::move() {
-	body[SIZE - 1].draw(' ');
-	for (size_t index = SIZE - 1; index > 0; --index) {
-		body[index] = body[index - 1];
+void player::move() {
+	position.draw(' ');
+	point body0orig = position;
+	position.move();
+	if (map.isWall(position)) {
+		position = body0orig;
 	}
-	Point body0orig = body[0];
-	body[0].move();
-	if (screen.isWall(body[0])) {
-		body[0] = body0orig;
-	}
-	body[0].draw();
+	position.draw();
 }

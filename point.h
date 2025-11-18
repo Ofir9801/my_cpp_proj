@@ -1,4 +1,9 @@
 #pragma once
+#include "utils.h"
+#include <iostream>
+#include "point.h"
+#include "keys.h"
+
 class point //classic point class for 2D coordinates
 {
 	int x, y;// private fields by default
@@ -6,7 +11,7 @@ class point //classic point class for 2D coordinates
 	int diff_y = 0; //direction y
 	char ch; //character to draw
 public:
-	point(int _x = 0, int _y = 0, _ch = ' ') { x = _x; y = _y; ch = _ch; }//constractor with default values
+	point(int _x = 0, int _y = 0, char _ch = ' ') { x = _x; y = _y; ch = _ch; }//constractor with default values
 	//some general functions, may remove those later
 	int getX() const { return x; }
 	int getY() const { return y; }
@@ -22,7 +27,7 @@ public:
 		std::cout << c;
 	}
 	void move();
-	void point::setDirection(keys dir);
+	void setDirection(keys dir);
 
 };
 
