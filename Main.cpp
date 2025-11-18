@@ -4,16 +4,21 @@
 #include "utils.h"
 #include "player.h"
 #include <windows.h>
+#include "objSigns.h"
+#include "Rooms.h"
 
 using std::cout;
 int main() {
-	const char keys1[NUM_KEYS + 1] = "wdxase";
-	const char keys2[NUM_KEYS + 1] = "ilmjko";
+	const char keys1[NUM_KEYS + 1] = "wdsaeq";
+	const char keys2[NUM_KEYS + 1] = "ilkjou";
 	constexpr char ESC = 27;
 	screen board;
-	player players[2] = { player(point(1, 1, '@'), keys1, board),player(point(1, 5, '&'), keys2, board) };
+	board.loadMap(menu);
+	player players[2] = { player(point(1, 4, objSigns::PLAYER1), keys1, board),player(point(75, 4, objSigns::PLAYER2), keys2, board) };
 	board.draw();
+	hideCursor();
 	bool won = false;
+	/*
 	while (!won) {
 		for (auto& p : players) {
 			p.move();
@@ -26,8 +31,10 @@ int main() {
 				(void)_getch();
 				won = true;
 				break;
-			}*/
+			}
+			board.showPlayerInfo(p);
 		}
+		
 		Sleep(100);
 		if (_kbhit()) {
 			char key = _getch();
@@ -45,5 +52,5 @@ int main() {
 			}
 		}
 	}
-	cls();
+	cls();*/
 }

@@ -134,8 +134,10 @@
   <ItemGroup>
     <ClInclude Include="Game.h" />
     <ClInclude Include="keys.h" />
+    <ClInclude Include="objSigns.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="point.h" />
+    <ClInclude Include="Rooms.h" />
     <ClInclude Include="screen.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>

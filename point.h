@@ -17,6 +17,7 @@ public:
 	void setX(int _x) { x = _x; }
 	void setY(int _y) { y = _y; }
 	void setChar(char _ch) { ch = _ch; }
+	char getChar() const { return ch; }
 	
 	void draw(char c) {
 		gotoxy(x, y);
