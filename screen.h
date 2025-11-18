@@ -8,7 +8,7 @@ public:
 	enum { MAX_X = 80, MAX_Y = 25 };
 private:
 	//screen rectangle for 80x25 characters for the static objects
-	const char* map[MAX_Y + 1] = {
+	const char* map[MAX_Y] = {
 		//   01234567890123456789012345678901234567890123456789012345678901234567890123456789
 			"WWWWWWWWWWWWWWWW   WWWWWWWWWWWW   WWWWWWWWWWWW  WWWWWWWWWWWW  WWWWWWWWWWWWWWWW W", // 0
 			"W                           W           W            W                         W",  // 1
