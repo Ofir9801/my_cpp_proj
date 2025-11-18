@@ -28,7 +28,7 @@ int main() {
 				break;
 			}*/
 		}
-		Sleep(50);
+		Sleep(100);
 		if (_kbhit()) {
 			char key = _getch();
 			if (key == ESC) {
