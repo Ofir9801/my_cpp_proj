@@ -17,9 +17,10 @@ Game::Game() :
 
 void Game::run() {
 	hideCursor();
-	showMenu();
+	bool started = true;
+	showMenu(started);
 	board.draw();
-	bool exitGame = false;
+	bool exitGame = started;
 	while (!exitGame) {
 		player1.move();
 		player2.move();
@@ -49,7 +50,7 @@ void Game::run() {
 	}
 }
 
-void Game::showMenu(){
+void Game::showMenu(bool started){
 	board.loadMap(menu);
 	board.draw();
 	bool inMenu = true;
@@ -70,6 +71,7 @@ void Game::showMenu(){
 				board.draw();
 				break;
 			case '9':
+				started = false;
 				inMenu = false;
 				break;
 			}

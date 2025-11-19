@@ -27,14 +27,19 @@ void player::addToInventory(char item)
 	}
 }
 
-void player::move() {
-	position.draw(' ');
-	point body0orig = position;
+void player::move() {//OFIR ADDITION - modified to prevent constant beeping
+	point originalPos = position;
+	position.draw();
 	position.move();
 
 	if (map.isWall(position)) {
-		position = body0orig;
+		position = originalPos;
 		position.setDirection(keys::STAY);//OFIR ADDITION if hit wall, stay in place
+		return;
 	}
+	if(position.getX() == originalPos.getX() && position.getY() == originalPos.getY()) {
+		return; //OFIR ADDITION - no movement, so no need to redraw
+	}
+	originalPos.draw(' '); //OFIR ADDITION - erase previous position
 	position.draw();
 }

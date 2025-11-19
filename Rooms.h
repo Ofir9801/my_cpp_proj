@@ -31,7 +31,7 @@ static const char* room1[screen::MAX_Y] = {
 	};
 static const char* menu[screen::MAX_Y] = {
 		//   01234567890123456789012345678901234567890123456789012345678901234567890123456789
-			"						Welcome to the adventure world!                          ",  // 0
+			"			 Welcome to the adventure world!			                         ",  // 0
 			"                                                                                ",  // 1
 			"                                                                                ",  // 2
 			"                 * To start a new game please enter 1                           ",  // 3
