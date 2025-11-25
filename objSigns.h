@@ -9,4 +9,4 @@ enum objSigns {
 };
 
 
-//obstacle, keys, spring, door, switch
+//obstacle, Keys, spring, door, switch

@@ -1,19 +1,25 @@
 #pragma once
 #include "point.h"
-class Switch
-{
-	point position;
-	bool isOn;
+#include "Screen.h"
+
+class Switch {
+    point position;
+    bool isOn;
+    Screen& map; 
+
 public:
-	Switch(int x, int y, bool initialState = false) : position(x, y, '/'), isOn(initialState) {}
-	void toggle() {
-		isOn = !isOn;
-		position.setChar(isOn ? '\\' : '/');
-		position.draw(); 
-	}
-	bool getState() const {
-		return isOn;
-	}
+    Switch(int x, int y, Screen& theMap, bool initialState = false)
+        : position(x, y, '/'), map(theMap), isOn(initialState) {
+    }
+
+    void toggle() {
+        isOn = !isOn;
+        char newSymbol = isOn ? '\\' : '/';
+        position.setChar(newSymbol);
+        map.setChar(position, newSymbol);
+    }
+
+    bool isAt(const point& p) const {
+        return position.getX() == p.getX() && position.getY() == p.getY();
+    }
 };
-
-

@@ -1,9 +1,10 @@
-#include "screen.h"
+#include "Screen.h"
 #include <iostream>
 #include <windows.h>
-#include "utils.h"
+#include "Utils.h"
 #include "objSigns.h"
 #include "Rooms.h"
+#include <cctype> //  for tolower, isdigit
 
 using std::cout;
 using std::endl;
@@ -16,7 +17,7 @@ enum INFO_SLOTS {
 	PLAYER2_INV_START_X = 70,
 	PLAYER_INV_Y = 1
 };
-screen::screen() 
+Screen::Screen() 
 {
 	memset(map, ' ', sizeof(map)); //initialize the map with spaces
 	for (int i = 0; i < MAX_Y; i++) {
@@ -25,7 +26,7 @@ screen::screen()
 	initaializeRoomsArray();
 
 }
-void screen::loadMap(const char* arr[])
+void Screen::loadMap(const char* arr[])
 {
 	for (int i = 0; i < MAX_Y; i++) {
 		strncpy_s(map[i], arr[i],MAX_X);
@@ -33,7 +34,7 @@ void screen::loadMap(const char* arr[])
 	}
 
 }
-void screen::draw(){
+void Screen::draw(){
 	cls(); //clear the console
 	for (int i = 0; i < MAX_Y; i++) {
 		gotoxy(0, i);
@@ -41,16 +42,16 @@ void screen::draw(){
 	}
 }
 
-bool screen::isWall(const point& p) const{
+bool Screen::isWall(const point& p) const{
 	char c = getCharAt(p);
-	if (c >= 0 && c << 9) {
+	if (isdigit(c)) {
 		//function to open door and change room
 		return false;
 	}
-	return c == '-' || c == '|';
+	return c == '-' || c == '|' || c == '#';
 }
 
-void screen::showPlayerInfo(player p) {
+void Screen::showPlayerInfo(Player p) {
 	char playerChar = p.getChar();
 	switch (playerChar) {
 	case objSigns::PLAYER1:
@@ -67,9 +68,16 @@ void screen::showPlayerInfo(player p) {
 			break;
 	}
 }
+void Screen::setChar(const point& p, char c) {
+	if (p.getX() < 0 || p.getX() >= MAX_X || p.getY() < 0 || p.getY() >= MAX_Y)
+		return;
+	map[p.getY()][p.getX()] = c;
+	gotoxy(p.getX(), p.getY());
+	cout << c;
+}
 
-void screen::initaializeRoomsArray() {
-	Rooms[0] = const_cast<char**>(room1);
+void Screen::initaializeRoomsArray() {
+	Rooms[0] = room1;
 	Rooms[1] = nullptr;
 	Rooms[2] = nullptr;
 }

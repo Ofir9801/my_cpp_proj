@@ -1,21 +1,21 @@
 #pragma once
 
-static const char* room1[screen::MAX_Y] = {
+static const char* room1[Screen::MAX_Y] = {
 		//   01234567890123456789012345678901234567890123456789012345678901234567890123456789
-			"player 1:                                                   player 2:           ",  // 0
+			"Player 1:                                                   Player 2:           ",  // 0
 			"inventory:                                                  inventory:          ",  // 1
 			"                                                                                ",  // 2
 			"---------------------------------3----------------------------------------------",  // 3
 			"|                           |           |            |                         |",  // 4
 			"|                           |           |            |                         |",  // 5
 			"4                           |           |            |                         |",  // 6
-			"|                                       |            |                         |",  // 7
+			"|                       #               |            |                         |",  // 7
 			"|                                       |            |                         |",  // 8
 			"|                           |           |            |                         |",  // 9
-			"|                           |           |            |                         |",  // 10
+			"|                  K        |           |            |                         |",  // 10
 			"|                           |           |            |                         |",  // 11
-			"|                           |           |          ----------------------      |",  // 12
-			"|                           |           |                                      5",  // 13
+			"|                       #   |           |          ----------------------      |",  // 12
+			"|                           |           |                                K     5",  // 13
 			"|                           |           |                                      |",  // 14
 			"|                           |           |                                      |",  // 15
 			"|                           |                                                  |",  // 16
@@ -28,14 +28,14 @@ static const char* room1[screen::MAX_Y] = {
 			"|                           |           |                                      |",  // 23
 			"--------------------1----------------------------------2------------------------"   // 24
 	};
-static const char* menu[screen::MAX_Y] = {
+static const char* menu[Screen::MAX_Y] = {
 		//   01234567890123456789012345678901234567890123456789012345678901234567890123456789
 			"			         Welcome to the adventure world!			                 ",  // 0
 			"                                                                                ",  // 1
 			"                                                                                ",  // 2
-			"                 * To start a new game please enter 1                           ",  // 3
-			"                 * To read about instruction and keys please enter 8            ",  // 4
-			"                 * To exit the game please enter 9                              ",  // 5
+			"                 * To start a new Game please enter 1                           ",  // 3
+			"                 * To read about instruction and Keys please enter 8            ",  // 4
+			"                 * To exit the Game please enter 9                              ",  // 5
 			"                                                                                ",  // 6                                                                                
 			"                                                                                ",  // 7
 			"                                                                                ",  // 8
@@ -56,9 +56,9 @@ static const char* menu[screen::MAX_Y] = {
 			"                                                                                ",  // 23
 			"                                                                                "   // 24	
 	};
-static const char* instructions[screen::MAX_Y] = {
+static const char* instructions[Screen::MAX_Y] = {
 	//   01234567890123456789012345678901234567890123456789012345678901234567890123456789
-		"						Instructions of the game:                                ",  // 0
+		"						Instructions of the Game:                                ",  // 0
 		"                                                                                ",  // 1
 		" *you are trap in world that contains different rooms and you need to get out   ",  // 2
 		"                                of there.                                       ",  // 3
@@ -76,10 +76,10 @@ static const char* instructions[screen::MAX_Y] = {
 		"                                                                                ",  // 15                                                                   
 		"                                                                                ",  // 16
 		"                                                                                ",  // 17
-		" player 1 key binds:        Player 2 key binds:                                 ",  // 18
+		" Player 1 key binds:        Player 2 key binds:                                 ",  // 18
 		"    UP   -                        UP  -                                         ",  // 19
 		"  RIGHT  -                      RIGHT -                                         ",  // 20
-		"  DOWN   -                      DOWN  -               Pause the game - ESC OR H ",  // 21
+		"  DOWN   -                      DOWN  -               Pause the Game - ESC OR H ",  // 21
 		"  LEFT   -                      LEFT  -                                         ",  // 22
 		"  STAY   -                      STAY  -                                         ",  // 23
 		" DISPOSE -                    DISPOSE -                                         "   // 24	

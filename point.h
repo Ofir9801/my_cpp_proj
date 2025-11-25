@@ -1,7 +1,7 @@
 #pragma once
-#include "utils.h"
+#include "Utils.h"
 #include <iostream>
-#include "keys.h"
+#include "Keys.h"
 
 class point //classic point class for 2D coordinates
 {
@@ -28,7 +28,7 @@ public:
 		draw(ch);
 	}
 	void move();
-	void setDirection(keys dir, int speed = 1);
+	void setDirection(Keys dir, int speed = 1);
 
 };
 

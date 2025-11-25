@@ -1,19 +1,20 @@
-﻿#include "player.h"
-#include "screen.h"
-#include "keys.h"
+﻿#include "Player.h"
+#include "Screen.h"
+#include "Keys.h"
+#include <cctype> //  for tolower, isdigit
 
-void player::handleKeyPressed(char key_pressed) {
+void Player::handleKeyPressed(char key_pressed) {
 	size_t index = 0;
 	for (char k : p_keys) {
 		if (std::tolower(k) == std::tolower(key_pressed)) {
-			position.setDirection((keys)index);
+			position.setDirection((Keys)index);
 			return;
 		}
 		++index;
 	}
 }
 
-void player::addToInventory(char item)
+void Player::addToInventory(char item)
 {
 	bool added = false;
 	for (int i = 0; i < INVENTORY_SIZE && !added ; ++i) {
@@ -27,19 +28,36 @@ void player::addToInventory(char item)
 	}
 }
 
-void player::move() {//OFIR ADDITION - modified to prevent constant beeping
+void Player::move() {//OFIR ADDITION - modified to prevent constant beeping
 	point originalPos = position;
 	position.draw();
 	position.move();
-
+	char next = map.getCharAt(position);
+	if (next == objSigns::KEY) {
+		//if(inventory != ' ')// maybe: check if inventory is full
+		addToInventory(objSigns::KEY);
+		map.setChar(position, ' ');
+	}
+	if(isdigit(next)) {
+		if (hasItem(objSigns::KEY)) {//if its a door and Player has the key
+			removeItem();
+			map.setChar(position, ' ');
+			//if(both players on door) load(next room)...
+		}
+		else{ //if no key - the door is like a wall
+			position = originalPos;
+			position.setDirection(Keys::STAY);
+			return;
+		}
+	}
 	if (map.isWall(position)) {
 		position = originalPos;
-		position.setDirection(keys::STAY);
+		position.setDirection(Keys::STAY);
 		return;
 	}
 	if(position.getX() == originalPos.getX() && position.getY() == originalPos.getY()) {
-		return; //OFIR ADDITION - no movement, so no need to redraw
+		return;
 	}
-	originalPos.draw(' '); //OFIR ADDITION - erase previous position
+	originalPos.draw(' ');
 	position.draw();
 }

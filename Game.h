@@ -1,15 +1,18 @@
 #pragma once
-#include "screen.h"
-#include "player.h"
-
+#include "Screen.h"
+#include "Player.h"
+#include "Switch.h"
+#include <vector>
 
 class Game{
-	screen board;
-	player player1;
-	player player2;
+	Screen board;
+	Player player1;
+	Player player2;
+	std::vector<Switch> switches;
 public:
-	Game(); //default constructor to initialize the game components	
-	void run(); //function to run the main game loop
-	void showMenu(bool &started);//function to show the game menu
+	Game(); //default constructor to initialize the Game components	
+	void run(); //function to run the main Game loop
+	void showMenu(bool &started);//function to show the Game menu
+	void loadSwitches();
 };
 

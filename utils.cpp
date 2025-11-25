@@ -2,7 +2,7 @@
 #include <windows.h> // Required for Windows API console functions
 #include <cstdlib>
 
-#include "utils.h"
+#include "Utils.h"
 
 void gotoxy(int x, int y) {
     std::cout.flush();

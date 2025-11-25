@@ -1,16 +1,21 @@
 #include "Game.h"
 #include <conio.h> 
 #include <windows.h>
-#include "utils.h"
+#include "Utils.h"
 #include "objSigns.h"
 #include "Rooms.h"
-#include "player.h"
+#include "Player.h"
+#include "Screen.h"
+#include <cctype> //  for tolower, isdigit
+
 const char keys1[] = "wdsaeq";
 const char keys2[] = "ilkjou";
 const char ESC = 27;
 Game::Game() :
 	player1(point(1, 4, objSigns::PLAYER1), keys1, board),
-	player2(point(75, 4, objSigns::PLAYER2), keys2, board) {}
+	player2(point(75, 4, objSigns::PLAYER2), keys2, board) {
+	loadSwitches();
+}
 
 void Game::run() {
 	hideCursor();
@@ -35,7 +40,7 @@ void Game::run() {
 				if (std::tolower(key) == std::tolower ('h')) exitGame = false;
 				else {
 					gotoxy(0, 24);
-					board.showMessage("--------------------------------------------------------");
+					board.draw();
 				}
 			}
 			else {
@@ -70,6 +75,20 @@ void Game::showMenu(bool& started){
 				started = false;
 				inMenu = false;
 				break;
+			}
+		}
+	}
+}
+void Game::loadSwitches() {//enter the switches from the board to the vector
+	switches.clear();
+	for (size_t y = 0; y < Screen::MAX_Y; y++) {
+		for (size_t x = 0; x < Screen::MAX_X; x++) {
+			char c = board.getCharAt(point(x, y));
+			if (c == '\\') {
+				switches.push_back(Switch(x, y, board, false));
+			}
+			else if (c == '/') {
+				switches.push_back(Switch(x, y, board, true));
 			}
 		}
 	}

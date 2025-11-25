@@ -1,33 +1,34 @@
 #pragma once
-#include "point.h"//using point class for player position
-#include "screen.h"//using screen class to check for walls	
-class screen;//forward declaration to avoid circular dependency
-int const INVENTORY_SIZE = 1; //player can hold up to one item
-int const NUM_KEYS = 6; //number of possible movement keys
+#include "point.h"//using point class for Player position
+#include "Screen.h"//using Screen class to check for walls	
+class Screen;//forward declaration to avoid circular dependency
+int const INVENTORY_SIZE = 1; //Player can hold up to one item
+int const NUM_KEYS = 6; //number of possible movement Keys
 
-class player
+class Player
 {
-	point position; //player's position on the map
-	char inventory[INVENTORY_SIZE+1]; //player can hold up to one item
+	point position; //Player's position on the map
+	char inventory[INVENTORY_SIZE + 1]; //Player can hold up to one item
 	char p_keys[NUM_KEYS];
-	screen& map; //reference to the game screen
+	Screen& map; //reference to the Game Screen
 
-public:	
-	player(const point& point, const char(&the_keys)[NUM_KEYS + 1], screen &theScreen) :map(theScreen) {
+public:
+	Player(const point& point, const char(&the_keys)[NUM_KEYS + 1], Screen& theScreen) :map(theScreen) {
 		memcpy(p_keys, the_keys, NUM_KEYS * sizeof(p_keys[0]));
 		position = point;
 		inventory[0] = ' '; //empty inventory
 		inventory[1] = '\0'; //null-terminate the inventory string
 	}
 
-	void move(); //function to move the player in the current direction
+	void move(); //function to move the Player in the current direction
 	void draw() {
 		position.draw();
 	}
-		//function to draw the player on the map using gotoxy
+	//function to draw the Player on the map using gotoxy
 	void handleKeyPressed(char key_pressed);
 	void addToInventory(char item);
 	char getChar() const { return position.getChar(); }
 	const char* getInventory() const { return inventory; }
+	bool hasItem(char item) const { return inventory[0] == item; }
+	void removeItem() { inventory[0] = ' '; }
 };
-

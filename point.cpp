@@ -1,31 +1,31 @@
 #include "point.h"
-#include "screen.h"
-#include "keys.h"
+#include "Screen.h"
+#include "Keys.h"
 
 void point::move() {
-	x = (x + diff_x);// + screen::MAX_X) % screen::MAX_X;//OFIR: is this okay with the wall logic?
-	y = (y + diff_y);// + screen::MAX_Y) % screen::MAX_Y;
+	x = (x + diff_x);// + Screen::MAX_X) % Screen::MAX_X;//OFIR: is this okay with the wall logic?
+	y = (y + diff_y);// + Screen::MAX_Y) % Screen::MAX_Y;
 }
 
-void point::setDirection(keys dir, int speed) { //SPEED MULTIPLY*****
+void point::setDirection(Keys dir, int speed) { //SPEED MULTIPLY*****
 	switch (dir) {
-	case keys::UP:
+	case Keys::UP:
 		diff_x = 0;
 		diff_y = -1 * speed;
 		break;
-	case keys::RIGHT:
+	case Keys::RIGHT:
 		diff_x = 1 * speed;
 		diff_y = 0;
 		break;
-	case keys::DOWN:
+	case Keys::DOWN:
 		diff_x = 0;
 		diff_y = 1 * speed;
 		break;
-	case keys::LEFT:
+	case Keys::LEFT:
 		diff_x = -1 * speed;
 		diff_y = 0;
 		break;
-	case keys::STAY:
+	case Keys::STAY:
 		diff_x = 0;
 		diff_y = 0;
 		break;

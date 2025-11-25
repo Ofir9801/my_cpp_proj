@@ -1,5 +1,5 @@
 #pragma once
-enum class keys{
+enum class Keys{
 	UP,
 	RIGHT,
 	DOWN,
