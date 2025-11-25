@@ -7,22 +7,22 @@ void point::move() {
 	y = (y + diff_y);// + screen::MAX_Y) % screen::MAX_Y;
 }
 
-void point::setDirection(keys dir) {
+void point::setDirection(keys dir, int speed) { //SPEED MULTIPLY*****
 	switch (dir) {
 	case keys::UP:
 		diff_x = 0;
-		diff_y = -1;
+		diff_y = -1 * speed;
 		break;
 	case keys::RIGHT:
-		diff_x = 1;
+		diff_x = 1 * speed;
 		diff_y = 0;
 		break;
 	case keys::DOWN:
 		diff_x = 0;
-		diff_y = 1;
+		diff_y = 1 * speed;
 		break;
 	case keys::LEFT:
-		diff_x = -1;
+		diff_x = -1 * speed;
 		diff_y = 0;
 		break;
 	case keys::STAY:

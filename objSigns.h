@@ -3,8 +3,11 @@ enum objSigns {
 	PLAYER1 = '$',
 	PLAYER2 = '&',
 	KEY = 'K',
-	TREASURE = 'T',
+	SPRING = 'S',
+
 	DOOR = 'D',
-	MONSTER = 'M',
 	EMPTY = ' '
 };
+
+
+//obstacle, keys, spring, door, switch

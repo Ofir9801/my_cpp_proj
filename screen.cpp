@@ -37,6 +37,12 @@ void screen::draw(){
 		cout << map[i];
 	}
 }
+
+bool screen::isWall(const point& p) const{
+	char c = getCharAt(p);
+	return c == '-' || c == '|';
+}
+
 void screen::showPlayerInfo(player p) {
 	char playerChar = p.getChar();
 	switch (playerChar) {
@@ -55,6 +61,10 @@ void screen::showPlayerInfo(player p) {
 	}
 
 }
+
+
+
+
 
 
 

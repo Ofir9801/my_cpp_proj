@@ -10,6 +10,6 @@ class Game{
 public:
 	Game(); //default constructor to initialize the game components	
 	void run(); //function to run the main game loop
-	void showMenu(bool started);//function to show the game menu
+	void showMenu(bool &started);//function to show the game menu
 };
 

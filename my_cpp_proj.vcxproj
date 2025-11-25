@@ -98,7 +98,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
@@ -129,6 +129,7 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="point.cpp" />
     <ClCompile Include="screen.cpp" />
+    <ClCompile Include="Switch.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +140,7 @@
     <ClInclude Include="point.h" />
     <ClInclude Include="Rooms.h" />
     <ClInclude Include="screen.h" />
+    <ClInclude Include="Switch.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>

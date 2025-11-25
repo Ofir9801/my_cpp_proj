@@ -12,6 +12,7 @@ public:
 private:
 	//screen rectangle for 80x25 characters for the static objects
 	char map[MAX_Y][MAX_X + 1];
+	char Rooms[10];
 
 	char getCharAt(const point& p) const {
 		return map[p.getY()][p.getX()];
@@ -21,10 +22,7 @@ public:
 	void loadMap(const char* arr[]); //function to load the map from a string array
 	void draw(); //function to draw the map to the console
 	//function to get the character at a specific position
-	bool isWall(const point& p) const {
-		char c = getCharAt(p);
-		return c == '-' || c == '|';
-	}
+	bool isWall(const point& p) const;
 	void showPlayerInfo(player p);
 	
 	void showMessage(const char* msg) {

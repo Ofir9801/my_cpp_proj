@@ -7,13 +7,10 @@
 #include "player.h"
 const char keys1[] = "wdsaeq";
 const char keys2[] = "ilkjou";
-
+const char ESC = 27;
 Game::Game() :
 	player1(point(1, 4, objSigns::PLAYER1), keys1, board),
-	player2(point(75, 4, objSigns::PLAYER2), keys2, board)
-{
-	board.loadMap(room1);
-}
+	player2(point(75, 4, objSigns::PLAYER2), keys2, board) {}
 
 void Game::run() {
 	hideCursor();
@@ -21,7 +18,7 @@ void Game::run() {
 	showMenu(started);
 	board.draw();
 	bool exitGame = started;
-	while (!exitGame) {
+	while (exitGame) {
 		player1.move();
 		player2.move();
 
@@ -30,16 +27,15 @@ void Game::run() {
 
 		Sleep(100);
 		if (_kbhit()) {
-			char key = _getch();
+			char key = (char)_getch();
 
-			if (key == 27) { 
-				gotoxy(0, 24);
-				std::cout << "Game Paused. Press ESC again to continue or 9 to exit.";
-				key = _getch();
-				if (key == '9') exitGame = true;
+			if (key == ESC) {  //change to const ESC	
+				board.showMessage("Game Paused. Press ESC again to continue or H to exit.");
+				key = (char)_getch();
+				if (std::tolower(key) == std::tolower ('h')) exitGame = false;
 				else {
 					gotoxy(0, 24);
-					std::cout << "--------------------------------------------------------";
+					board.showMessage("--------------------------------------------------------");
 				}
 			}
 			else {
@@ -50,14 +46,14 @@ void Game::run() {
 	}
 }
 
-void Game::showMenu(bool started){
+void Game::showMenu(bool& started){
 	board.loadMap(menu);
 	board.draw();
 	bool inMenu = true;
 	char a;
 	while (inMenu) {
 		if (_kbhit()) {
-			char key = _getch();
+			char key = (char)_getch();
 			switch (key) {
 			case '1':
 				board.loadMap(room1);
@@ -66,7 +62,7 @@ void Game::showMenu(bool started){
 			case '8':
 				board.loadMap(instructions);
 				board.draw();
-				a = _getch();
+				a = (char)_getch();
 				board.loadMap(menu);
 				board.draw();
 				break;
@@ -78,3 +74,7 @@ void Game::showMenu(bool started){
 		}
 	}
 }
+
+
+
+
