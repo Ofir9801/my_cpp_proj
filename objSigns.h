@@ -4,7 +4,6 @@ enum objSigns {
 	PLAYER2 = '&',
 	KEY = 'K',
 	SPRING = 'S',
-
 	DOOR = 'D',
 	EMPTY = ' '
 };

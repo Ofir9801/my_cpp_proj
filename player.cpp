@@ -34,7 +34,7 @@ void player::move() {//OFIR ADDITION - modified to prevent constant beeping
 
 	if (map.isWall(position)) {
 		position = originalPos;
-		position.setDirection(keys::STAY);//OFIR ADDITION if hit wall, stay in place
+		position.setDirection(keys::STAY);
 		return;
 	}
 	if(position.getX() == originalPos.getX() && position.getY() == originalPos.getY()) {

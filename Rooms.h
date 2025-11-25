@@ -1,13 +1,4 @@
 #pragma once
-#include "screen.h"
-class Rooms {
-	Rooms* arr;
-
-	public:
-	static const char* room1[screen::MAX_Y];
-	static const char* menu[screen::MAX_Y];
-	static const char* instructions[screen::MAX_Y];
-};
 
 static const char* room1[screen::MAX_Y] = {
 		//   01234567890123456789012345678901234567890123456789012345678901234567890123456789

@@ -3,6 +3,7 @@
 #include <windows.h>
 #include "utils.h"
 #include "objSigns.h"
+#include "Rooms.h"
 
 using std::cout;
 using std::endl;
@@ -15,12 +16,14 @@ enum INFO_SLOTS {
 	PLAYER2_INV_START_X = 70,
 	PLAYER_INV_Y = 1
 };
-screen::screen()
+screen::screen() 
 {
 	memset(map, ' ', sizeof(map)); //initialize the map with spaces
 	for (int i = 0; i < MAX_Y; i++) {
 		map[i][MAX_X] = '\0'; //null-terminate each row
 	}
+	initaializeRoomsArray();
+
 }
 void screen::loadMap(const char* arr[])
 {
@@ -40,6 +43,10 @@ void screen::draw(){
 
 bool screen::isWall(const point& p) const{
 	char c = getCharAt(p);
+	if (c >= 0 && c << 9) {
+		//function to open door and change room
+		return false;
+	}
 	return c == '-' || c == '|';
 }
 
@@ -59,8 +66,14 @@ void screen::showPlayerInfo(player p) {
 			cout << p.getInventory()<< std::flush;
 			break;
 	}
-
 }
+
+void screen::initaializeRoomsArray() {
+	Rooms[0] = const_cast<char**>(room1);
+	Rooms[1] = nullptr;
+	Rooms[2] = nullptr;
+}
+
 
 
 
