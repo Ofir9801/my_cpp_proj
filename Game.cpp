@@ -11,6 +11,8 @@
 const char keys1[] = "wdsaeq";
 const char keys2[] = "ilkjou";
 const char ESC = 27;
+
+
 Game::Game() :
 	player1(point(1, 4, objSigns::PLAYER1), keys1, board),
 	player2(point(75, 4, objSigns::PLAYER2), keys2, board) {
@@ -52,8 +54,7 @@ void Game::run() {
 }
 
 void Game::showMenu(bool& started){
-	board.loadMap(menu);
-	board.draw();
+	changeRoom(MENU);
 	bool inMenu = true;
 	char a;
 	while (inMenu) {
@@ -61,15 +62,14 @@ void Game::showMenu(bool& started){
 			char key = (char)_getch();
 			switch (key) {
 			case '1':
-				board.loadMap(room1);
+				changeRoom(ROOM1);
 				inMenu = false;
 				break;
 			case '8':
-				board.loadMap(instructions);
-				board.draw();
+				changeRoom(INSTRUCTIONS);
+				board.showKeyBinds(keys1,keys2);
 				a = (char)_getch();
-				board.loadMap(menu);
-				board.draw();
+				changeRoom(MENU);
 				break;
 			case '9':
 				started = false;
@@ -81,8 +81,8 @@ void Game::showMenu(bool& started){
 }
 void Game::loadSwitches() {//enter the switches from the board to the vector
 	switches.clear();
-	for (size_t y = 0; y < Screen::MAX_Y; y++) {
-		for (size_t x = 0; x < Screen::MAX_X; x++) {
+	for (int y = 0; y < Screen::MAX_Y; y++) {
+		for (int x = 0; x < Screen::MAX_X; x++) {
 			char c = board.getCharAt(point(x, y));
 			if (c == '\\') {
 				switches.push_back(Switch(x, y, board, false));
@@ -93,6 +93,14 @@ void Game::loadSwitches() {//enter the switches from the board to the vector
 		}
 	}
 }
+
+void Game::changeRoom(int roomNumber)
+{
+	board.loadMap(roomNumber);
+	board.draw();
+}
+
+
 
 
 

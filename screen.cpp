@@ -17,6 +17,7 @@ enum INFO_SLOTS {
 	PLAYER2_INV_START_X = 70,
 	PLAYER_INV_Y = 1
 };
+
 Screen::Screen() 
 {
 	memset(map, ' ', sizeof(map)); //initialize the map with spaces
@@ -26,13 +27,13 @@ Screen::Screen()
 	initaializeRoomsArray();
 
 }
-void Screen::loadMap(const char* arr[])
+void Screen::loadMap(int roomNumber)
 {
 	for (int i = 0; i < MAX_Y; i++) {
-		strncpy_s(map[i], arr[i],MAX_X);
+		strncpy_s(map[i], Rooms[roomNumber][i],MAX_X);
 		map[i][MAX_X] = '\0'; //null-terminate each row
 	}
-
+	currentRoom = roomNumber;
 }
 void Screen::draw(){
 	cls(); //clear the console
@@ -44,10 +45,6 @@ void Screen::draw(){
 
 bool Screen::isWall(const point& p) const{
 	char c = getCharAt(p);
-	if (isdigit(c)) {
-		//function to open door and change room
-		return false;
-	}
 	return c == '-' || c == '|' || c == '#';
 }
 
@@ -76,20 +73,41 @@ void Screen::setChar(const point& p, char c) {
 	cout << c;
 }
 
-void Screen::initaializeRoomsArray() {
-	Rooms[0] = room1;
-	Rooms[1] = nullptr;
-	Rooms[2] = nullptr;
+void Screen::showKeyBinds(const char* keys1, const char* keys2) const
+{
+	int const INITIAL_Y = 19;
+	int const INITIAL_X1 = 11;
+	int const INITIAL_X2 = 40;
+
+	for (int i = 0; i < NUM_KEYS; i++) {
+		gotoxy(INITIAL_X1, INITIAL_Y + i);
+		cout << (char)toupper(keys1[i]); //print uppercase
+		gotoxy(INITIAL_X2, INITIAL_Y + i);
+		cout << (char)toupper(keys2[i]); //print uppercase
+	}
+}
+void Screen::showMessage(const char* msg){
+	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
+	std::cout << msg << std::flush;
 }
 
+void Screen::room1Challenge(char ch, point p){
+	if (ch == '5'){
+		showMessage("Congratulations! You have unlocked the correct door and may procceed to the next room");
+		setChar(p, ' ');
+	}
+	else {
+		showMessage("this lead to dead end! try another door");
+		if(p.getX() == 0 || p.getX() == MAX_X)
+			setChar(p, '|'  );
+		else
+			setChar(p, '-');
+	}
+}
 
-
-
-
-
-
-
-
-
-
-
+void Screen::initaializeRoomsArray() {
+	Rooms[MENU] = menu;
+	Rooms[INSTRUCTIONS] = instructions;
+	Rooms[ROOM1] = room1;
+	Rooms[ROOM2] = room2;
+}

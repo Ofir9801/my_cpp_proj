@@ -7,7 +7,7 @@ class Obstacle
 	int weight;
 	Screen& map;
 public:
-	Obstacle(int x, int y, Screen& theMap, int weight = 1): position(x, y, '#'), map(theMap), weight(weight) {
+	Obstacle(int x, int y, Screen& theMap, int weight = 1): position(x, y, '*'), map(theMap), weight(weight) {
 	}
 
 	void push(int force, Keys dir);

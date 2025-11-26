@@ -14,7 +14,7 @@ void Player::handleKeyPressed(char key_pressed) {
 	}
 }
 
-void Player::addToInventory(char item)
+bool Player::addToInventory(char item)
 {
 	bool added = false;
 	for (int i = 0; i < INVENTORY_SIZE && !added ; ++i) {
@@ -25,24 +25,33 @@ void Player::addToInventory(char item)
 	}
 	if (!added) {
 		map.showMessage("Inventory full!");
+		return false;
 	}
+	return true;
 }
 
 void Player::move() {//OFIR ADDITION - modified to prevent constant beeping
 	point originalPos = position;
+
 	position.draw();
 	position.move();
 	char next = map.getCharAt(position);
 	if (next == objSigns::KEY) {
 		//if(inventory != ' ')// maybe: check if inventory is full
-		addToInventory(objSigns::KEY);
-		map.setChar(position, ' ');
+		if (addToInventory(objSigns::KEY))
+			map.setChar(position, ' ');
+		else
+			map.setChar(position, objSigns::KEY); //keep the key on the map
+		
+		
 	}
 	if(isdigit(next)) {
 		if (hasItem(objSigns::KEY)) {//if its a door and Player has the key
 			removeItem();
-			map.setChar(position, ' ');
-			//if(both players on door) load(next room)...
+			if (map.getCurrentRoom() == 1)
+				map.room1Challenge(next, position);
+			return;
+			//if(both players on door) load(next room)...s
 		}
 		else{ //if no key - the door is like a wall
 			position = originalPos;

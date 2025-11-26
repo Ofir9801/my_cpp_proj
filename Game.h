@@ -14,5 +14,6 @@ public:
 	void run(); //function to run the main Game loop
 	void showMenu(bool &started);//function to show the Game menu
 	void loadSwitches();
+	void changeRoom(int roomNumber);
 };
 

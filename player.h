@@ -8,7 +8,7 @@ int const NUM_KEYS = 6; //number of possible movement Keys
 class Player
 {
 	point position; //Player's position on the map
-	char inventory[INVENTORY_SIZE + 1]; //Player can hold up to one item
+	char inventory[INVENTORY_SIZE+1]; //Player can hold up to one item
 	char p_keys[NUM_KEYS];
 	Screen& map; //reference to the Game Screen
 
@@ -17,7 +17,7 @@ public:
 		memcpy(p_keys, the_keys, NUM_KEYS * sizeof(p_keys[0]));
 		position = point;
 		inventory[0] = ' '; //empty inventory
-		inventory[1] = '\0'; //null-terminate the inventory string
+		inventory[INVENTORY_SIZE] = '\0'; //null-terminate the inventory string
 	}
 
 	void move(); //function to move the Player in the current direction
@@ -26,7 +26,7 @@ public:
 	}
 	//function to draw the Player on the map using gotoxy
 	void handleKeyPressed(char key_pressed);
-	void addToInventory(char item);
+	bool addToInventory(char item);
 	char getChar() const { return position.getChar(); }
 	const char* getInventory() const { return inventory; }
 	bool hasItem(char item) const { return inventory[0] == item; }
