@@ -28,7 +28,8 @@ public:
 		draw(ch);
 	}
 	void move();
-	void setDirection(Keys dir, int speed = 1);
+	void setDirection(Keys dir, bool state = true, int speed = 1 );
+
 
 };
 

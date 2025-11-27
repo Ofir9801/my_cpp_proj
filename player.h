@@ -11,6 +11,7 @@ class Player
 	char inventory[INVENTORY_SIZE+1]; //Player can hold up to one item
 	char p_keys[NUM_KEYS];
 	Screen& map; //reference to the Game Screen
+	bool state = true; //Player state - can move or not
 
 public:
 	Player(const point& point, const char(&the_keys)[NUM_KEYS + 1], Screen& theScreen) :map(theScreen) {
@@ -19,7 +20,6 @@ public:
 		inventory[0] = ' '; //empty inventory
 		inventory[INVENTORY_SIZE] = '\0'; //null-terminate the inventory string
 	}
-
 	void move(); //function to move the Player in the current direction
 	void draw() {
 		position.draw();
@@ -31,4 +31,6 @@ public:
 	const char* getInventory() const { return inventory; }
 	bool hasItem(char item) const { return inventory[0] == item; }
 	void removeItem() { inventory[0] = ' '; }
+	void dispose();
+	void clearFromScreen();
 };

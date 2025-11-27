@@ -23,7 +23,7 @@ void Game::run() {
 	hideCursor();
 	bool started = true;
 	showMenu(started);
-	board.draw();
+	board.drawMap();
 	bool exitGame = started;
 	while (exitGame) {
 		player1.move();
@@ -39,10 +39,10 @@ void Game::run() {
 			if (key == ESC) {  //change to const ESC	
 				board.showMessage("Game Paused. Press ESC again to continue or H to exit.");
 				key = (char)_getch();
-				if (std::tolower(key) == std::tolower ('h')) exitGame = false;
+				if (std::tolower((unsigned char)key) == std::tolower ('h')) exitGame = false;
 				else {
 					gotoxy(0, 24);
-					board.draw();
+					board.drawMap();
 				}
 			}
 			else {
@@ -50,6 +50,11 @@ void Game::run() {
 				player2.handleKeyPressed(key);
 			}
 		}
+		if (board.getSuccessfulMove()) {
+			size_t index = board.getCurrentRoom();
+			changeRoom(index++);
+		}
+
 	}
 }
 
@@ -97,7 +102,7 @@ void Game::loadSwitches() {//enter the switches from the board to the vector
 void Game::changeRoom(int roomNumber)
 {
 	board.loadMap(roomNumber);
-	board.draw();
+	board.drawMap();
 }
 
 

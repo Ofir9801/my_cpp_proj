@@ -1,14 +1,20 @@
 ﻿#include "Player.h"
 #include "Screen.h"
 #include "Keys.h"
-#include <cctype> //  for tolower, isdigit
+#include <cctype>
 
 void Player::handleKeyPressed(char key_pressed) {
 	size_t index = 0;
 	for (char k : p_keys) {
-		if (std::tolower(k) == std::tolower(key_pressed)) {
-			position.setDirection((Keys)index);
-			return;
+		if (std::tolower((unsigned char)k) == std::tolower(key_pressed)) {
+			if(index != NUM_KEYS-1){
+				position.setDirection((Keys)index);
+				return;
+			}
+			else {
+				dispose();
+				return;
+			}
 		}
 		++index;
 	}
@@ -30,33 +36,50 @@ bool Player::addToInventory(char item)
 	return true;
 }
 
+void Player::dispose()
+{
+	if (inventory[0] != ' ') {
+		map.setChar(position, inventory[0]);
+		position.draw();
+		inventory[0] = ' ';
+	}
+	else {
+		map.showMessage("No item to dispose.");
+	}
+}
+
+void Player::clearFromScreen()
+{
+	state = false;
+	position.setDirection(Keys::STAY);
+	map.setChar(position, ' ');
+}
+
 void Player::move() {//OFIR ADDITION - modified to prevent constant beeping
+	if (!state) return; //if player movement is disabled
 	point originalPos = position;
 
 	position.draw();
 	position.move();
 	char next = map.getCharAt(position);
 	if (next == objSigns::KEY) {
-		//if(inventory != ' ')// maybe: check if inventory is full
 		if (addToInventory(objSigns::KEY))
 			map.setChar(position, ' ');
 		else
 			map.setChar(position, objSigns::KEY); //keep the key on the map
-		
-		
 	}
-	if(isdigit(next)) {
+
+	if (isdigit((unsigned char)next)) {
 		if (hasItem(objSigns::KEY)) {//if its a door and Player has the key
 			removeItem();
-			if (map.getCurrentRoom() == 1)
-				map.room1Challenge(next, position);
-			return;
-			//if(both players on door) load(next room)...s
+			if (map.getCurrentRoom() == roomIndex::ROOM1) {
+				map.room1Challenge(next, position, this);
+			}
 		}
-		else{ //if no key - the door is like a wall
+		//if(both players on door) load(next room)...
+		else { //if no key - the door is like a wall
 			position = originalPos;
 			position.setDirection(Keys::STAY);
-			return;
 		}
 	}
 	if (map.isWall(position)) {
@@ -67,6 +90,6 @@ void Player::move() {//OFIR ADDITION - modified to prevent constant beeping
 	if(position.getX() == originalPos.getX() && position.getY() == originalPos.getY()) {
 		return;
 	}
-	originalPos.draw(' ');
+	originalPos.draw(map.getCharAt(originalPos));
 	position.draw();
 }

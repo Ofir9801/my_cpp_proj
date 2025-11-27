@@ -4,6 +4,7 @@
 #include "Utils.h"
 #include "objSigns.h"
 #include "Rooms.h"
+#include "Player.h"
 #include <cctype> //  for tolower, isdigit
 
 using std::cout;
@@ -35,7 +36,7 @@ void Screen::loadMap(int roomNumber)
 	}
 	currentRoom = roomNumber;
 }
-void Screen::draw(){
+void Screen::drawMap() {
 	cls(); //clear the console
 	for (int i = 0; i < MAX_Y; i++) {
 		gotoxy(0, i);
@@ -48,7 +49,7 @@ bool Screen::isWall(const point& p) const{
 	return c == '-' || c == '|' || c == '#';
 }
 
-void Screen::showPlayerInfo(Player p) {
+void Screen::showPlayerInfo(const Player& p) {
 	char playerChar = p.getChar();
 	switch (playerChar) {
 	case objSigns::PLAYER1:
@@ -81,9 +82,9 @@ void Screen::showKeyBinds(const char* keys1, const char* keys2) const
 
 	for (int i = 0; i < NUM_KEYS; i++) {
 		gotoxy(INITIAL_X1, INITIAL_Y + i);
-		cout << (char)toupper(keys1[i]); //print uppercase
+		cout << (unsigned char)toupper(keys1[i]); //print uppercase
 		gotoxy(INITIAL_X2, INITIAL_Y + i);
-		cout << (char)toupper(keys2[i]); //print uppercase
+		cout << (unsigned char)toupper(keys2[i]); //print uppercase
 	}
 }
 void Screen::showMessage(const char* msg){
@@ -91,17 +92,21 @@ void Screen::showMessage(const char* msg){
 	std::cout << msg << std::flush;
 }
 
-void Screen::room1Challenge(char ch, point p){
+void Screen::room1Challenge(char ch, point position, Player* p ){
 	if (ch == '5'){
 		showMessage("Congratulations! You have unlocked the correct door and may procceed to the next room");
-		setChar(p, ' ');
+		setChar(position, ' ');
+		p->clearFromScreen();
+		//setSuccessfulMove(true);
 	}
 	else {
 		showMessage("this lead to dead end! try another door");
-		if(p.getX() == 0 || p.getX() == MAX_X)
-			setChar(p, '|'  );
-		else
-			setChar(p, '-');
+		if (position.getX() == 0 || position.getX() == MAX_X-1) {
+			setChar(position, '|');
+		}
+		else {
+			setChar(position, '-');
+		}
 	}
 }
 

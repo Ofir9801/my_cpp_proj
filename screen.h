@@ -18,20 +18,23 @@ private:
 	char map[MAX_Y][MAX_X + 1];
 	const char** Rooms[NUM_ROOMS]; 
 	size_t currentRoom = 0;
+	bool successfulMove = false;
 
 
 public:
 	Screen();
 	void loadMap(int roomNumber); //function to load the map from a string array
-	void draw(); //function to draw the map to the console
+	void drawMap(); //function to draw the map to the console
 	//function to get the character at a specific position
 	bool isWall(const point& p) const;
 	size_t getCurrentRoom() const { return currentRoom; }
-	void showPlayerInfo(Player p);
+	void showPlayerInfo(const Player& p);
 	void initaializeRoomsArray();
 	void showMessage(const char* msg);
 	char getCharAt(const point& p) const {return map[p.getY()][p.getX()];}
 	void setChar(const point& p, char c);//function to set a character on Screen at point p, like picking up a key
 	void showKeyBinds(const char* keys1, const char* keys2)const;
-	void room1Challenge(char ch,point p);
+	void room1Challenge(char ch,point position, Player* p);
+	void setSuccessfulMove(bool val) { successfulMove = val; }
+	bool getSuccessfulMove() const { return successfulMove; }
 };
