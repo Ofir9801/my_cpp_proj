@@ -24,7 +24,17 @@ void Game::run() {
 	hideCursor();
 	bool started = true;
 	showMenu(started);
+	if (!started) {
+		cls();
+		board.showMessage("Exiting game. Goodbye!");
+		Sleep(1000);
+		cls();
+		gotoxy(0, 0);
+		return;
+	}
 	board.drawMap();
+	player1.draw();
+	player2.draw();
 	bool exitGame = started;
 	while (exitGame) {
 		player1.move();
@@ -40,7 +50,13 @@ void Game::run() {
 			if (key == ESC) {  //change to const ESC	
 				board.showMessage("Game Paused. Press ESC again to continue or H to exit.");
 				key = (char)_getch();
-				if (std::tolower((unsigned char)key) == std::tolower ('h')) exitGame = false;
+				if (std::tolower((unsigned char)key) == std::tolower('h')) {
+					cls();
+					board.showMessage("Exiting game. Goodbye!");
+					Sleep(1000);
+					cls();
+					exitGame = false;
+				}
 				else {
 					gotoxy(0, 24);
 					board.drawMap();
@@ -122,10 +138,14 @@ void Game::changeRoom(int roomNumber)
 {
 	board.loadMap(roomNumber);
 	loadSwitches();
-	//loadObstacles();
+	loadObstacles();
 	player1.reset(point(1, 4, objSigns::PLAYER1));
 	player2.reset(point(75, 4, objSigns::PLAYER2));
 	board.drawMap();
+	if (roomNumber != MENU && roomNumber != INSTRUCTIONS) {
+		player1.draw();
+		player2.draw();
+	}
 }
 
 

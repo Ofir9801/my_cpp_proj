@@ -59,21 +59,20 @@ void Player::clearFromScreen()
 void Player::move() {
 	if (!state) return; //if player movement is disabled
 	point originalPos = position;
-	handleSpringFlight();//helper function for spring flight
+	if (springCyclesLeft > 0) {
+		handleSpringFlight();//helper function for spring flight
+		return;
+	}
 	position.move();
-	int force = (springCyclesLeft > 0) ? currentForce : 1;
+	int force = 1;
 	char nextTile = map.getCharAt(position);
 	bool blocked = handleSpecialObjects(nextTile, originalPos, force);//helper function for special objects
 
 	if (blocked || map.isWall(position)) {
 		position = originalPos;
 		position.setDirection(Keys::STAY);
-		if (springCyclesLeft > 0) {//the spring effect is expired if we hit a wall
-			springCyclesLeft = 0;
-			currentForce = 1;
-		}
 		return;
-	}
+		}
 	if (position.getX() == originalPos.getX() && position.getY() == originalPos.getY()) {
 		return;//to prevent issues with beeping 
 	}
@@ -83,17 +82,18 @@ void Player::move() {
 void Player::handleSpringFlight() {//function to handle the sping effect
 	if (springCyclesLeft <= 0) return;
 	for (int i = 0; i < currentForce; ++i) {
-		point tempPos = position;
-		tempPos.setDirection(springDir.getDirectionEnum());
-		tempPos.move();
+		point prevPos = position;
+		point nextPos = position;
+		nextPos.setDirection(springDir.getDirectionEnum());
+		nextPos.move();
 
-		if (map.isWall(tempPos)) {
+		if (map.isWall(nextPos)) {
 			springCyclesLeft = 0;
 			currentForce = 1;
 			break;
 		}
-		position.draw(map.getCharAt(position));
-		position = tempPos;
+		prevPos.draw(map.getCharAt(prevPos));
+		position = nextPos;
 		position.draw();
 		Sleep(50);
 	}
@@ -130,13 +130,19 @@ bool Player::handleSpecialObjects(char nextTile, point originalPos, int force) {
 	}
 
 	if (nextTile == '#' && springCyclesLeft == 0) {//new spring
-		// כאן אפשר להוסיף לוגיקה לחישוב אורך הקפיץ
-		int compressed = 2; // (זמני, עד שתממש ספירה אמיתית)
-
-		currentForce = compressed;
-		springCyclesLeft = compressed * compressed;
+		Keys dir = position.getDirectionEnum();
+		point nextPos = position;
+		int springSize = 0;
+		while(map.getCharAt(nextPos) == '#') {
+			springSize++;
+			nextPos.setDirection(dir);
+			nextPos.move();
+			if (map.isWall(nextPos)) break;
+		}
+		currentForce = springSize;
+		springCyclesLeft = springSize * springSize;
 		springDir = position;
-		springDir.setDirection(originalPos.getDirectionEnum());
+		springDir.setDirection(dir);
 		return false;
 	}
 
@@ -147,4 +153,17 @@ void Player::reset(point newPosition) {
 	position = newPosition;
 	state = true;
 	position.setDirection(Keys::STAY);
+}
+int Player::countSpringChars(point startPos, Keys dir) {
+	int count = 0;
+	point tempPos = startPos;
+	tempPos.setDirection(dir);
+	tempPos.move();
+	while (map.getCharAt(tempPos) == '#') {
+		count++;
+		tempPos.setDirection(dir);
+		tempPos.move();
+		if (map.isWall(tempPos)) break;
+	}
+	return count;
 }

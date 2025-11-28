@@ -129,6 +129,7 @@
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Point.cpp" />
+    <ClCompile Include="Rooms.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Switch.cpp" />
     <ClCompile Include="Utils.cpp" />

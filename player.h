@@ -4,12 +4,13 @@
 class Screen;//forward declaration to avoid circular dependency
 int const INVENTORY_SIZE = 1; //Player can hold up to one item
 int const NUM_KEYS = 6; //number of possible movement Keys
-int springCyclesLeft = 0;
-int currentForce = 1;
-point springDir;
+
 
 class Player
 {
+	int springCyclesLeft = 0;
+	int currentForce = 1;
+	point springDir;
 	point position; //Player's position on the map
 	char inventory[INVENTORY_SIZE+1]; //Player can hold up to one item
 	char p_keys[NUM_KEYS];
@@ -17,6 +18,7 @@ class Player
 	bool state = true; //Player state - can move or not
 	void handleSpringFlight();
 	bool handleSpecialObjects(char tileType, point originalPos, int force);
+	int countSpringChars(point startPos, Keys dir);
 
 public:
 	Player(const point& point, const char(&the_keys)[NUM_KEYS + 1], Screen& theScreen) :map(theScreen) {

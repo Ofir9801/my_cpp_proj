@@ -46,7 +46,7 @@ void Screen::drawMap() {
 
 bool Screen::isWall(const point& p) const{
 	char c = getCharAt(p);
-	return c == '-' || c == '|' || c == '#';
+	return c == '-' || c == '|' || c == '*';
 }
 
 void Screen::showPlayerInfo(const Player& p) {
