@@ -5,6 +5,7 @@
 class Switch {
     point position;
     bool isOn;
+    bool wasToggled = false;
     Screen& map; 
 
 public:
@@ -12,12 +13,8 @@ public:
         : position(x, y, '/'), map(theMap), isOn(initialState) {
     }
 
-    void toggle() {
-        isOn = !isOn;
-        char newSymbol = isOn ? '\\' : '/';
-        position.setChar(newSymbol);
-        map.setChar(position, newSymbol);
-    }
+    void toggle();
+    void update(bool isPressed);
 
     bool isAt(const point& p) const {
         return position.getX() == p.getX() && position.getY() == p.getY();

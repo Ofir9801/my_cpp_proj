@@ -29,7 +29,7 @@ public:
 	}
 	void move();
 	void setDirection(Keys dir, bool state = true, int speed = 1 );
-
+	Keys getDirectionEnum() const;
 
 };
 

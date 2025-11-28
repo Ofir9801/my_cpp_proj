@@ -37,4 +37,5 @@ public:
 	void room1Challenge(char ch,point position, Player* p);
 	void setSuccessfulMove(bool val) { successfulMove = val; }
 	bool getSuccessfulMove() const { return successfulMove; }
+	bool tryPushObstacle(const point& obstaclePos, Keys direction, int force);
 };

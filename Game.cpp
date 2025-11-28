@@ -17,6 +17,7 @@ Game::Game() :
 	player1(point(1, 4, objSigns::PLAYER1), keys1, board),
 	player2(point(75, 4, objSigns::PLAYER2), keys2, board) {
 	loadSwitches();
+	loadObstacles();
 }
 
 void Game::run() {
@@ -58,9 +59,8 @@ void Game::run() {
 		}
 
 		for (auto& s : switches) {//function that runs on the switches and check if player toggles it
-			if (s.isAt(player1.getPosition()) || s.isAt(player2.getPosition())) {
-				s.toggle(); 
-			}
+			bool isPressed = s.isAt(player1.getPosition()) || s.isAt(player2.getPosition());
+			s.update(isPressed); 
 		}
 
 	}
@@ -102,6 +102,17 @@ void Game::loadSwitches() {//enter the switches from the board to the vector
 			}
 			else if (c == '/') {
 				switches.push_back(Switch(x, y, board, true));
+			}
+		}
+	}
+}
+void Game::loadObstacles() {//enter the obstacles from the board to the vector
+	obstacles.clear();
+	for (int y = 0; y < Screen::MAX_Y; y++) {
+		for (int x = 0; x < Screen::MAX_X; x++) {
+			char c = board.getCharAt(point(x, y));
+			if (c == '*') {
+				obstacles.push_back(Obstacle(x, y, board, 1));
 			}
 		}
 	}

@@ -38,3 +38,19 @@ void point::setDirection(Keys dir, bool state, int speed)
 		diff_y = 0;
 	}
 }
+Keys point::getDirectionEnum() const
+{
+	if (diff_y < 0) {
+		return Keys::UP;
+	}
+	else if (diff_x > 0) {
+		return Keys::RIGHT;
+	}
+	else if (diff_y > 0) {
+		return Keys::DOWN;
+	}
+	else if (diff_x < 0) {
+		return Keys::LEFT;
+	}
+		return Keys::STAY;
+}

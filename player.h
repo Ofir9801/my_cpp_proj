@@ -4,6 +4,9 @@
 class Screen;//forward declaration to avoid circular dependency
 int const INVENTORY_SIZE = 1; //Player can hold up to one item
 int const NUM_KEYS = 6; //number of possible movement Keys
+int springCyclesLeft = 0;
+int currentForce = 1;
+point springDir;
 
 class Player
 {
@@ -12,6 +15,8 @@ class Player
 	char p_keys[NUM_KEYS];
 	Screen& map; //reference to the Game Screen
 	bool state = true; //Player state - can move or not
+	void handleSpringFlight();
+	bool handleSpecialObjects(char tileType, point originalPos, int force);
 
 public:
 	Player(const point& point, const char(&the_keys)[NUM_KEYS + 1], Screen& theScreen) :map(theScreen) {

@@ -116,3 +116,19 @@ void Screen::initaializeRoomsArray() {
 	Rooms[ROOM1] = room1;
 	Rooms[ROOM2] = room2;
 }
+
+bool Screen::tryPushObstacle(const point& obstaclePos, Keys direction, int force) {
+	int obstacleWeight = 1;
+	if (force < obstacleWeight) return false;
+	point targetPos = obstaclePos;
+	targetPos.setDirection(direction);
+	targetPos.move();	
+	char targetChar = getCharAt(targetPos);
+	if (targetChar == ' ') {
+		char objectChar = getCharAt(obstaclePos);
+		setChar(obstaclePos, ' ');
+		setChar(targetPos, objectChar);
+		return true;
+	}
+	return false;
+}
