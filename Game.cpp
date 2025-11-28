@@ -1,4 +1,4 @@
-#include "Game.h"
+﻿#include "Game.h"
 #include <conio.h> 
 #include <windows.h>
 #include "Utils.h"
@@ -32,7 +32,7 @@ void Game::run() {
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
 
-		Sleep(100);
+		Sleep(150);
 		if (_kbhit()) {
 			char key = (char)_getch();
 
@@ -51,8 +51,16 @@ void Game::run() {
 			}
 		}
 		if (board.getSuccessfulMove()) {
+			board.setSuccessfulMove(false);
 			size_t index = board.getCurrentRoom();
-			changeRoom(index++);
+			if (index < NUM_ROOMS - 1)//to see if there is a next room
+				changeRoom(++index);
+		}
+
+		for (auto& s : switches) {//function that runs on the switches and check if player toggles it
+			if (s.isAt(player1.getPosition()) || s.isAt(player2.getPosition())) {
+				s.toggle(); 
+			}
 		}
 
 	}
@@ -102,6 +110,10 @@ void Game::loadSwitches() {//enter the switches from the board to the vector
 void Game::changeRoom(int roomNumber)
 {
 	board.loadMap(roomNumber);
+	loadSwitches();
+	//loadObstacles();
+	player1.reset(point(1, 4, objSigns::PLAYER1));
+	player2.reset(point(75, 4, objSigns::PLAYER2));
 	board.drawMap();
 }
 

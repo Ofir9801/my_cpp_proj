@@ -97,7 +97,7 @@ void Screen::room1Challenge(char ch, point position, Player* p ){
 		showMessage("Congratulations! You have unlocked the correct door and may procceed to the next room");
 		setChar(position, ' ');
 		p->clearFromScreen();
-		//setSuccessfulMove(true);
+		setSuccessfulMove(true);
 	}
 	else {
 		showMessage("this lead to dead end! try another door");

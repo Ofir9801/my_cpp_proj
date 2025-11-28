@@ -7,7 +7,7 @@ void Player::handleKeyPressed(char key_pressed) {
 	size_t index = 0;
 	for (char k : p_keys) {
 		if (std::tolower((unsigned char)k) == std::tolower(key_pressed)) {
-			if(index != NUM_KEYS-1){
+			if(index != NUM_KEYS - 1){
 				position.setDirection((Keys)index);
 				return;
 			}
@@ -92,4 +92,9 @@ void Player::move() {//OFIR ADDITION - modified to prevent constant beeping
 	}
 	originalPos.draw(map.getCharAt(originalPos));
 	position.draw();
+}
+void Player::reset(point newPosition) {
+	position = newPosition;
+	state = true;
+	position.setDirection(Keys::STAY);
 }

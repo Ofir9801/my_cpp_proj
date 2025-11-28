@@ -33,4 +33,6 @@ public:
 	void removeItem() { inventory[0] = ' '; }
 	void dispose();
 	void clearFromScreen();
+	void reset(point newPosition);
+	point getPosition() const { return position; }
 };
