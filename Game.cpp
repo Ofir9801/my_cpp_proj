@@ -42,7 +42,7 @@ void Game::run() {
 
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
-
+		board.refreshSpringsDisplay(player1.getPosition(), player2.getPosition());
 		Sleep(150);
 		if (_kbhit()) {
 			char key = (char)_getch();
@@ -133,7 +133,6 @@ void Game::loadObstacles() {//enter the obstacles from the board to the vector
 		}
 	}
 }
-
 void Game::changeRoom(int roomNumber)
 {
 	board.loadMap(roomNumber);

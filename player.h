@@ -1,24 +1,22 @@
 #pragma once
 #include "point.h"//using point class for Player position
 #include "Screen.h"//using Screen class to check for walls	
+
 class Screen;//forward declaration to avoid circular dependency
 int const INVENTORY_SIZE = 1; //Player can hold up to one item
 int const NUM_KEYS = 6; //number of possible movement Keys
 
-
 class Player
 {
 	int springCyclesLeft = 0;
-	int currentForce = 1;
-	point springDir;
+	int currentForce = 1; //acts as speed
+	point springDir; //direction of the flight
 	point position; //Player's position on the map
 	char inventory[INVENTORY_SIZE+1]; //Player can hold up to one item
 	char p_keys[NUM_KEYS];
 	Screen& map; //reference to the Game Screen
 	bool state = true; //Player state - can move or not
-	void handleSpringFlight();
-	bool handleSpecialObjects(char tileType, point originalPos, int force);
-	int countSpringChars(point startPos, Keys dir);
+	bool handleSpecialObjects(char nextTile, point nextPos, int force);
 
 public:
 	Player(const point& point, const char(&the_keys)[NUM_KEYS + 1], Screen& theScreen) :map(theScreen) {
@@ -42,4 +40,5 @@ public:
 	void clearFromScreen();
 	void reset(point newPosition);
 	point getPosition() const { return position; }
+	Keys getOppositeDirection(Keys dir);
 };

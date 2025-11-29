@@ -3,6 +3,8 @@
 #include "point.h"
 #include "Player.h"
 #include "objSigns.h"
+#include "Spring.h"
+#include <vector>
 class Player; //forward declaration to avoid circular dependency
 
 int constexpr NUM_ROOMS = 4; //number of rooms in the Game
@@ -19,7 +21,7 @@ private:
 	const char** Rooms[NUM_ROOMS]; 
 	size_t currentRoom = 0;
 	bool successfulMove = false;
-
+	std::vector<Spring> springs;
 
 public:
 	Screen();
@@ -38,4 +40,7 @@ public:
 	void setSuccessfulMove(bool val) { successfulMove = val; }
 	bool getSuccessfulMove() const { return successfulMove; }
 	bool tryPushObstacle(const point& obstaclePos, Keys direction, int force);
+	void loadSprings();
+	Spring* getSpringAt(const point& p);
+	void refreshSpringsDisplay(const point& p1, const point& p2) const;
 };

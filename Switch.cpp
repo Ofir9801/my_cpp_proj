@@ -7,10 +7,14 @@ void Switch::toggle() {
 	position.setChar(newSymbol);
 	map.setChar(position, newSymbol);
 }
+
 void Switch::update(bool isPressed) {
-	if (isPressed && !wasToggled) {
-		toggle();
-		wasToggled = true;
+	if (isPressed) {
+		if (!wasToggled) {
+			toggle();
+			wasToggled = true;
+		}
 	}
+	else
 		wasToggled = false;
-}
+	}

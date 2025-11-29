@@ -3,7 +3,7 @@ enum objSigns {
 	PLAYER1 = '$',
 	PLAYER2 = '&',
 	KEY = 'K',
-	SPRING = 'S',
+	SPRING = '#',
 	DOOR = 'D',
 	EMPTY = ' '
 };
