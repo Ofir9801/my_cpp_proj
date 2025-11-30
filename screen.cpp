@@ -91,6 +91,8 @@ void Screen::showKeyBinds(const char* keys1, const char* keys2) const
 }
 void Screen::showMessage(const char* msg){
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
+	std::cout << "                                                                                " << std::flush;//clear the line before
+	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
 	std::cout << msg << std::flush;
 }
 
@@ -109,8 +111,6 @@ void Screen::room1Challenge(char ch, point position, Player* p) {
 		else {
 			setChar(position, '-');
 		}
-		Sleep(1000);
-		showMessage("                                           ");
 	}
 }
 
@@ -207,4 +207,10 @@ bool Screen::getThroughDoor (const Player* p) const
 	char c = getCharAt(p->getPosition());
 	return c == '{';
 	
+}
+
+void Screen::clearMessegeArea(int const counter)
+{
+	if (counter % 10 == 0) // clear message area every 8 cycles
+		showMessage("                                                                                ");
 }

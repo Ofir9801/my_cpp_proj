@@ -1,6 +1,7 @@
 #pragma once
 #include "point.h"
 #include "Screen.h"
+#include "objSigns.h"
 
 class Switch {
     point position;
@@ -10,7 +11,7 @@ class Switch {
 
 public:
     Switch(int x, int y, Screen& theMap, bool initialState = false)
-        : position(x, y, '/'), map(theMap), isOn(initialState) {
+        : position(x, y, objSigns::SWITCH_OFF), map(theMap), isOn(initialState) {
     }
 
     void toggle();

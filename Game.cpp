@@ -21,6 +21,7 @@ Game::Game() :
 
 void Game::run() {
 	hideCursor();
+	int gamecycle = 0;
 	bool started = true;
 	showMenu(started);
 	if (!started) {
@@ -42,7 +43,8 @@ void Game::run() {
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
 		board.refreshSpringsDisplay(player1.getPosition(), player2.getPosition());
-		Sleep(150);
+		Sleep(100);
+		board.clearMessegeArea(gamecycle);
 		if (_kbhit()) {
 			char key = (char)_getch();
 
@@ -77,7 +79,7 @@ void Game::run() {
 			bool isPressed = s.isAt(player1.getPosition()) || s.isAt(player2.getPosition());
 			s.update(isPressed); 
 		}
-
+		gamecycle++;
 	}
 }
 

@@ -3,9 +3,12 @@ enum objSigns {
 	PLAYER1 = '$',
 	PLAYER2 = '&',
 	KEY = 'K',
+	OBSTACLE = '*',
 	SPRING = '#',
 	DOOR = 'D',
-	EMPTY = ' '
+	EMPTY = ' ',
+	SWITCH_OFF = '\\',
+	SWITCH_ON = '/'
 };
 
 

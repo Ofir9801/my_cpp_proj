@@ -34,8 +34,6 @@ bool Player::addToInventory(char item)
 	}
 	if (!added) {
 		map.showMessage("Inventory full!");
-		Sleep(500);
-		map.showMessage("                            ");
 		return false;
 	}
 	return true;
@@ -50,8 +48,6 @@ void Player::dispose()
 	}
 	else {
 		map.showMessage("No item to dispose.");
-		Sleep(500);
-		map.showMessage("                            ");
 	}
 }
 
@@ -65,54 +61,84 @@ void Player::clearFromScreen()
 
 void Player::move() {
 	if (!state) return; //if player movement is disabled
+
+	applySpringDirectionIfNeeded();
+
+	// if the player stands on the "through door" tile, mark successful move and hide
+	if (checkAndHandleThroughDoor()) {
+		return;
+	}
+
+	int stepsToTake = computeStepsToTake();
+	for (int i = 0; i < stepsToTake; ++i) {
+		// takeStep() will return true when movement should stop (blocked or state changed)
+		if (takeStep()) break;
+	}
+	handleActiveSpring();
+	finalizeMovement();
+}
+
+
+void Player::applySpringDirectionIfNeeded() {
 	if (springCyclesLeft > 0) {
 		position.setDirection(springDir.getDirectionEnum());
 	}
+}
+
+bool Player::checkAndHandleThroughDoor() {
 	if (map.getThroughDoor(this)) {
 		map.setSuccessfulMove(true);
 		clearFromScreen();
-		return;
+		return true;
 	}
-	int stepsToTake = (springCyclesLeft > 0) ? currentForce : 1;
-	for (int i = 0; i < stepsToTake; ++i) {
-		point originalPos = position;
-		point nextCandidate = position;
-		nextCandidate.move();
-		char nextTile = map.getCharAt(nextCandidate);
-		bool blocked = false;
-		if (map.isWall(nextCandidate)) {
-			blocked = true;
-		}
-	
-		else {//not a wall
-			int force = (springCyclesLeft > 0) ? currentForce : 1;
-			blocked = handleSpecialObjects(nextTile, nextCandidate, force);
-		}
+	return false;
+}
 
-		// If some handler (e.g. room1Challenge) disabled the player and cleared the screen,
-		// don't continue drawing / moving this player in this tick.
-		if (!state) return;
+int Player::computeStepsToTake() const {
+	return (springCyclesLeft > 0) ? currentForce : 1;
+}
 
-		if (blocked) {//if we hit a wall or blocked object, we stop
-			if (springCyclesLeft > 0) {
-				springCyclesLeft = 0;
-				currentForce = 1;
-			}
-			position = originalPos;
-			break;
-		}
-		else {//success
-			if (originalPos.getX() != nextCandidate.getX() || originalPos.getY() != nextCandidate.getY()) {
-				if (map.getSpringAt(originalPos) == nullptr) {
-					map.setChar(originalPos, ' '); // leaving no trail
-				}
-			}
-			position = nextCandidate;
-			position.draw();
-		}
+bool Player::takeStep() {
+	point originalPos = position;
+	point nextCandidate = position;
+	nextCandidate.move();
+	char nextTile = map.getCharAt(nextCandidate);
+	bool blocked = false;
+
+	if (map.isWall(nextCandidate)) {
+		blocked = true;
 	}
+	else { // not a wall
+		int force = (springCyclesLeft > 0) ? currentForce : 1;
+		blocked = handleSpecialObjects(nextTile, nextCandidate, force);
+	}
+
+	if (!state) return true;
+
+	if (blocked) { // if we hit a wall or blocked object, we stop
+		if (springCyclesLeft > 0) {
+			springCyclesLeft = 0;
+			currentForce = 1;
+		}
+		position = originalPos;
+		return true; // stop further steps
+	}
+	else { // success: move to nextCandidate
+		if (originalPos.getX() != nextCandidate.getX() || originalPos.getY() != nextCandidate.getY()) {
+			if (map.getSpringAt(originalPos) == nullptr) {
+				char underlying = map.getCharAt(originalPos);
+				map.setChar(originalPos, underlying); // leaving no trail
+			}
+		}
+		position = nextCandidate;
+		position.draw();
+		return false; // can continue
+	}
+}
+
+void Player::handleActiveSpring() {
 	Spring* activeSpring = map.getSpringAt(position);
-	//now we want to 'visualize' the spring if we are on one
+	// now we want to 'visualize' the spring if we are on one
 	if (activeSpring != nullptr) {
 		activeSpring->draw(position, true);
 		point checkWall = position;
@@ -126,6 +152,9 @@ void Player::move() {
 			position.setDirection(activeSpring->getDirection());
 		}
 	}
+}
+
+void Player::finalizeMovement() {
 	if (springCyclesLeft > 0) {
 		springCyclesLeft--;
 		if (springCyclesLeft == 0) currentForce = 1;
@@ -153,7 +182,7 @@ bool Player::handleSpecialObjects(char nextTile, point nextPos, int force) {//fu
 		}
 		return true;
 	}
-	if (nextTile == '*') {//obstacle
+	if (nextTile == objSigns::OBSTACLE) {
 		Keys pushDir = (springCyclesLeft > 0) ? springDir.getDirectionEnum() : position.getDirectionEnum();
 
 		if (map.tryPushObstacle(nextPos, pushDir, force)) {
@@ -163,6 +192,7 @@ bool Player::handleSpecialObjects(char nextTile, point nextPos, int force) {//fu
 	}
 	return false;
 }
+
 void Player::reset(point newPosition) {
 	position = newPosition;
 	state = true;
