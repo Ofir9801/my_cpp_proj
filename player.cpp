@@ -60,12 +60,18 @@ void Player::clearFromScreen()
 	state = false;
 	position.setDirection(Keys::STAY);
 	map.setChar(position, ' ');
+	position.setChar(' ');
 }
 
 void Player::move() {
 	if (!state) return; //if player movement is disabled
 	if (springCyclesLeft > 0) {
 		position.setDirection(springDir.getDirectionEnum());
+	}
+	if (map.getThroughDoor(this)) {
+		map.setSuccessfulMove(true);
+		clearFromScreen();
+		return;
 	}
 	int stepsToTake = (springCyclesLeft > 0) ? currentForce : 1;
 	for (int i = 0; i < stepsToTake; ++i) {
@@ -77,10 +83,16 @@ void Player::move() {
 		if (map.isWall(nextCandidate)) {
 			blocked = true;
 		}
+	
 		else {//not a wall
 			int force = (springCyclesLeft > 0) ? currentForce : 1;
 			blocked = handleSpecialObjects(nextTile, nextCandidate, force);
 		}
+
+		// If some handler (e.g. room1Challenge) disabled the player and cleared the screen,
+		// don't continue drawing / moving this player in this tick.
+		if (!state) return;
+
 		if (blocked) {//if we hit a wall or blocked object, we stop
 			if (springCyclesLeft > 0) {
 				springCyclesLeft = 0;
@@ -120,10 +132,11 @@ void Player::move() {
 	}
 }
 
-bool Player::handleSpecialObjects(char nextTile, point originalPos, int force) {//function to handle special objects
+bool Player::handleSpecialObjects(char nextTile, point nextPos, int force) {//function to handle special objects
 	if (nextTile == objSigns::KEY) {
 		if (addToInventory(objSigns::KEY)) {
-			map.setChar(position, ' ');
+			// clear the key from the tile we are moving onto (nextPos), not the player's old position
+			map.setChar(nextPos, ' ');
 			return false;
 		}
 		return true; //if inventory is full its blocked
@@ -133,7 +146,8 @@ bool Player::handleSpecialObjects(char nextTile, point originalPos, int force) {
 		if (hasItem(objSigns::KEY)) {
 			removeItem();
 			if (map.getCurrentRoom() == roomIndex::ROOM1) {
-				map.room1Challenge(nextTile, position, this);
+				// pass the tile we are moving onto (nextPos) so the screen can clear that cell
+				map.room1Challenge(nextTile, nextPos, this);
 			}
 			return false;
 		}
@@ -142,13 +156,13 @@ bool Player::handleSpecialObjects(char nextTile, point originalPos, int force) {
 	if (nextTile == '*') {//obstacle
 		Keys pushDir = (springCyclesLeft > 0) ? springDir.getDirectionEnum() : position.getDirectionEnum();
 
-		if (map.tryPushObstacle(originalPos, pushDir, force)) {
+		if (map.tryPushObstacle(nextPos, pushDir, force)) {
 			return false;
 		}
 		return true;
 	}
 	return false;
-	}
+}
 void Player::reset(point newPosition) {
 	position = newPosition;
 	state = true;

@@ -16,8 +16,7 @@ const char ESC = 27;
 Game::Game() :
 	player1(point(1, 4, objSigns::PLAYER1), keys1, board),
 	player2(point(75, 4, objSigns::PLAYER2), keys2, board) {
-	loadSwitches();
-	loadObstacles();
+	loadItems();
 }
 
 void Game::run() {
@@ -108,8 +107,9 @@ void Game::showMenu(bool& started){
 		}
 	}
 }
-void Game::loadSwitches() {//enter the switches from the board to the vector
+void Game::loadItems() {//enter the switches from the board to the vector
 	switches.clear();
+	obstacles.clear();
 	for (int y = 0; y < Screen::MAX_Y; y++) {
 		for (int x = 0; x < Screen::MAX_X; x++) {
 			char c = board.getCharAt(point(x, y));
@@ -119,25 +119,17 @@ void Game::loadSwitches() {//enter the switches from the board to the vector
 			else if (c == '/') {
 				switches.push_back(Switch(x, y, board, true));
 			}
-		}
-	}
-}
-void Game::loadObstacles() {//enter the obstacles from the board to the vector
-	obstacles.clear();
-	for (int y = 0; y < Screen::MAX_Y; y++) {
-		for (int x = 0; x < Screen::MAX_X; x++) {
-			char c = board.getCharAt(point(x, y));
-			if (c == '*') {
+			else if (c == '*'){
 				obstacles.push_back(Obstacle(x, y, board, 1));
 			}
+
 		}
 	}
 }
 void Game::changeRoom(int roomNumber)
 {
 	board.loadMap(roomNumber);
-	loadSwitches();
-	loadObstacles();
+	loadItems();
 	player1.reset(point(1, 4, objSigns::PLAYER1));
 	player2.reset(point(75, 4, objSigns::PLAYER2));
 	board.drawMap();

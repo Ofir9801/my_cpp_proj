@@ -43,4 +43,5 @@ public:
 	void loadSprings();
 	Spring* getSpringAt(const point& p);
 	void refreshSpringsDisplay(const point& p1, const point& p2) const;
+	bool getThroughDoor (const Player* p) const;
 };

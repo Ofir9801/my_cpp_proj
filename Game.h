@@ -15,8 +15,7 @@ public:
 	Game(); //default constructor to initialize the Game components	
 	void run(); //function to run the main Game loop
 	void showMenu(bool &started);//function to show the Game menu
-	void loadSwitches();
-	void loadObstacles();
+	void loadItems();
 	void changeRoom(int roomNumber);
 };
 

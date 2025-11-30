@@ -94,12 +94,12 @@ void Screen::showMessage(const char* msg){
 	std::cout << msg << std::flush;
 }
 
-void Screen::room1Challenge(char ch, point position, Player* p ){
+void Screen::room1Challenge(char ch, point position, Player* p) {
 	if (ch == '5'){
-		showMessage("Congratulations! You have unlocked the correct door and may procceed to the next room");
-		setChar(position, ' ');
+		showMessage("You have unlocked the correct door and may procceed to the next room");
+		setChar(position, '{');
 		p->clearFromScreen();
-		setSuccessfulMove(true);
+		
 	}
 	else {
 		showMessage("this lead to dead end! try another door");
@@ -110,7 +110,7 @@ void Screen::room1Challenge(char ch, point position, Player* p ){
 			setChar(position, '-');
 		}
 		Sleep(1000);
-		showMessage("                            ");
+		showMessage("                                           ");
 	}
 }
 
@@ -200,4 +200,11 @@ void Screen::refreshSpringsDisplay(const point& p1, const point& p2) const {
 			s.draw(point(0, 0), false);
 		}
 	}
+}
+
+bool Screen::getThroughDoor (const Player* p) const
+{
+	char c = getCharAt(p->getPosition());
+	return c == '{';
+	
 }
