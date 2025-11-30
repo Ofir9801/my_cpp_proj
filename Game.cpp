@@ -43,7 +43,7 @@ void Game::run() {
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
 		board.refreshSpringsDisplay(player1.getPosition(), player2.getPosition());
-		Sleep(100);
+		Sleep(130);
 		board.clearMessegeArea(gamecycle);
 		if (_kbhit()) {
 			char key = (char)_getch();
