@@ -171,14 +171,19 @@ bool Player::handleSpecialObjects(char nextTile, point nextPos, int force) {//fu
 		return true; //if inventory is full its blocked
 	}
 
-	if(isdigit((unsigned char)nextTile)) {//door
+	if (isdigit((unsigned char)nextTile)) {
 		if (hasItem(objSigns::KEY)) {
 			removeItem();
-			if (map.getCurrentRoom() == roomIndex::ROOM1) {
-				// pass the tile we are moving onto (nextPos) so the screen can clear that cell
-				map.room1Challenge(nextTile, nextPos, this);
+			if (map.isWinningDoor(nextTile)) {
+				map.setChar(nextPos, '{');
+				map.showMessage("Correct door! Unlocked.");
+				return false;
 			}
-			return false;
+			else {
+				map.setChar(nextPos, 'X');
+				map.showMessage("Wrong door! It's a dead end.");
+				return true;
+			}
 		}
 		return true;
 	}

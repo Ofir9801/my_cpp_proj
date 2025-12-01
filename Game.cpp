@@ -74,11 +74,7 @@ void Game::run() {
 			if (index < NUM_ROOMS - 1)//to see if there is a next room
 				changeRoom(++index);
 		}
-
-		for (auto& s : switches) {//function that runs on the switches and check if player toggles it
-			bool isPressed = s.isAt(player1.getPosition()) || s.isAt(player2.getPosition());
-			s.update(isPressed); 
-		}
+		updateSwitches();
 		gamecycle++;
 	}
 }
@@ -124,9 +120,12 @@ void Game::loadItems() {//enter the switches from the board to the vector
 			else if (c == '*'){
 				obstacles.push_back(Obstacle(x, y, board, 1));
 			}
-
+			else if(isdigit((unsigned char)c)){
+				doors.push_back(Door(x, y, c, board));
+			}
 		}
 	}
+	autoLinkSwitchesAndDoors();
 }
 void Game::changeRoom(int roomNumber)
 {
@@ -140,9 +139,27 @@ void Game::changeRoom(int roomNumber)
 		player2.draw();
 	}
 }
+void Game::autoLinkSwitchesAndDoors() {
+	int levelNum = board.getCurrentRoom() - 1;
+	char currentDoorId = '1';
+	char exitDoor = char(levelNum);
+	for(auto& s : switches) {
+		s.setTargetDoorId(currentDoorId);
+		currentDoorId++;
+	}
+}
 
-
-
-
-
+void Game::updateSwitches() {
+	for (auto& s : switches) {
+		bool isPressed = s.isAt(player1.getPosition()) || s.isAt(player2.getPosition());
+		if (s.update(isPressed)) {
+			int targetID = s.getTargetDoorId();
+			for (auto& d : doors) {
+				if (d.getId() == targetID) {
+					s.getIsOn() ? d.open() : d.close();
+				}
+			}
+		}
+	}
+}
 

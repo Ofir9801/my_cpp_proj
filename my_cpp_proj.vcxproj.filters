@@ -45,6 +45,9 @@
     <ClCompile Include="Spring.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Door.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Point.h">
@@ -78,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Spring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Door.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

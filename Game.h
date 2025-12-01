@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Switch.h"
 #include "Obstacle.h"
+#include "Door.h"
 #include <vector>
 
 class Game{
@@ -11,11 +12,15 @@ class Game{
 	Player player2;
 	std::vector<Switch> switches;
 	std::vector<Obstacle> obstacles;
+	std::vector<Door> doors;
 public:
 	Game(); //default constructor to initialize the Game components	
 	void run(); //function to run the main Game loop
 	void showMenu(bool &started);//function to show the Game menu
 	void loadItems();
 	void changeRoom(int roomNumber);
+private:
+	void autoLinkSwitchesAndDoors();
+	void updateSwitches();
 };
 

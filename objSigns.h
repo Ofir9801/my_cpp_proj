@@ -5,7 +5,7 @@ enum objSigns {
 	KEY = 'K',
 	OBSTACLE = '*',
 	SPRING = '#',
-	DOOR = 'D',
+	DOOR = '1',
 	EMPTY = ' ',
 	SWITCH_OFF = '\\',
 	SWITCH_ON = '/'
