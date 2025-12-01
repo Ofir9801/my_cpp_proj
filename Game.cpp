@@ -42,11 +42,11 @@ void Game::run() {
 		Sleep(130);
 		board.clearMessegeArea(gamecycle);
 		if (_kbhit()) {
-			char key = (char)_getch();
+			int key = _getch();
 
 			if (key == ESC) {  //change to const ESC	
 				board.showMessage("Game Paused. Press ESC again to continue or H to exit.");
-				key = (char)_getch();
+				key = _getch();
 				if (std::tolower((unsigned char)key) == std::tolower('h')) {
 					cls();
 					board.showMessage("Exiting game. Goodbye!");
@@ -59,9 +59,13 @@ void Game::run() {
 					board.drawMap();
 				}
 			}
-			else {
-				player1.handleKeyPressed(key);
-				player2.handleKeyPressed(key);
+			else if(isSpecialKey(key)){
+				_getch(); //ignore special keys like arrows
+			}
+			
+			else{
+				player1.handleKeyPressed((char)key);
+				player2.handleKeyPressed((char)key);
 			}
 		}
 		if (board.getSuccessfulMove()) {

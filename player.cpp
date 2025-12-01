@@ -4,6 +4,7 @@
 #include <cctype>
 #include <windows.h>
 
+//special key = 0 / 224
 void Player::handleKeyPressed(char key_pressed) {
 	if (springCyclesLeft > 0) return; //disable changing direction during spring flight
 	size_t index = 0;

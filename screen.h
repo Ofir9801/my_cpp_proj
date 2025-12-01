@@ -40,4 +40,5 @@ public:
 	void clearMessegeArea(int const counter);
 	bool isOnOpenDoor(const point& p) const { return getCharAt(p) == '{'; }
 	bool isWinningDoor(char doorId) const { return doorId == (char)(currentRoom - 1); }
+	
 };

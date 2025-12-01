@@ -46,4 +46,5 @@ public:
 	void finalizeMovement();
 	point getPosition() const { return position; }
 	Keys getOppositeDirection(Keys dir);
+	
 };
