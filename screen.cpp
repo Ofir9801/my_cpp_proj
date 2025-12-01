@@ -211,6 +211,6 @@ bool Screen::getThroughDoor (const Player* p) const
 
 void Screen::clearMessegeArea(int const counter)
 {
-	if (counter % 10 == 0) // clear message area every 8 cycles
+	if (counter % 20 == 0) // clear message area every 10 cycles
 		showMessage("                                                                                ");
 }
