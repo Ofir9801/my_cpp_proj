@@ -3,8 +3,7 @@
 #include "Screen.h"//using Screen class to check for walls	
 
 class Screen;//forward declaration to avoid circular dependency
-int const INVENTORY_SIZE = 1; //Player can hold up to one item
-int const NUM_KEYS = 6; //number of possible movement Keys
+
 
 class Player
 {

@@ -8,10 +8,6 @@
 #include "Screen.h"
 #include <cctype> //  for tolower, isdigit
 
-const char keys1[] = "wdsaeq";
-const char keys2[] = "ilkjou";
-const char ESC = 27;
-
 
 Game::Game() :
 	player1(point(1, 4, objSigns::PLAYER1), keys1, board),
@@ -108,8 +104,8 @@ void Game::showMenu(bool& started){
 void Game::loadItems() {//enter the switches from the board to the vector
 	switches.clear();
 	obstacles.clear();
-	for (int y = 0; y < Screen::MAX_Y; y++) {
-		for (int x = 0; x < Screen::MAX_X; x++) {
+	for (int y = 0; y < BOARD_DIMENSION::MAX_Y; y++) {
+		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
 			char c = board.getCharAt(point(x, y));
 			if (c == '\\') {
 				switches.push_back(Switch(x, y, board, false));

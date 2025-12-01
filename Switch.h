@@ -27,6 +27,5 @@ public:
     bool isAt(const point& p) const {
         return position.getX() == p.getX() && position.getY() == p.getY();
     }
-    bool isAt(const point& p) const { return position.getX() == p.getX() && position.getY() == p.getY(); }
     bool getIsOn() const { return isOn; }
 };

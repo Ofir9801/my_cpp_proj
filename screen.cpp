@@ -11,15 +11,6 @@
 using std::cout;
 using std::endl;
 
-enum INFO_SLOTS {
-	PLAYER1_SIGN_START_X = 11,
-	PLAYER2_SIGN_START_X = 70,
-	PLAYER_SIGN_Y = 0,
-	PLAYER1_INV_START_X = 11,
-	PLAYER2_INV_START_X = 70,
-	PLAYER_INV_Y = 1
-};
-
 Screen::Screen() 
 {
 	memset(map, ' ', sizeof(map)); //initialize the map with spaces
@@ -48,7 +39,7 @@ void Screen::drawMap() {
 
 bool Screen::isWall(const point& p) const{
 	char c = getCharAt(p);
-	return c == '-' || c == '|';
+	return c == '-' || c == '|' || c == 'X';
 }
 
 void Screen::showPlayerInfo(const Player& p) {
@@ -96,7 +87,7 @@ void Screen::showMessage(const char* msg){
 	std::cout << msg << std::flush;
 }
 
-void Screen::room1Challenge(char ch, point position, Player* p) {
+/*void Screen::room1Challenge(char ch, point position, Player* p) {
 	if (ch == '5'){
 		showMessage("You have unlocked the correct door and may procceed to the next room");
 		setChar(position, '{');
@@ -112,7 +103,7 @@ void Screen::room1Challenge(char ch, point position, Player* p) {
 			setChar(position, '-');
 		}
 	}
-}
+}*/
 
 void Screen::initaializeRoomsArray() {
 	Rooms[MENU] = menu;
@@ -140,9 +131,9 @@ bool Screen::tryPushObstacle(const point& obstaclePos, Keys direction, int force
 
 void Screen::loadSprings() {
 	springs.clear();
-	bool processed[Screen::MAX_Y][Screen::MAX_X] = { false };
-	for (int y = 0; y < Screen::MAX_Y; y++) {
-		for (int x = 0; x < Screen::MAX_X; x++) {
+	bool processed[BOARD_DIMENSION::MAX_Y][BOARD_DIMENSION::MAX_X] = { false };
+	for (int y = 0; y < BOARD_DIMENSION::MAX_Y; y++) {
+		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
 			point p(x, y);
 			if (getCharAt(p) == objSigns::SPRING && !processed[y][x]) {
 				bool isHorizontal = (x + 1 < MAX_X && getCharAt(point(x + 1, y)) == objSigns::SPRING);

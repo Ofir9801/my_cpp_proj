@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "point.h"
-#include "Keys.h"
 class Screen;//forward declaration to avoid circular dependency
 class Spring {
     point startPos;

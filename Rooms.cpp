@@ -2,7 +2,7 @@
 #include "Rooms.h" 
 
 //room1 - learning the rules
-const char* room1[Screen::MAX_Y] = {
+const char* room1[BOARD_DIMENSION::MAX_Y] = {
 	//   01234567890123456789012345678901234567890123456789012345678901234567890123456789
 		"Player 1:                                                   Player 2:           ", // 0
 		"Inventory:                                                  Inventory:          ", // 1
@@ -32,7 +32,7 @@ const char* room1[Screen::MAX_Y] = {
 };
 
 //room2 - a harder challenge
-const char* room2[Screen::MAX_Y] = {
+const char* room2[BOARD_DIMENSION::MAX_Y] = {
 	//   01234567890123456789012345678901234567890123456789012345678901234567890123456789
 		"Player 1:                                                   Player 2:           ", // 0
 		"Inventory:                                                  Inventory:          ", // 1
@@ -62,7 +62,7 @@ const char* room2[Screen::MAX_Y] = {
 };
 
 // main menu screen
-const char* menu[Screen::MAX_Y] = {
+const char* menu[BOARD_DIMENSION::MAX_Y] = {
 	//   01234567890123456789012345678901234567890123456789012345678901234567890123456789
 		"			       Welcome to the adventure world!		   	                     ",  // 0
 		"                                                                                ",  // 1
@@ -92,7 +92,7 @@ const char* menu[Screen::MAX_Y] = {
 };
 
 // instructions screen
-const char* instructions[Screen::MAX_Y] = {
+const char* instructions[BOARD_DIMENSION::MAX_Y] = {
 	//   01234567890123456789012345678901234567890123456789012345678901234567890123456789
 		"			Instructions of the Game:				                             ",  // 0
 		"                                                                                ",  // 1

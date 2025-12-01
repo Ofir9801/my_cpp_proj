@@ -1,6 +1,5 @@
 #include "point.h"
 #include "Screen.h"
-#include "Keys.h"
 
 void point::move() {
 	x = (x + diff_x);
