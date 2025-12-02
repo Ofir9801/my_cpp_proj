@@ -16,7 +16,6 @@ private:
 	char map[MAX_Y][MAX_X + 1];
 	const char** Rooms[NUM_ROOMS];
 	size_t currentRoom = 0;
-	bool successfulMove = false;
 	std::vector<Spring> springs;
 	std::vector<Switch> switches;
 	std::vector<Obstacle> obstacles;
@@ -36,9 +35,6 @@ public:
 	char getCharAt(const point& p) const { return map[p.getY()][p.getX()]; }
 	void setChar(const point& p, char c);//function to set a character on Screen at point p, like picking up a key
 	void showKeyBinds(const char* keys1, const char* keys2)const;
-	//void room1Challenge(char ch, point position, Player* p);
-	void setSuccessfulMove(bool val) { successfulMove = val; }
-	bool getSuccessfulMove() const { return successfulMove; }
 	bool tryPushObstacle(const point& obstaclePos, Keys direction, int force);
 	void loadSprings();
 	Spring* getSpringAt(const point& p);
@@ -51,4 +47,5 @@ public:
 	void updateSwitches();
 	bool isDoorOpen(int door_id);
 	void openDoor(int door_id);
+	//void room1Challenge(char ch, point position, Player* p);
 };

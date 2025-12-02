@@ -40,7 +40,6 @@ void Game::run() {
 		checkPlayerExit(player1);
 		checkPlayerExit(player2);
 		if (player1.hasFinished() && player2.hasFinished()) {
-			board.setSuccessfulMove(false);
 			size_t index = board.getCurrentRoom();
 			if (index < NUM_ROOMS - 1) {
 				changeRoom(++index);

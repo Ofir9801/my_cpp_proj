@@ -175,8 +175,8 @@ bool Player::handleSpecialObjects(char nextTile, point nextPos, int force) {//fu
 	if (isdigit((unsigned char)nextTile)) { // check if it's a door
 		int doorId = nextTile - '0';
 		if (map.isDoorOpen(doorId)) {
-			map.setSuccessfulMove(true);
 			clearFromScreen();
+			finishedLevel = true;
 			return false;
 		}
 		else {
@@ -186,6 +186,7 @@ bool Player::handleSpecialObjects(char nextTile, point nextPos, int force) {//fu
 					map.openDoor(doorId);
 					clearFromScreen();
 					map.showMessage("Correct door! Unlocked.");
+					finishedLevel = true;
 					return false;
 				}
 				else {
