@@ -6,11 +6,11 @@
 class Door
 {
 	point position;
-	int id = 0;
+	char id = 0;
 	bool isOpen;
 	Screen& map;
 public:
-	Door(int x, int y, int _id, Screen& _map) :
+	Door(int x, int y, char _id, Screen& _map) :
 		position(point(x, y, _id)), isOpen(false), map(_map) {
 	}
 
