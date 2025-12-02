@@ -16,6 +16,7 @@ class Player
 	Screen& map; //reference to the Game Screen
 	bool state = true; //Player state - can move or not
 	bool handleSpecialObjects(char nextTile, point nextPos, int force);
+	bool finishedLevel = false;
 
 public:
 	Player(const point& point, const char(&the_keys)[NUM_KEYS + 1], Screen& theScreen) :map(theScreen) {
@@ -46,5 +47,7 @@ public:
 	void finalizeMovement();
 	point getPosition() const { return position; }
 	Keys getOppositeDirection(Keys dir);
+	bool hasFinished() const { return finishedLevel; }
+	void reachedExit();
 	
 };

@@ -204,6 +204,7 @@ void Player::reset(point newPosition) {
 	position.setDirection(Keys::STAY);
 	springCyclesLeft = 0;
 	currentForce = 1;
+	finishedLevel = false;
 }
 Keys Player::getOppositeDirection(Keys dir) {
 	switch (dir) {
@@ -213,4 +214,8 @@ Keys Player::getOppositeDirection(Keys dir) {
 	case Keys::RIGHT: return Keys::LEFT;
 	default: return Keys::STAY;
 	}
+}
+void Player::reachedExit() {
+	finishedLevel = true;
+	clearFromScreen();
 }

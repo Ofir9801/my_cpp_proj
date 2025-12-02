@@ -28,6 +28,7 @@ void Game::run() {
 		gotoxy(0, 0);
 		return;
 	}
+	char winningDoorId = char(board.getCurrentRoom() - 1 + '0');
 	board.drawMap();
 	player1.draw();
 	player2.draw();
@@ -35,7 +36,22 @@ void Game::run() {
 	while (exitGame) {
 		player1.move();
 		player2.move();
-
+		updateSwitches();
+		checkPlayerExit(player1);
+		checkPlayerExit(player2);
+		if (player1.hasFinished() && player2.hasFinished()) {
+			board.setSuccessfulMove(false);
+			size_t index = board.getCurrentRoom();
+			if (index < NUM_ROOMS - 1) {
+				changeRoom(++index);
+				winningDoorId = (char)('0' + (board.getCurrentRoom() - 1));
+			}
+			else {
+				exitGame = false;
+			}
+		}
+		if (!player1.hasFinished()) player1.draw();
+		if (!player2.hasFinished()) player2.draw();
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
 		board.refreshSpringsDisplay(player1.getPosition(), player2.getPosition());
@@ -60,7 +76,7 @@ void Game::run() {
 				}
 			}
 			else if(isSpecialKey(key)){
-				_getch(); //ignore special keys like arrows
+				char a = _getch(); //ignore special keys like arrows
 			}
 			
 			else{
@@ -68,13 +84,8 @@ void Game::run() {
 				player2.handleKeyPressed((char)key);
 			}
 		}
-		if (board.getSuccessfulMove()) {
-			board.setSuccessfulMove(false);
-			size_t index = board.getCurrentRoom();
-			if (index < NUM_ROOMS - 1)//to see if there is a next room
-				changeRoom(++index);
-		}
-		updateSwitches();
+		player1.draw();
+		player2.draw();
 		gamecycle++;
 	}
 }
@@ -162,4 +173,21 @@ void Game::updateSwitches() {
 		}
 	}
 }
-
+void Game::checkPlayerExit(Player& p) {
+	if (p.hasFinished()) return;
+	if (board.isOnOpenDoor(p.getPosition())) {
+		char winningID = (char)('0' + (board.getCurrentRoom() - 1));
+		for (const auto& d : doors) {
+			if (d.isAt(p.getPosition())) {
+				if (d.getId() == winningID) {
+					p.reachedExit();
+					board.showMessage("Waiting for partner...");
+				}
+				else {
+					board.showMessage("Wrong door! Dead end.");
+				}
+				return;
+			}
+		}
+	}
+}
