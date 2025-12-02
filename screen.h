@@ -47,5 +47,4 @@ public:
 	void updateSwitches();
 	bool isDoorOpen(int door_id);
 	void openDoor(int door_id);
-	//void room1Challenge(char ch, point position, Player* p);
 };

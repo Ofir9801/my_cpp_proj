@@ -89,24 +89,6 @@ void Screen::showMessage(const char* msg){
 	std::cout << msg << std::flush;
 }
 
-/*void Screen::room1Challenge(char ch, point position, Player* p) {
-	if (ch == '5'){
-		showMessage("You have unlocked the correct door and may procceed to the next room");
-		setChar(position, '{');
-		p->clearFromScreen();
-		
-	}
-	else {
-		showMessage("this lead to dead end! try another door");
-		if (position.getX() == 0 || position.getX() == MAX_X-1) {
-			setChar(position, '|');
-		}
-		else {
-			setChar(position, '-');
-		}
-	}
-}*/
-
 void Screen::initaializeRoomsArray() {
 	Rooms[MENU] = menu;
 	Rooms[INSTRUCTIONS] = instructions;
@@ -195,12 +177,6 @@ void Screen::refreshSpringsDisplay(const point& p1, const point& p2) const {
 	}
 }
 
-/*bool Screen::getThroughDoor(const Player* p) const
-{
-	char c = getCharAt(p->getPosition());
-	return c == '{';
-	
-}*/
 void Screen::loadItems() {//enter the items from the board to the vector
 	switches.clear();
 	obstacles.clear();

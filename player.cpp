@@ -65,11 +65,6 @@ void Player::move() {
 
 	applySpringDirectionIfNeeded();
 
-	/*// if the player stands on the "through door" tile, mark successful move and hide
-	if (checkAndHandleThroughDoor()) {
-		return;
-	}*/
-
 	int stepsToTake = computeStepsToTake();
 	for (int i = 0; i < stepsToTake; ++i) {
 		// takeStep() will return true when movement should stop (blocked or state changed)
@@ -85,15 +80,6 @@ void Player::applySpringDirectionIfNeeded() {
 		position.setDirection(springDir.getDirectionEnum());
 	}
 }
-
-/*bool Player::checkAndHandleThroughDoor() {
-	if (map.getThroughDoor(this)) {
-		map.setSuccessfulMove(true);
-		clearFromScreen();
-		return true;
-	}
-	return false;
-}*/
 
 int Player::computeStepsToTake() const {
 	return (springCyclesLeft > 0) ? currentForce : 1;

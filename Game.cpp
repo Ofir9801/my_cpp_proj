@@ -115,30 +115,7 @@ void Game::showMenu(bool& started){
 		}
 	}
 }
-/*
-void Game::loadItems() {//enter the items from the board to the vector
-	switches.clear();
-	obstacles.clear();
-	doors.clear();
-	for (int y = 0; y < BOARD_DIMENSION::MAX_Y; y++) {
-		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
-			char c = board.getCharAt(point(x, y));
-			if (c == '\\') {
-				switches.push_back(Switch(x, y, board, false));
-			}
-			else if (c == '/') {
-				switches.push_back(Switch(x, y, board, true));
-			}
-			else if (c == '*'){
-				obstacles.push_back(Obstacle(x, y, board, 1));
-			}
-			else if(isdigit((unsigned char)c)){
-				doors.push_back(Door(x, y, c, board));
-			}
-		}
-	}
-	autoLinkSwitchesAndDoors();
-}*/
+
 void Game::changeRoom(int roomNumber)
 {
 	board.loadMap(roomNumber);
@@ -151,16 +128,6 @@ void Game::changeRoom(int roomNumber)
 		player2.draw();
 	}
 }
-/*
-void Game::autoLinkSwitchesAndDoors() {
-	int levelNum = board.getCurrentRoom() - 1;
-	char currentDoorId = '1';
-	char exitDoor = char(levelNum);
-	for(auto& s : switches) {
-		s.setTargetDoorId(currentDoorId);
-		currentDoorId++;
-	}
-}*/
 
 void Game::updateSwitches() {
 	for (auto& s : board.switches) {
