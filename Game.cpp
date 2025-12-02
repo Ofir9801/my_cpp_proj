@@ -44,7 +44,6 @@ void Game::run() {
 			size_t index = board.getCurrentRoom();
 			if (index < NUM_ROOMS - 1) {
 				changeRoom(++index);
-				winningDoorId = (char)('0' + (board.getCurrentRoom() - 1));
 			}
 			else {
 				exitGame = false;
@@ -84,11 +83,12 @@ void Game::run() {
 				player2.handleKeyPressed((char)key);
 			}
 		}
+		}
 		player1.draw();
 		player2.draw();
 		gamecycle++;
 	}
-}
+
 
 void Game::showMenu(bool& started){
 	changeRoom(MENU);

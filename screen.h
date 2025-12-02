@@ -15,6 +15,7 @@ private:
 	size_t currentRoom = 0;
 	bool successfulMove = false;
 	std::vector<Spring> springs;
+	char winningDoorId = ' ';
 
 public:
 	Screen();
@@ -39,6 +40,6 @@ public:
 	bool getThroughDoor(const Player* p) const;
 	void clearMessegeArea(int const counter);
 	bool isOnOpenDoor(const point& p) const { return getCharAt(p) == '{'; }
-	bool isWinningDoor(char doorId) const { return doorId == (char)((currentRoom - 1) + '0'); }
-	
+	bool isWinningDoor(char doorId) const { return doorId == winningDoorId; }
+	void setWinningDoorId(char id) { winningDoorId = id; }
 };
