@@ -36,7 +36,7 @@ enum objSigns {
 	SWITCH_OFF = '\\',
 	SWITCH_ON = '/'
 };
-
+const char EMPTYLINE[] = "                                                                                ";
 const char keys1[] = "wdsaeq";
 const char keys2[] = "ilkjou";
 const char ESC = 27;

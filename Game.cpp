@@ -2,7 +2,6 @@
 #include <conio.h> 
 #include <windows.h>
 #include "Utils.h"
-#include "objSigns.h"
 #include "Rooms.h"
 #include "Player.h"
 #include "Screen.h"
@@ -12,7 +11,7 @@
 Game::Game() :
 	player1(point(1, 4, objSigns::PLAYER1), keys1, board),
 	player2(point(75, 4, objSigns::PLAYER2), keys2, board) {
-	loadItems();
+//	loadItems();
 }
 
 void Game::run() {
@@ -34,6 +33,7 @@ void Game::run() {
 	player2.draw();
 	bool exitGame = started;
 	while (exitGame) {
+		
 		player1.move();
 		player2.move();
 		updateSwitches();
@@ -116,9 +116,11 @@ void Game::showMenu(bool& started){
 		}
 	}
 }
-void Game::loadItems() {//enter the switches from the board to the vector
+/*
+void Game::loadItems() {//enter the items from the board to the vector
 	switches.clear();
 	obstacles.clear();
+	doors.clear();
 	for (int y = 0; y < BOARD_DIMENSION::MAX_Y; y++) {
 		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
 			char c = board.getCharAt(point(x, y));
@@ -137,11 +139,11 @@ void Game::loadItems() {//enter the switches from the board to the vector
 		}
 	}
 	autoLinkSwitchesAndDoors();
-}
+}*/
 void Game::changeRoom(int roomNumber)
 {
 	board.loadMap(roomNumber);
-	loadItems();
+	
 	player1.reset(point(1, 4, objSigns::PLAYER1));
 	player2.reset(point(75, 4, objSigns::PLAYER2));
 	board.drawMap();
@@ -150,6 +152,7 @@ void Game::changeRoom(int roomNumber)
 		player2.draw();
 	}
 }
+/*
 void Game::autoLinkSwitchesAndDoors() {
 	int levelNum = board.getCurrentRoom() - 1;
 	char currentDoorId = '1';
@@ -158,14 +161,14 @@ void Game::autoLinkSwitchesAndDoors() {
 		s.setTargetDoorId(currentDoorId);
 		currentDoorId++;
 	}
-}
+}*/
 
 void Game::updateSwitches() {
-	for (auto& s : switches) {
+	for (auto& s : board.switches) {
 		bool isPressed = s.isAt(player1.getPosition()) || s.isAt(player2.getPosition());
 		if (s.update(isPressed)) {
 			int targetID = s.getTargetDoorId();
-			for (auto& d : doors) {
+			for (auto& d : board.doors) {
 				if (d.getId() == targetID) {
 					s.getIsOn() ? d.open() : d.close();
 				}
@@ -173,11 +176,27 @@ void Game::updateSwitches() {
 		}
 	}
 }
+bool Screen::isDoorOpen(int door_id)
+{
+	for (const auto& d : doors) {
+		if (d.getId() == door_id) {
+			return d.getIsOpen();
+		}
+	}
+}
+void Screen::openDoor(int door_id)
+{
+	for (auto& d : doors) {
+		if (d.getId() == door_id) {
+			d.open();
+		}
+	}
+}
 void Game::checkPlayerExit(Player& p) {
 	if (p.hasFinished()) return;
 	if (board.isOnOpenDoor(p.getPosition())) {
 		char winningID = (char)('0' + (board.getCurrentRoom() - 1));
-		for (const auto& d : doors) {
+		for (const auto& d : board.doors) {
 			if (d.isAt(p.getPosition())) {
 				if (d.getId() == winningID) {
 					p.reachedExit();

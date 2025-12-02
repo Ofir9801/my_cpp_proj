@@ -2,7 +2,6 @@
 #include <iostream>
 #include <windows.h>
 #include "Utils.h"
-#include "objSigns.h"
 #include "Rooms.h"
 #include "Player.h"
 #include "Spring.h"
@@ -11,13 +10,15 @@
 using std::cout;
 using std::endl;
 
-Screen::Screen() 
+Screen::Screen()
 {
+	loadItems();
 	memset(map, ' ', sizeof(map)); //initialize the map with spaces
 	for (int i = 0; i < MAX_Y; i++) {
 		map[i][MAX_X] = '\0'; //null-terminate each row
 	}
 	initaializeRoomsArray();
+
 
 }
 void Screen::loadMap(int roomNumber)
@@ -28,6 +29,7 @@ void Screen::loadMap(int roomNumber)
 	}
 	currentRoom = roomNumber;
 	loadSprings();
+	loadItems();
 }
 void Screen::drawMap() {
 	cls(); //clear the console
@@ -82,7 +84,7 @@ void Screen::showKeyBinds(const char* keys1, const char* keys2) const
 }
 void Screen::showMessage(const char* msg){
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
-	std::cout << "                                                                                " << std::flush;//clear the line before
+	std::cout << EMPTYLINE<< std::flush;//clear the line before
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
 	std::cout << msg << std::flush;
 }
@@ -193,15 +195,47 @@ void Screen::refreshSpringsDisplay(const point& p1, const point& p2) const {
 	}
 }
 
-bool Screen::getThroughDoor (const Player* p) const
+/*bool Screen::getThroughDoor(const Player* p) const
 {
 	char c = getCharAt(p->getPosition());
 	return c == '{';
 	
+}*/
+void Screen::loadItems() {//enter the items from the board to the vector
+	switches.clear();
+	obstacles.clear();
+	doors.clear();
+	for (int y = 0; y < BOARD_DIMENSION::MAX_Y; y++) {
+		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
+			char c = getCharAt(point(x, y));
+			if (c == '\\') {
+				switches.push_back(Switch(x, y, this, false));
+			}
+			else if (c == '/') {
+				switches.push_back(Switch(x, y, this, true));
+			}
+			else if (c == '*') {
+				obstacles.push_back(Obstacle(x, y, this, 1));
+			}
+			else if (isdigit((unsigned char)c)) {
+				doors.push_back(Door(x, y, c, this));
+			}
+		}
+	}
+	autoLinkSwitchesAndDoors();
+}
+void Screen::autoLinkSwitchesAndDoors() {
+	int levelNum = getCurrentRoom() - 1;
+	char currentDoorId = '1';
+	char exitDoor = char(levelNum);
+	for (auto& s : switches) {
+		s.setTargetDoorId(currentDoorId);
+		currentDoorId++;
+	}
 }
 
 void Screen::clearMessegeArea(int const counter)
 {
-	if (counter % 20 == 0) // clear message area every 10 cycles
-		showMessage("                                                                                ");
+	if (counter % 20 == 0) // clear message area every 20 cycles
+		showMessage(EMPTYLINE);
 }

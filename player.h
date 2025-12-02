@@ -40,7 +40,6 @@ public:
 	void clearFromScreen();
 	void reset(point newPosition);
 	void applySpringDirectionIfNeeded();
-	bool checkAndHandleThroughDoor();
 	int computeStepsToTake() const;
 	bool takeStep();
 	void handleActiveSpring();
