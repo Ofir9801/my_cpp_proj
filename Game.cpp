@@ -11,7 +11,6 @@
 Game::Game() :
 	player1(point(1, 4, objSigns::PLAYER1), keys1, board),
 	player2(point(75, 4, objSigns::PLAYER2), keys2, board) {
-//	loadItems();
 }
 
 void Game::run() {
@@ -126,6 +125,15 @@ void Game::changeRoom(int roomNumber)
 	if (roomNumber != MENU && roomNumber != INSTRUCTIONS) {
 		player1.draw();
 		player2.draw();
+	}
+}
+void Game::autoLinkSwitchesAndDoors() {
+	int levelNum = board.getCurrentRoom() - 1;
+	char currentDoorId = '1';
+	char exitDoor = char(levelNum);
+	for(auto& s : switches) {
+		s.setTargetDoorId(currentDoorId);
+		currentDoorId++;
 	}
 }
 
