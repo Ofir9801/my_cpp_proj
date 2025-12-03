@@ -2,12 +2,9 @@
 //would contain Screen related functions for the Game map
 #include "point.h"
 #include "Player.h"
+#include "objSigns.h"
 #include "Spring.h"
-#include "Switch.h"
-#include "Obstacle.h"
-#include "Door.h"
 #include <vector>
-
 class Player; //forward declaration to avoid circular dependency
 
 class Screen {
@@ -16,13 +13,11 @@ private:
 	char map[MAX_Y][MAX_X + 1];
 	const char** Rooms[NUM_ROOMS];
 	size_t currentRoom = 0;
+	bool successfulMove = false;
 	std::vector<Spring> springs;
-	std::vector<Switch> switches;
-	std::vector<Obstacle> obstacles;
-	std::vector<Door> doors;
+	char winningDoorId = ' ';
 
 public:
-	friend class Game;	
 	Screen();
 	void loadMap(int roomNumber); //function to load the map from a string array
 	void drawMap(); //function to draw the map to the console
@@ -35,16 +30,16 @@ public:
 	char getCharAt(const point& p) const { return map[p.getY()][p.getX()]; }
 	void setChar(const point& p, char c);//function to set a character on Screen at point p, like picking up a key
 	void showKeyBinds(const char* keys1, const char* keys2)const;
+	//void room1Challenge(char ch, point position, Player* p);
+	void setSuccessfulMove(bool val) { successfulMove = val; }
+	bool getSuccessfulMove() const { return successfulMove; }
 	bool tryPushObstacle(const point& obstaclePos, Keys direction, int force);
 	void loadSprings();
 	Spring* getSpringAt(const point& p);
 	void refreshSpringsDisplay(const point& p1, const point& p2) const;
+	bool getThroughDoor(const Player* p) const;
 	void clearMessegeArea(int const counter);
 	bool isOnOpenDoor(const point& p) const { return getCharAt(p) == '{'; }
-	bool isWinningDoor(int doorId) const { return doorId == currentRoom - 1; }
-	void loadItems();
-	void autoLinkSwitchesAndDoors();
-	void updateSwitches();
-	bool isDoorOpen(int door_id);
-	void openDoor(int door_id);
+	bool isWinningDoor(char doorId) const { return doorId == winningDoorId; }
+	void setWinningDoorId(char id) { winningDoorId = id; }
 };

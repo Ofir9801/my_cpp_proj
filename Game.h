@@ -4,7 +4,7 @@
 #include "Switch.h"
 #include "Obstacle.h"
 #include "Door.h"
-
+#include <vector>
 
 class Game{
 	Screen board;
