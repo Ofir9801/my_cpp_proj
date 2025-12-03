@@ -127,15 +127,6 @@ void Game::changeRoom(int roomNumber)
 		player2.draw();
 	}
 }
-void Game::autoLinkSwitchesAndDoors() {
-	int levelNum = board.getCurrentRoom() - 1;
-	char currentDoorId = '1';
-	char exitDoor = char(levelNum);
-	for(auto& s : switches) {
-		s.setTargetDoorId(currentDoorId);
-		currentDoorId++;
-	}
-}
 
 void Game::updateSwitches() {
 	for (auto& s : board.switches) {
