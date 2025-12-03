@@ -1,6 +1,5 @@
 #pragma once
 #include "point.h"
-//#include "Screen.h"
 class Screen;//forward declaration to avoid circular dependency
 
 class Door
