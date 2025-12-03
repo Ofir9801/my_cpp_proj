@@ -1,17 +1,17 @@
 #pragma once
 #include "point.h"
-#include "Screen.h"
-#include "objSigns.h"
+//#include "Screen.h"
+class Screen;//forward declaration to avoid circular dependency
 
 class Door
 {
 	point position;
 	char id = 0;
 	bool isOpen;
-	Screen& map;
+	Screen* map;
 public:
-	Door(int x, int y, char _id, Screen& _map) :
-		position(point(x, y, _id)), isOpen(false), map(_map) {
+	Door(int x, int y, char _id, Screen* _map) :
+		position(point(x, y, _id)),id(_id - '0'), isOpen(false), map(_map) {
 	}
 
 	void open();
