@@ -1,5 +1,4 @@
 ﻿#include "Spring.h"
-#include "Screen.h"	
 #include <cmath>
 
 bool Spring::isPlayerOn(const point& p) const {

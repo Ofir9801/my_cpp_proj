@@ -29,7 +29,6 @@ public:
 	void draw() {
 		position.draw();
 	}
-	//function to draw the Player on the map using gotoxy
 	void handleKeyPressed(char key_pressed);
 	bool addToInventory(char item);
 	char getChar() const { return position.getChar(); }
@@ -40,6 +39,7 @@ public:
 	void clearFromScreen();
 	void reset(point newPosition);
 	void applySpringDirectionIfNeeded();
+	bool checkAndHandleThroughDoor();
 	int computeStepsToTake() const;
 	bool takeStep();
 	void handleActiveSpring();

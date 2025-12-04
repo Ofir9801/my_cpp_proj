@@ -1,17 +1,17 @@
 #pragma once
 #include "point.h"
-//#include "Screen.h"
+
 class Screen;//forward declaration to avoid circular dependency
 
 class Switch {
     point position;
     bool isOn;
     bool wasToggled = false;
-    Screen* map; 
+    Screen& map; 
     int targetDoorId = -1;
 
 public:
-    Switch(int x, int y, Screen* theMap, bool initialState = false)
+    Switch(int x, int y, Screen& theMap, bool initialState = false)
         : position(x, y, objSigns::SWITCH_OFF), map(theMap), isOn(initialState) {
     }
 
