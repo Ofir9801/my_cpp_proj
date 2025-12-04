@@ -3,8 +3,8 @@
 #include "Spring.h"
 #include <cctype>
 #include <windows.h>
+#include <conio.h> //?
 
-//special key = 0 / 224
 void Player::handleKeyPressed(char key_pressed) {
 	if (springCyclesLeft > 0) return; //disable changing direction during spring flight
 	size_t index = 0;
@@ -64,11 +64,6 @@ void Player::move() {
 
 	applySpringDirectionIfNeeded();
 
-	// if the player stands on the "through door" tile, mark successful move and hide
-	if (checkAndHandleThroughDoor()) {
-		return;
-	}
-
 	int stepsToTake = computeStepsToTake();
 	for (int i = 0; i < stepsToTake; ++i) {
 		// takeStep() will return true when movement should stop (blocked or state changed)
@@ -83,15 +78,6 @@ void Player::applySpringDirectionIfNeeded() {
 	if (springCyclesLeft > 0) {
 		position.setDirection(springDir.getDirectionEnum());
 	}
-}
-
-bool Player::checkAndHandleThroughDoor() {
-	if (map.getThroughDoor(this)) {
-		map.setSuccessfulMove(true);
-		clearFromScreen();
-		return true;
-	}
-	return false;
 }
 
 int Player::computeStepsToTake() const {
@@ -170,22 +156,32 @@ bool Player::handleSpecialObjects(char nextTile, point nextPos, int force) {//fu
 		}
 		return true; //if inventory is full its blocked
 	}
-
-	if (isdigit((unsigned char)nextTile)) {
-		if (hasItem(objSigns::KEY)) {
-			removeItem();
-			if (map.isWinningDoor(nextTile)) {
-				map.setChar(nextPos, '{');
-				map.showMessage("Correct door! Unlocked.");
-				return false;
-			}
-			else {
-				map.setChar(nextPos, 'X');
-				map.showMessage("Wrong door! It's a dead end.");
-				return true;
-			}
+	if (isdigit((unsigned char)nextTile)) { // check if it's a door
+		int doorId = nextTile - '0';
+		if (map.isDoorOpen(doorId)) {
+			clearFromScreen();
+			finishedLevel = true;
+			return false;
 		}
-		return true;
+		else {
+			if (hasItem(objSigns::KEY)) {
+				removeItem();
+				if (map.isWinningDoor(doorId)) {
+					map.openDoor(doorId);
+					clearFromScreen();
+					map.showMessage("Correct door! Unlocked.");
+					finishedLevel = true;
+					return false;
+				}
+				else {
+					map.setChar(nextPos, 'X');
+					map.showMessage("Wrong door! It's a dead end.");
+					return true;
+				}
+			}
+			map.showMessage("try look for a key to unlock this door");
+			return true;
+		}
 	}
 	if (nextTile == objSigns::OBSTACLE) {
 		Keys pushDir = (springCyclesLeft > 0) ? springDir.getDirectionEnum() : position.getDirectionEnum();
