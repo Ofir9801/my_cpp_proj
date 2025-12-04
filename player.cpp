@@ -5,6 +5,17 @@
 #include <windows.h>
 #include <conio.h> //?
 
+void Player::draw()
+{
+	{
+		if (map.IsColor()) {
+			char c = position.getChar();
+			position.draw(c, color);
+		}
+		else { position.draw(WHITE); }
+	}
+}
+
 void Player::handleKeyPressed(char key_pressed) {
 	if (springCyclesLeft > 0) return; //disable changing direction during spring flight
 	size_t index = 0;
@@ -43,7 +54,11 @@ void Player::dispose()
 {
 	if (inventory[0] != ' ') {
 		map.setChar(position, inventory[0]);
-		position.draw();
+		if (map.IsColor())
+		{
+			position.draw(getColorForChar(position.getChar()));
+		}
+		else { position.draw(WHITE); }
 		inventory[0] = ' ';
 	}
 	else {
@@ -72,6 +87,7 @@ void Player::move() {
 	handleActiveSpring();
 	finalizeMovement();
 }
+
 
 
 void Player::applySpringDirectionIfNeeded() {
@@ -117,7 +133,11 @@ bool Player::takeStep() {
 			}
 		}
 		position = nextCandidate;
-		position.draw();
+		if (map.IsColor())
+		{
+			position.draw(getColorForChar(position.getChar()));
+		}
+		else { position.draw(WHITE); }
 		return false; // can continue
 	}
 }
@@ -158,32 +178,7 @@ bool Player::handleSpecialObjects(char nextTile, point nextPos, int force) {//fu
 	}
 	if (isdigit((unsigned char)nextTile))  // check if it's a door
 		return atDoor(nextTile, nextPos);
-		/*int doorId = nextTile - '0';
-		if (map.isDoorOpen(doorId)) {
-			clearFromScreen();
-			finishedLevel = true;
-			return false;
-		}
-		else {
-			if (hasItem(objSigns::KEY)) {
-				removeItem();
-				if (map.isWinningDoor(doorId)) {
-					map.openDoor(doorId);
-					clearFromScreen();
-					map.showMessage("Correct door! Unlocked.");
-					finishedLevel = true;
-					return false;
-				}
-				else {
-					map.setChar(nextPos, 'X');
-					map.showMessage("Wrong door! It's a dead end.");
-					return true;
-				}
-			}
-			map.showMessage("try look for a key to unlock this door");
-			return true;
-		}
-	}*/
+		
 	if (nextTile == objSigns::OBSTACLE) {
 		Keys pushDir = (springCyclesLeft > 0) ? springDir.getDirectionEnum() : position.getDirectionEnum();
 

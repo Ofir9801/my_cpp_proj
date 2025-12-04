@@ -24,3 +24,28 @@ void hideCursor()
 void cls() {
     system("cls");
 }
+
+void SetTextColor(int color)
+{
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}
+
+int getColorForChar(char c)
+{
+	if (c == objSigns::PLAYER1 || c == objSigns::PLAYER2)
+		return CYAN;
+	else if (c == objSigns::KEY)
+		return YELLOW;
+	else if (c == objSigns::OBSTACLE)
+		return BROWN;
+	else if (c == objSigns::SPRING)
+		return MAGENTA;
+	else if (c == objSigns::SWITCH_ON)
+		return GREEN;
+	else if (c == objSigns::SWITCH_OFF)
+		return RED;
+	else if (isdigit((unsigned char)c))
+		return BLUE;
+	else
+		return WHITE;
+}

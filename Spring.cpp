@@ -40,14 +40,14 @@ void Spring::draw(const point& playerPos, bool active) const{
         else
             currentSegment.setY(startPos.getY() + i);
         if (!active) {
-            currentSegment.draw('#');
+            currentSegment.draw(objSigns::SPRING,getColorForChar(objSigns::SPRING));
             continue;
         }
         bool isCompressed = false;
         if (currentSegment.getX() == playerPos.getX() && currentSegment.getY() == playerPos.getY()) {
         }
         else {
-            currentSegment.draw(' ');
+            currentSegment.draw(objSigns::EMPTY,WHITE);
         }
     }
 }

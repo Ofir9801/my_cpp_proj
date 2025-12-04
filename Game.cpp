@@ -1,6 +1,7 @@
-﻿#include "Game.h"
+﻿#pragma once
 #include <conio.h> 
 #include <windows.h>
+#include "Game.h"
 #include "Utils.h"
 #include "Rooms.h"
 #include "Player.h"
@@ -10,8 +11,7 @@
 
 Game::Game() :
 	player1(point(1, 4, objSigns::PLAYER1), keys1, board),
-	player2(point(75, 4, objSigns::PLAYER2), keys2, board) {
-}
+	player2(point(75, 4, objSigns::PLAYER2), keys2, board) {}
 
 void Game::run() {
 	hideCursor();
@@ -99,7 +99,12 @@ void Game::showMenu(bool& started){
 			char key = (char)_getch();
 			switch (key) {
 			case '1':
-				changeRoom(ROOM2);
+				changeRoom(ROOM1);
+				inMenu = false;
+				break;
+			case '2':
+				SetColorfullGame();
+				changeRoom(ROOM1);
 				inMenu = false;
 				break;
 			case '8':
@@ -134,4 +139,9 @@ void Game::updateSwitches() {
 		bool isPressed = s.isAt(player1.getPosition()) || s.isAt(player2.getPosition());
 		s.update(isPressed);
 		}
+}
+
+void Game::SetColorfullGame() {
+	// Enable color mode in the game
+	board.colorToggle = true;
 }

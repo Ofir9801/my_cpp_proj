@@ -19,8 +19,7 @@ private:
 	std::vector<Switch> switches;
 	std::vector<Obstacle> obstacles;
 	std::vector<Door> doors;
-	
-
+	bool colorToggle = false;
 public:
 	friend class Game;
 	Screen();
@@ -44,10 +43,10 @@ public:
 	bool isWinningDoor(int doorId) const { return doorId == currentRoom - 1; }
 	void loadItems();
 	void autoLinkSwitchesAndDoors();
-	//void updateSwitches();
 	bool isDoorOpen(int door_id);
 	void openDoor(int door_id);
 	void setconnection(int door_id);
 	bool ConnectionStatus(int doorId);
 	bool SwitchState(int doorId);
+	bool IsColor() const { return colorToggle; }
 };

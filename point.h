@@ -1,6 +1,7 @@
 #pragma once
 #include "Utils.h"
 #include <iostream>
+#include <Windows.h>
 
 class point //classic point class for 2D coordinates
 {
@@ -17,14 +18,9 @@ public:
 	void setY(int _y) { y = _y; }
 	void setChar(char _ch) { ch = _ch; }
 	char getChar() const { return ch; }
-	
-	void draw(char c) {
-		gotoxy(x, y);
-		std::cout << c;
-	}
-
-	void draw() {
-		draw(ch);
+	void draw(char c, int color);
+	void draw(int color) {
+		draw(ch, color);
 	}
 	void move();
 	void setDirection(Keys dir, bool state = true, int speed = 1 );

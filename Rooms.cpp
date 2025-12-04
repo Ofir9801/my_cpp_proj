@@ -47,10 +47,10 @@ const char* room2[BOARD_DIMENSION::MAX_Y] = {
 		"|                                                                              |", // 10
 		"|                                                                              |", // 11
 		"|                                                                              |", // 12
-		"|         * * * * * *															|", // 13
-		"|         * * * *															    |", // 14
-		"|         * K  * * K  *													    |", // 15
-		"|         ******* *******													    |", // 16
+		"|         * * * * * *                                                        	|", // 13
+		"|         * * * *	                                                            |", // 14
+		"|         * K  * * K  *	                                                    |", // 15
+		"|         ******* *******	                                                    |", // 16
 		"|                                                                              |", // 17
 		"|            K                                                                 |", // 18
 		"|                       -----------------------------                          |", // 19
@@ -68,18 +68,18 @@ const char* menu[BOARD_DIMENSION::MAX_Y] = {
 		"                                                                                ",  // 1
 		"                                                                                ",  // 2
 		"                 * To start a new Game please enter 1                           ",  // 3
-		"                 * To read about instruction and Keys please enter 8            ",  // 4
-		"                 * To exit the Game please enter 9                              ",  // 5
-		"                                                                                ",  // 6                                                                                
-		"                                                                                ",  // 7
+		"                 *To start a Colorful Game please enter 2                       ",  // 4
+		"                 * To read about instruction and Keys please enter 8            ",  // 5
+		"                 * To exit the Game please enter 9                              ",  // 6
+		"                                                                                ",  // 7                                                                                
 		"                                                                                ",  // 8
 		"                                                                                ",  // 9
-		"                                                                                ",  // 10                                                                             
-		"                                                                                ",  // 11
-		"                                                                                ",  // 12                                                                            
-		"                                                                                ",  // 13
-		"                                                                                ",  // 14                                                                          
-		"                                                                                ",  // 15
+		"                                                                                ",  // 10
+		"                                                                                ",  // 11                                                                             
+		"                                                                                ",  // 12
+		"                                                                                ",  // 13                                                                            
+		"                                                                                ",  // 14
+		"                                                                                ",  // 15                                                                          
 		"                                                                                ",  // 16
 		"                                                                                ",  // 17
 		"                                                                                ",  // 18
@@ -88,7 +88,8 @@ const char* menu[BOARD_DIMENSION::MAX_Y] = {
 		"                                                                                ",  // 21
 		"                                                                                ",  // 22
 		"                                                                                ",  // 23
-		"                                                                                "   // 24	
+		"                                                                                ",  // 24
+			
 };
 
 // instructions screen

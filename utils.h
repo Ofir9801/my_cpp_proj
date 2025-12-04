@@ -37,6 +37,25 @@ enum objSigns {
 	SWITCH_OFF = '\\',
 	SWITCH_ON = '/'
 };
+enum Color {
+	BLACK = 0,
+	BLUE = 1,
+	GREEN = 2,
+	CYAN = 3,
+	RED = 4,
+	MAGENTA = 5,
+	BROWN = 6,
+	LIGHTGREY = 7,
+	DARKGREY = 8,
+	LIGHTBLUE = 9,
+	LIGHTGREEN = 10,
+	LIGHTCYAN = 11,
+	LIGHTRED = 12,
+	LIGHTMAGENTA = 13,
+	YELLOW = 14,
+	WHITE = 15
+};
+
 const char EMPTYLINE[] = "                                                                                ";
 const char keys1[] = "wdsaeq";
 const char keys2[] = "ilkjou";
@@ -49,4 +68,6 @@ int constexpr NUM_ROOMS = 5; //number of rooms in the Game
 void gotoxy(int x, int y);
 void hideCursor();
 void cls();
+void SetTextColor(int color);
+int getColorForChar(char c);
 

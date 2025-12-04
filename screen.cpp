@@ -34,7 +34,18 @@ void Screen::drawMap() {
 	cls(); //clear the console
 	for (int i = 0; i < MAX_Y; i++) {
 		gotoxy(0, i);
-		cout << map[i];
+		if (i>2 && colorToggle) {
+			for (int j = 0; j < MAX_X; j++) {
+				char c = map[i][j];
+				int color = getColorForChar(c);
+				SetTextColor(color);
+				cout << c;
+			}
+			SetTextColor(WHITE); //reset to default color
+		}
+		else{
+			cout << map[i];
+		}
 	}
 }
 
@@ -65,7 +76,14 @@ void Screen::setChar(const point& p, char c) {
 		return;
 	map[p.getY()][p.getX()] = c;
 	gotoxy(p.getX(), p.getY());
-	cout << c;
+	if (colorToggle) {
+		SetTextColor(getColorForChar(c));
+		cout << c;
+		SetTextColor(WHITE); //reset to default color
+		return;
+	}
+	else
+		cout << c;
 }
 
 void Screen::showKeyBinds(const char* keys1, const char* keys2) const
@@ -254,3 +272,4 @@ bool Screen::SwitchState(int doorId) {
 			return s.getIsOn();
 	}
 }
+
