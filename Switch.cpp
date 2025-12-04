@@ -9,15 +9,13 @@ void Switch::toggle() {
 	map->showMessage(isOn ? "Switch is ON" : "Switch is OFF");
 }
 
-bool Switch::update(bool isPressed) {
+void Switch::update(bool isPressed) {
 	if (isPressed) {
 		if (!wasToggled) {
 			toggle();
 			wasToggled = true;
-			return true;
 		}
 	}
 	else
 		wasToggled = false;
-	return false;
-	}
+}

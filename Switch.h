@@ -11,12 +11,12 @@ class Switch {
     int targetDoorId = -1;
 
 public:
-    Switch(int x, int y, Screen* theMap, bool initialState = false)
-        : position(x, y, objSigns::SWITCH_OFF), map(theMap), isOn(initialState) {
+    Switch(int x, int y, Screen* theMap, int targetDoorId = -1, bool initialState = false)
+        : position(x, y, objSigns::SWITCH_OFF), map(theMap), isOn(initialState), targetDoorId(targetDoorId) {
     }
 
     void toggle();
-    bool update(bool isPressed);
+    void update(bool isPressed);
 
     void setTargetDoorId(int doorId) {
         targetDoorId = doorId;

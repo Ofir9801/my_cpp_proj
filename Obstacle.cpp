@@ -15,7 +15,8 @@ void Obstacle::push(int force, Keys dir) {
 		position.setDirection(Keys::STAY);
 		return;
 	}
-	// Update the map to reflect the new position of the obstacle
-	map->setChar(originalPos, ' '); // Clear old position
+		
+	
+	map->setChar(originalPos, ' ');
 	map->setChar(position, position.getChar()); // Set new position
 }

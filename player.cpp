@@ -156,8 +156,9 @@ bool Player::handleSpecialObjects(char nextTile, point nextPos, int force) {//fu
 		}
 		return true; //if inventory is full its blocked
 	}
-	if (isdigit((unsigned char)nextTile)) { // check if it's a door
-		int doorId = nextTile - '0';
+	if (isdigit((unsigned char)nextTile))  // check if it's a door
+		return atDoor(nextTile, nextPos);
+		/*int doorId = nextTile - '0';
 		if (map.isDoorOpen(doorId)) {
 			clearFromScreen();
 			finishedLevel = true;
@@ -182,7 +183,7 @@ bool Player::handleSpecialObjects(char nextTile, point nextPos, int force) {//fu
 			map.showMessage("try look for a key to unlock this door");
 			return true;
 		}
-	}
+	}*/
 	if (nextTile == objSigns::OBSTACLE) {
 		Keys pushDir = (springCyclesLeft > 0) ? springDir.getDirectionEnum() : position.getDirectionEnum();
 
@@ -214,4 +215,47 @@ Keys Player::getOppositeDirection(Keys dir) {
 void Player::reachedExit() {
 	finishedLevel = true;
 	clearFromScreen();
+}
+
+bool Player::atDoor(unsigned char nextTile, point nextPos) {
+	int doorId = nextTile - '0';
+	if (map.ConnectionStatus(doorId)){ // connected to a switch
+		if (map.SwitchState(doorId)) {OpenDoorWithKey(doorId, nextPos);}//true = switch is on 
+		else { //switch is off
+			map.showMessage("The door is locked. Find the switch to open it.");
+			return true;
+		}
+	}
+	else {OpenDoorWithKey(doorId, nextPos);}//not connected to a switch
+	
+}
+
+
+bool Player::OpenDoorWithKey(int doorId, point nextPos) {
+	if (map.isDoorOpen(doorId)) {
+		clearFromScreen();
+		finishedLevel = true;
+		return false;
+	}
+	else {
+		if (hasItem(objSigns::KEY)) {
+			removeItem();
+			if (map.isWinningDoor(doorId)) {
+				map.openDoor(doorId);
+				clearFromScreen();
+				map.showMessage("Correct door! Unlocked.");
+				finishedLevel = true;
+				return false;
+			}
+			else {
+				map.setChar(nextPos, 'X');
+				map.showMessage("Wrong door! It's a dead end.");
+				return true;
+			}
+		}
+		else {
+			map.showMessage("try look for a key to unlock this door");
+			return true;
+		}
+	}
 }

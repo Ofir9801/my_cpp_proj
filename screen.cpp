@@ -93,6 +93,7 @@ void Screen::initaializeRoomsArray() {
 	Rooms[INSTRUCTIONS] = instructions;
 	Rooms[ROOM1] = room1;
 	Rooms[ROOM2] = room2;
+	Rooms[VICTORY] = endingScreen;
 }
 
 bool Screen::tryPushObstacle(const point& obstaclePos, Keys direction, int force) {
@@ -207,10 +208,10 @@ void Screen::loadItems() {//enter the items from the board to the vector
 }
 void Screen::autoLinkSwitchesAndDoors() {
 	int levelNum = getCurrentRoom() - 1;
-	char currentDoorId = '1';
-	char exitDoor = char(levelNum);
+	int currentDoorId = 1;
 	for (auto& s : switches) {
 		s.setTargetDoorId(currentDoorId);
+		setconnection(currentDoorId);
 		currentDoorId++;
 	}
 }
@@ -228,5 +229,28 @@ void Screen::openDoor(int door_id)
 		if (d.getId() == door_id) {
 			d.open();
 		}
+	}
+}
+
+void Screen::setconnection(int doorId) {
+	for (auto& d : doors) {
+		if (d.getId() == doorId) {
+			d.setConnection(true);
+		}
+	}
+}
+
+bool Screen::ConnectionStatus(int doorId) {
+	for (const auto& d : doors) {
+		if (d.getId() == doorId) {
+			return d.getConnection();
+		}
+	}
+}
+
+bool Screen::SwitchState(int doorId) {
+	for (auto& s : switches) {
+		if (s.getTargetDoorId() == doorId)
+			return s.getIsOn();
 	}
 }

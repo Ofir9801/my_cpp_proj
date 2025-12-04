@@ -18,6 +18,5 @@ public:
 private:
 	void updateSwitches();
 	bool isSpecialKey(int key) { return key == 0 || key == 224; } //when keyboard presses special keys like arrows
-	void checkPlayerExit(Player& p);
 };
 

@@ -32,28 +32,16 @@ void Game::run() {
 	player2.draw();
 	bool exitGame = started;
 	while (exitGame) {
-		player1.move();
-		player2.move();
 		updateSwitches();
-		checkPlayerExit(player1);
-		checkPlayerExit(player2);
-		if (player1.hasFinished() && player2.hasFinished()) {
-			size_t index = board.getCurrentRoom();
-			if (index < NUM_ROOMS - 1) {
-				changeRoom(++index);
-				winningDoorId = (char)('0' + (board.getCurrentRoom() - 1));
-			}
-			else {
-				exitGame = false;
-			}
-		}
-		if (!player1.hasFinished()) player1.draw();
-		if (!player2.hasFinished()) player2.draw();
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
 		board.refreshSpringsDisplay(player1.getPosition(), player2.getPosition());
-		Sleep(130);
 		board.clearMessegeArea(gamecycle);
+
+		player1.move();
+		player2.move();
+		Sleep(130);
+		
 		if (_kbhit()) {
 			int key = _getch();
 
@@ -84,6 +72,20 @@ void Game::run() {
 		player1.draw();
 		player2.draw();
 		gamecycle++;
+
+		if (player1.hasFinished() && player2.hasFinished()) {
+			size_t index = board.getCurrentRoom();
+			if (index < VICTORY) {
+				changeRoom(++index);
+				winningDoorId = (char)('0' + (board.getCurrentRoom() - 1));
+			}
+			else {
+				board.showMessage("Press Any key to finish the game");
+				_getch();
+				exitGame = false;
+				cls();
+			}
+		}
 	}
 }
 
@@ -97,7 +99,7 @@ void Game::showMenu(bool& started){
 			char key = (char)_getch();
 			switch (key) {
 			case '1':
-				changeRoom(ROOM1);
+				changeRoom(ROOM2);
 				inMenu = false;
 				break;
 			case '8':
@@ -118,44 +120,18 @@ void Game::showMenu(bool& started){
 void Game::changeRoom(int roomNumber)
 {
 	board.loadMap(roomNumber);
+	board.drawMap();
+	if (roomNumber != MENU && roomNumber != INSTRUCTIONS && roomNumber != VICTORY) {
 	player1.reset(point(1, 4, objSigns::PLAYER1));
 	player2.reset(point(75, 4, objSigns::PLAYER2));
-	board.drawMap();
-	if (roomNumber != MENU && roomNumber != INSTRUCTIONS) {
 		player1.draw();
 		player2.draw();
 	}
 }
 
-
 void Game::updateSwitches() {
 	for (auto& s : board.switches) {
 		bool isPressed = s.isAt(player1.getPosition()) || s.isAt(player2.getPosition());
-		if (s.update(isPressed)) {
-			int targetID = s.getTargetDoorId();
-			for (auto& d : board.doors) {
-				if (d.getId() == targetID) {
-					s.getIsOn() ? d.open() : d.close();
-				}
-			}
+		s.update(isPressed);
 		}
-	}
-}
-void Game::checkPlayerExit(Player& p) {
-	if (p.hasFinished()) return;
-	if (board.isOnOpenDoor(p.getPosition())) {
-		char winningID = (char)('0' + (board.getCurrentRoom() - 1));
-		for (const auto& d : board.doors) {
-			if (d.isAt(p.getPosition())) {
-				if (d.getId() == winningID) {
-					p.reachedExit();
-					board.showMessage("Waiting for partner...");
-				}
-				else {
-					board.showMessage("Wrong door! Dead end.");
-				}
-				return;
-			}
-		}
-	}
 }

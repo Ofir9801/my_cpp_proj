@@ -15,7 +15,8 @@ enum roomIndex {
 	MENU = 0, 
 	INSTRUCTIONS = 1,
 	ROOM1 = 2,
-	ROOM2 = 3 
+	ROOM2 = 3,
+	VICTORY = 4
 };
 enum Keys {
 	UP,
@@ -42,7 +43,7 @@ const char keys2[] = "ilkjou";
 const char ESC = 27;
 int const INVENTORY_SIZE = 1; //Player can hold up to one item
 int const NUM_KEYS = 6; //number of possible movement Keys
-int constexpr NUM_ROOMS = 4; //number of rooms in the Game
+int constexpr NUM_ROOMS = 5; //number of rooms in the Game
 
 
 void gotoxy(int x, int y);
