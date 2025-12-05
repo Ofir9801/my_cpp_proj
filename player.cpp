@@ -215,13 +215,13 @@ void Player::reachedExit() {
 bool Player::atDoor(unsigned char nextTile, point nextPos) {
 	int doorId = nextTile - '0';
 	if (map.ConnectionStatus(doorId)){ // connected to a switch
-		if (map.SwitchState(doorId)) {OpenDoorWithKey(doorId, nextPos);}//true = switch is on 
+		if (map.SwitchState(doorId)) {return OpenDoorWithKey(doorId, nextPos);}//true = switch is on 
 		else { //switch is off
 			map.showMessage("The door is locked. Find the switch to open it.");
 			return true;
 		}
 	}
-	else {OpenDoorWithKey(doorId, nextPos);}//not connected to a switch
+	else { return OpenDoorWithKey(doorId, nextPos);}//not connected to a switch
 	
 }
 

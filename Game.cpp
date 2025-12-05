@@ -18,6 +18,7 @@ void Game::run() {
 	int gamecycle = 0;
 	bool started = true;
 	showMenu(started);
+	bool firstMessage = true;
 	if (!started) {
 		cls();
 		board.showMessage("Exiting game. Goodbye!");
@@ -32,6 +33,11 @@ void Game::run() {
 	player2.draw();
 	bool exitGame = started;
 	while (exitGame) {
+		if (firstMessage) {
+			board.showMessage("Welcome to the Adventure Game! only one door will lead you to the next room.");
+			Sleep(2000);
+			firstMessage = false;
+		}
 		updateSwitches();
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
@@ -61,7 +67,7 @@ void Game::run() {
 				}
 			}
 			else if (isSpecialKey(key)) {
-				char a = _getch(); //ignore special keys like arrows
+				(void)_getch(); //ignore special keys like arrows
 			}
 
 			else {
@@ -81,12 +87,13 @@ void Game::run() {
 			}
 			else {
 				board.showMessage("Press Any key to finish the game");
-				_getch();
+				(void)_getch();
 				exitGame = false;
 				cls();
 			}
 		}
 	}
+	cls();
 }
 
 
