@@ -246,7 +246,7 @@ void Screen::loadItems() {//enter the items from the board to the vector
 }
 void Screen::autoLinkSwitchesAndDoors() {
 	int levelNum = getCurrentRoom() - 1;
-	int currentDoorId = 1;
+	int currentDoorId = levelNum;
 	for (auto& s : switches) {
 		s.setTargetDoorId(currentDoorId);
 		setconnection(currentDoorId);
