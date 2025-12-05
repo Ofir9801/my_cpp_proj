@@ -8,4 +8,4 @@ Ofir Eran, id: 323958082
 - we change the key binds for players for more comfortable using, now it is:
 player 1: right - D, down - S, up - W, left - A, stay - E, dispose - Q
 player 2: right - L, down - K, up - i, left - J, stay - O, dispose - U
-we support in this exercise two players, walls, keys ,doors, spring, switch, obstacle.
+- we support in this exercise two players, walls, keys ,doors, spring, switch, obstacle.

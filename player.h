@@ -41,9 +41,7 @@ public:
 	void handleActiveSpring();
 	void finalizeMovement();
 	point getPosition() const { return position; }
-	Keys getOppositeDirection(Keys dir);
 	bool hasFinished() const { return finishedLevel; }
-	void reachedExit();
 	bool atDoor(unsigned char nextTile, point nextPos);
 	bool OpenDoorWithKey(int doorId, point nextPos);
 };

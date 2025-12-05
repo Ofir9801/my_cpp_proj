@@ -190,19 +190,6 @@ void Player::reset(point newPosition) {
 	currentForce = 1;
 	finishedLevel = false;
 }
-Keys Player::getOppositeDirection(Keys dir) {
-	switch (dir) {
-	case Keys::UP: return Keys::DOWN;
-	case Keys::DOWN: return Keys::UP;
-	case Keys::LEFT: return Keys::RIGHT;
-	case Keys::RIGHT: return Keys::LEFT;
-	default: return Keys::STAY;
-	}
-}
-void Player::reachedExit() {
-	finishedLevel = true;
-	clearFromScreen();
-}
 
 bool Player::atDoor(unsigned char nextTile, point nextPos) {
 	int doorId = nextTile - '0';

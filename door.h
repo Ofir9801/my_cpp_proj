@@ -15,7 +15,6 @@ public:
 	}
 
 	void open();
-	void close();
 	bool isAt(const point& p) const {return position.getX() == p.getX() && position.getY() == p.getY(); }
 	int getId() const { return id; }
 	bool getIsOpen() const { return isOpen; }

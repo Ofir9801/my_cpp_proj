@@ -8,9 +8,3 @@ void Door::open() {
 		map->showMessage("Door opened!");
 	}
 }
-void Door::close() {
-	if (isOpen) {
-		isOpen = false;
-		map->showMessage("Door closed!");
-	}
-}
