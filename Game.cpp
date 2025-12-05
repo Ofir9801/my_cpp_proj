@@ -132,7 +132,7 @@ void Game::showMenu(bool& started){
 void Game::changeRoom(int roomNumber)
 {
 	board.loadMap(roomNumber);
-	board.drawMap();
+	board.drawMap(roomNumber);
 	if (roomNumber != MENU && roomNumber != INSTRUCTIONS && roomNumber != VICTORY) {
 	player1.reset(point(1, 4, objSigns::PLAYER1));
 	player2.reset(point(75, 4, objSigns::PLAYER2));

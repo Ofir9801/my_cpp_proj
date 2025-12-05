@@ -54,11 +54,7 @@ void Player::dispose()
 {
 	if (inventory[0] != ' ') {
 		map.setChar(position, inventory[0]);
-		if (map.IsColor())
-		{
-			position.draw(getColorForChar(position.getChar()));
-		}
-		else { position.draw(WHITE); }
+		position.draw(map.IsColor() ? getColorForChar(position.getChar()) : WHITE);
 		inventory[0] = ' ';
 	}
 	else {
@@ -133,11 +129,7 @@ bool Player::takeStep() {
 			}
 		}
 		position = nextCandidate;
-		if (map.IsColor())
-		{
-			position.draw(getColorForChar(position.getChar()));
-		}
-		else { position.draw(WHITE); }
+		position.draw(map.IsColor() ? getColorForChar(position.getChar()) : WHITE);
 		return false; // can continue
 	}
 }
@@ -235,6 +227,7 @@ bool Player::OpenDoorWithKey(int doorId, point nextPos) {
 	else {
 		if (hasItem(objSigns::KEY)) {
 			removeItem();
+			map.showPlayerInfo(*this);
 			if (map.isWinningDoor(doorId)) {
 				map.openDoor(doorId);
 				clearFromScreen();

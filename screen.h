@@ -24,7 +24,8 @@ public:
 	friend class Game;
 	Screen();
 	void loadMap(int roomNumber); //function to load the map from a string array
-	void drawMap(); //function to draw the map to the console
+	void drawMap(); 
+	void drawMap(int roomNumber); //function to draw the map to the console
 	//function to get the character at a specific position
 	bool isWall(const point& p) const;
 	size_t getCurrentRoom() const { return currentRoom; }

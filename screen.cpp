@@ -34,7 +34,7 @@ void Screen::drawMap() {
 	cls(); //clear the console
 	for (int i = 0; i < MAX_Y; i++) {
 		gotoxy(0, i);
-		if (i>2 && colorToggle) {
+		if (i > 2 && colorToggle) {
 			for (int j = 0; j < MAX_X; j++) {
 				char c = map[i][j];
 				int color = getColorForChar(c);
@@ -43,10 +43,30 @@ void Screen::drawMap() {
 			}
 			SetTextColor(WHITE); //reset to default color
 		}
-		else{
+		else {
 			cout << map[i];
 		}
 	}
+}
+void Screen::drawMap(int roomNumber) {
+	cls(); //clear the console
+	if (roomNumber == VICTORY &&colorToggle) {
+		for (int i = 0; i < MAX_Y; i++) {
+			gotoxy(0, i);
+			if (i > 2) {
+				for (int j = 0; j < MAX_X; j++) {
+					char c = map[i][j];
+					SetTextColor(YELLOW);
+					cout << c;
+				}
+				SetTextColor(WHITE); //reset to default color
+			}
+			else {
+				cout << map[i];
+			}
+		}
+	}
+	else {drawMap();}
 }
 
 bool Screen::isWall(const point& p) const{
@@ -197,7 +217,7 @@ void Screen::refreshSpringsDisplay(const point& p1, const point& p2) const {
 
 void Screen::clearMessegeArea(int const counter)
 {
-	if (counter % 20 == 0) // clear message area every 10 cycles
+	if (counter % 20 == 0) // clear message area every 20 cycles
 		showMessage(EMPTYLINE);
 }
 
