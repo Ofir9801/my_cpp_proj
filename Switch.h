@@ -18,14 +18,8 @@ public:
     void toggle();
     void update(bool isPressed);
 
-    void setTargetDoorId(int doorId) {
-        targetDoorId = doorId;
-	}
-    int getTargetDoorId() const {
-        return targetDoorId;
-	}
-    bool isAt(const point& p) const {
-        return position.getX() == p.getX() && position.getY() == p.getY();
-    }
+    void setTargetDoorId(int doorId) { targetDoorId = doorId; }
+    int getTargetDoorId() const {return targetDoorId;}
+    bool isAt(const point& p) const { return position.getX() == p.getX() && position.getY() == p.getY(); }
     bool getIsOn() const { return isOn; }
 };

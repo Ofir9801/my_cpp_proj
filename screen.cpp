@@ -56,7 +56,7 @@ void Screen::drawMap(int roomNumber) {
 			if (i > 2) {
 				for (int j = 0; j < MAX_X; j++) {
 					char c = map[i][j];
-					SetTextColor(YELLOW);
+					SetTextColor(BROWN);
 					cout << c;
 				}
 				SetTextColor(WHITE); //reset to default color

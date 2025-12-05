@@ -45,7 +45,7 @@ int getColorForChar(char c)
 	else if (c == objSigns::SWITCH_OFF)
 		return RED;
 	else if (isdigit((unsigned char)c))
-		return BLUE;
+		return DARKGREY;
 	else
 		return WHITE;
 }
