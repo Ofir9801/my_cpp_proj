@@ -43,11 +43,10 @@ void Spring::draw(const point& playerPos, bool active) const{
             currentSegment.draw(objSigns::SPRING,getColorForChar(objSigns::SPRING));
             continue;
         }
-        bool isCompressed = false;
         if (currentSegment.getX() == playerPos.getX() && currentSegment.getY() == playerPos.getY()) {
         }
         else {
-            currentSegment.draw(objSigns::EMPTY,WHITE);
+            currentSegment.draw(objSigns::SPRING, getColorForChar(objSigns::SPRING));
         }
     }
 }
