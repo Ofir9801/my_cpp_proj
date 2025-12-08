@@ -9,3 +9,7 @@ Ofir Eran, id: 323958082
 player 1: right - D, down - S, up - W, left - A, stay - E, dispose - Q
 player 2: right - L, down - K, up - i, left - J, stay - O, dispose - U
 - we support in this exercise two players, walls, keys ,doors, spring, switch, obstacle.
+
+for this exercise we linked the door number to the room number and there so for entry room 2 from room 1, you need to open door with the digit 1.
+every switch is linked to spefic door by his id so only one switch can in the room can open each door.
+in a room that there is switches in it, you need to turn on the designated switch that linked to the door and also unlock with a key. the player will get messages through the game that will help him understand he need to do

@@ -7,3 +7,6 @@ obstacles - brown
 spring - magenta
 switch: on - green, off - red
 doors - dark grey
+
+
+we change the switch that every time the player is hover above the switch it change his state in opposite to the possibility that when the switch turn on by the player it stay on the whole time.
