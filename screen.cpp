@@ -7,6 +7,7 @@
 #include "Spring.h"
 #include <random>
 #include <algorithm>
+#include <Windows.h>
 #include <cctype> //  for tolower, isdigit
 
 using std::cout;
@@ -227,6 +228,7 @@ void Screen::loadItems() {//enter the items from the board to the vector
 	switches.clear();
 	obstacles.clear();
 	doors.clear();
+	keys.clear();
 	doorIDs.clear();
 	for (int y = 3; y < BOARD_DIMENSION::MAX_Y; y++) {
 		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
@@ -250,13 +252,14 @@ void Screen::loadItems() {//enter the items from the board to the vector
 		}
 	}
 	linkDoorsToKeysAndSwitches();
+
 }
 void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number of switches and  is equal to the number of doors
 	std::vector <int> doorIdCopy = doorIDs;  //make copy of doorIds vector 
 
 	std::random_device rd;  //use gemini to get known of the shuffle algorithm and how to integrate it with the code
 	std::mt19937 g(rd());	//the prompt is "give me idea to connect between doors id to switches and keys in randomize pattern in complexicity lower than o(n^2)
-	
+
 	std::shuffle(doorIdCopy.begin(), doorIdCopy.end(), g);
 	for (int i = 0; i < keys.size(); i++) {
 		if (i >= doorIdCopy.size())
@@ -326,10 +329,11 @@ void Screen::addKeyToInventory(Point position, char p)
 	}
 }
 
-void Screen::RemoveKeyFromInventory(char p) {
+void Screen::RemoveKeyFromInventory(char p, Point newPos) {
 	for (auto& k : keys) {
 		if (k.getInUse() == true && k.getPlayerUse() == p) {
 			k.setInUse(false, ' ');
+			k.SetPosition(newPos);
 			break;
 		}
 	}

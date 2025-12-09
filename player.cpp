@@ -54,7 +54,7 @@ bool Player::addToInventory(char item, Point position)
 
 void Player::removeItem()
 {
-	map.RemoveKeyFromInventory(this->getChar());
+	map.RemoveKeyFromInventory(this->getChar(), position);
 	inventory[0] = ' '; 
 }
 
@@ -62,7 +62,7 @@ void Player::dispose()
 {
 	if (inventory[0] != ' ') {
 		map.setChar(position, inventory[0]);
-		map.RemoveKeyFromInventory(this->getChar());
+		map.RemoveKeyFromInventory(this->getChar(),position);
 		position.draw(map.IsColor() ? getColorForChar(position.getChar()) : WHITE);
 		inventory[0] = ' ';
 	}

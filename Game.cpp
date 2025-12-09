@@ -27,6 +27,8 @@ void Game::run() {
 		gotoxy(0, 0);
 		return;
 	}
+
+
 	char winningDoorId = char(board.getCurrentRoom() - 1 + '0');
 	board.drawMap();
 	player1.draw();
@@ -38,6 +40,7 @@ void Game::run() {
 			Sleep(2000);
 			firstMessage = false;
 		}
+
 		updateSwitches();
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);

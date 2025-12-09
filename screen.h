@@ -54,6 +54,6 @@ public:
 	bool SwitchState(int doorId);
 	bool IsColor() const { return colorToggle; }
 	void addKeyToInventory(Point position, char p);
-	void RemoveKeyFromInventory(char p);
+	void RemoveKeyFromInventory(char p, Point newPos);
 	int GetDoorIdByKey(char p);
 };
