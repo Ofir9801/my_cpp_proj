@@ -1,6 +1,4 @@
 #pragma once
-
-
 enum INFO_SLOTS {
 	PLAYER1_SIGN_START_X = 11,
 	PLAYER2_SIGN_START_X = 70,
@@ -12,7 +10,7 @@ enum INFO_SLOTS {
 enum BOARD_DIMENSION{ MAX_X = 80, MAX_Y = 25 };
 enum MESSAGES_POS { MES_X = 0, MES_Y = 2 };
 enum roomIndex {
-	MENU = 0, 
+	MENU = 0,
 	INSTRUCTIONS = 1,
 	ROOM1 = 2,
 	ROOM2 = 3,

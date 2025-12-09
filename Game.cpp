@@ -10,8 +10,8 @@
 
 
 Game::Game() :
-	player1(point(1, 4, objSigns::PLAYER1), keys1, board),
-	player2(point(75, 4, objSigns::PLAYER2), keys2, board) {}
+	player1(Point(1, 4, objSigns::PLAYER1), keys1, board),
+	player2(Point(75, 4, objSigns::PLAYER2), keys2, board) {}
 
 void Game::run() {
 	hideCursor();
@@ -134,8 +134,8 @@ void Game::changeRoom(int roomNumber)
 	board.loadMap(roomNumber);
 	board.drawMap(roomNumber);
 	if (roomNumber != MENU && roomNumber != INSTRUCTIONS && roomNumber != VICTORY) {
-	player1.reset(point(1, 4, objSigns::PLAYER1));
-	player2.reset(point(75, 4, objSigns::PLAYER2));
+	player1.reset(Point(1, 4, objSigns::PLAYER1));
+	player2.reset(Point(75, 4, objSigns::PLAYER2));
 		player1.draw();
 		player2.draw();
 	}

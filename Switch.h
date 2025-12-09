@@ -1,10 +1,10 @@
 #pragma once
-#include "point.h"
+#include "Point.h"
 
 class Screen;//forward declaration to avoid circular dependency
 
 class Switch {
-    point position;
+    Point position;
     bool isOn;
     bool wasToggled = false;
     Screen* map; 
@@ -20,6 +20,6 @@ public:
 
     void setTargetDoorId(int doorId) { targetDoorId = doorId; }
     int getTargetDoorId() const {return targetDoorId;}
-    bool isAt(const point& p) const { return position.getX() == p.getX() && position.getY() == p.getY(); }
+    bool isAt(const Point& p) const {return position == p;}
     bool getIsOn() const { return isOn; }
 };
