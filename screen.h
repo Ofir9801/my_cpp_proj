@@ -5,6 +5,8 @@
 #include "Switch.h"
 #include "Obstacle.h"
 #include "Door.h"
+#include "Riddle.h"
+#include "Bomb.h"
 #include <vector>
 
 class Player; //forward declaration to avoid circular dependency
@@ -19,6 +21,8 @@ private:
 	std::vector<Switch> switches;
 	std::vector<Obstacle> obstacles;
 	std::vector<Door> doors;
+	std::vector<Riddle> riddles;
+	std::vector<Bomb> activeBombs;
 	bool colorToggle = false;
 public:
 	friend class Game;
@@ -50,4 +54,6 @@ public:
 	bool ConnectionStatus(int doorId);
 	bool SwitchState(int doorId);
 	bool IsColor() const { return colorToggle; }
+	void updateBombs();
+	bool handleRiddle(const point& p, Player& player);
 };

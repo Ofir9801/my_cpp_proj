@@ -5,6 +5,8 @@
 #include "Rooms.h"
 #include "Player.h"
 #include "Spring.h"
+#include "Riddle.h"
+#include "Bomb.h"
 #include <cctype> //  for tolower, isdigit
 
 using std::cout;
@@ -240,6 +242,10 @@ void Screen::loadItems() {//enter the items from the board to the vector
 			else if (isdigit((unsigned char)c)) {
 				doors.push_back(Door(x, y, c, this));
 			}
+			else if (c == '?') {
+				std::string q = "What is 2 + 2?\n1) 3\n2) 4\n3) 5\n4) 6";//TODO: better riddle managment
+				riddles.push_back(Riddle(point(x, y), q, '2'));
+			}
 		}
 	}
 	autoLinkSwitchesAndDoors();
@@ -290,6 +296,34 @@ bool Screen::SwitchState(int doorId) {
 	for (auto& s : switches) {
 		if (s.getTargetDoorId() == doorId)
 			return s.getIsOn();
+	}
+}
+
+bool Screen::handleRiddle(const point& p, Player& player) {
+	for (auto it = riddles.begin(); it != riddles.end(); ++it) {
+		if (it->isAt(p)) {
+			bool solved = it->engage(*this, player);
+			if (solved) {
+				riddles.erase(it);
+				return true;
+			}
+			return false;
+		}
+	}
+	return false;
+}
+
+void Screen::updateBombs() {
+	for (size_t i = 0; i < activeBombs.size(); ) {
+		activeBombs[i].tick();
+		if (activeBombs[i].shouldExplode()) {
+			activeBombs[i].explode(*this);
+			setChar(activeBombs[i].getPosition(), ' ');
+			activeBombs.erase(activeBombs.begin() + i);
+		}
+		else {
+			++i;
+		}
 	}
 }
 
