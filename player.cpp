@@ -42,7 +42,7 @@ bool Player::addToInventory(char item, Point position)
 			inventory[i] = item; //add item to inventory
 			added = true;
 			if (item == objSigns::KEY)
-				map.addKeyToInventory(position);
+				map.addKeyToInventory(position, this->getChar());
 		}
 	}
 	if (!added) {
@@ -52,13 +52,17 @@ bool Player::addToInventory(char item, Point position)
 	return true;
 }
 
-
-
+void Player::removeItem()
+{
+	map.RemoveKeyFromInventory(this->getChar());
+	inventory[0] = ' '; 
+}
 
 void Player::dispose()
 {
 	if (inventory[0] != ' ') {
 		map.setChar(position, inventory[0]);
+		map.RemoveKeyFromInventory(this->getChar());
 		position.draw(map.IsColor() ? getColorForChar(position.getChar()) : WHITE);
 		inventory[0] = ' ';
 	}
@@ -166,7 +170,7 @@ void Player::finalizeMovement() {
 
 bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//function to handle special objects
 	if (nextTile == objSigns::KEY) {
-		if (addToInventory(objSigns::KEY),nextPos) {
+		if (addToInventory(objSigns::KEY,nextPos)) {
 			// clear the key from the tile we are moving onto (nextPos), not the player's old position
 			map.setChar(nextPos, ' ');
 			return false;
@@ -217,7 +221,8 @@ bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
 		return false;
 	}
 	else {
-		if (hasItem(objSigns::KEY)) {
+			int keyDoorId = map.GetDoorIdByKey(this->getChar());
+			if(hasItem(objSigns::KEY) && keyDoorId == doorId){
 			removeItem();
 			map.showPlayerInfo(*this);
 			if (map.isWinningDoor(doorId)) {
@@ -234,7 +239,7 @@ bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
 			}
 		}
 		else {
-			map.showMessage("try look for a key to unlock this door");
+			map.showMessage("try look for the right key to unlock this door");
 			return true;
 		}
 	}

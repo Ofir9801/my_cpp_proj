@@ -259,7 +259,7 @@ void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number 
 	
 	std::shuffle(doorIdCopy.begin(), doorIdCopy.end(), g);
 	for (int i = 0; i < keys.size(); i++) {
-		if (i > doorIdCopy.size())
+		if (i >= doorIdCopy.size())
 			break;
 		int currentDoorId = doorIdCopy[i];
 		keys[i].setTargetDoorId(currentDoorId);
@@ -267,7 +267,7 @@ void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number 
 	
 	std::shuffle(doorIdCopy.begin(), doorIdCopy.end(), g);
 	for (int i = 0; i < switches.size(); i++) {
-		if (i > doorIdCopy.size())
+		if (i >= doorIdCopy.size())
 			break;
 		int currentDoorId = doorIdCopy[i];
 		switches[i].setTargetDoorId(currentDoorId);
@@ -316,15 +316,35 @@ bool Screen::SwitchState(int doorId) {
 	}
 }
 
-void Screen::addKeyToInventory(Point position)
+void Screen::addKeyToInventory(Point position, char p)
+{
+	for (auto& k : keys) {
+		if (k.getPosition() == position) {
+			k.setInUse(true, p);
+			break;
+		}
+	}
+}
+
+void Screen::RemoveKeyFromInventory(char p) {
+	for (auto& k : keys) {
+		if (k.getInUse() == true && k.getPlayerUse() == p) {
+			k.setInUse(false, ' ');
+			break;
+		}
+	}
+}
+
+int Screen::GetDoorIdByKey(char p)
 {
 	bool flag = false;
 	for (auto& k : keys) {
-		if (flag) break;
-		if (k.getPosition() == position) {
-			k.setUse(true);
-			flag = true;
+		if (k.getPlayerUse() == p) {
+			return k.getTargetDoorId();
+			break;
 		}
 	}
+	return -1;
+
 }
 

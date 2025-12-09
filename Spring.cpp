@@ -43,11 +43,8 @@ void Spring::draw(const Point& playerPos, bool active) const{
             currentSegment.draw(objSigns::SPRING,map.IsColor() ? getColorForChar(objSigns::SPRING) : WHITE);
             continue;
         }
-        if (currentSegment == playerPos) {
-        }
-        else {
-            currentSegment.draw(objSigns::SPRING, getColorForChar(playerPos.getChar()));
-           // currentSegment.draw(objSigns::SPRING,  BLACK);
+        if (currentSegment != playerPos) {
+            currentSegment.draw(objSigns::SPRING, map.IsColor() ? getColorForChar(playerPos.getChar()) : WHITE );
         }
     }
 }

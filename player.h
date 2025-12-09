@@ -18,9 +18,8 @@ class Player
 	int color = CYAN;
 
 public:
-	Player(const Point& point, const char(&the_keys)[NUM_KEYS + 1], Screen& theScreen) :map(theScreen) {
+	Player(const Point& point, const char(&the_keys)[NUM_KEYS + 1], Screen& theScreen) :map(theScreen), position(point) {
 		memcpy(p_keys, the_keys, NUM_KEYS * sizeof(p_keys[0]));
-		position = point;
 		inventory[0] = ' '; //empty inventory
 		inventory[INVENTORY_SIZE] = '\0'; //null-terminate the inventory string
 	}
@@ -31,7 +30,7 @@ public:
 	char getChar() const { return position.getChar(); }
 	const char* getInventory() const { return inventory; }
 	bool hasItem(char item) const { return inventory[0] == item; }
-	void removeItem() { inventory[0] = ' '; }
+	void removeItem();
 	void dispose();
 	void clearFromScreen();
 	void reset(Point newPosition);

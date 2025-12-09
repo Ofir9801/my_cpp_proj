@@ -53,5 +53,7 @@ public:
 	bool ConnectionStatus(int doorId);
 	bool SwitchState(int doorId);
 	bool IsColor() const { return colorToggle; }
-	void addKeyToInventory(Point position);
+	void addKeyToInventory(Point position, char p);
+	void RemoveKeyFromInventory(char p);
+	int GetDoorIdByKey(char p);
 };
