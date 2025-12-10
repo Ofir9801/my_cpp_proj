@@ -26,25 +26,35 @@ void Screen::loadMap(int roomNumber)
 {
 	for (int i = 0; i < MAX_Y; i++) {
 		map[i] = Rooms[roomNumber][i];
+
 	}
 	currentRoom = roomNumber;
+	if (roomNumber == roomIndex::ROOM3)
+		isDarkRoom = true;
+	else
+		isDarkRoom = false;
 	loadItems();
 }
 void Screen::drawMap() {
 	cls(); //clear the console
-	for (int i = 0; i < MAX_Y; i++) {
-		gotoxy(0, i);
-		if (i > 2 && colorToggle) {
-			for (int j = 0; j < MAX_X; j++) {
-				char c = map[i][j];
-				int color = getColorForChar(c);
-				SetTextColor(color);
-				cout << c;
+	if (isDarkRoom) {
+		for (int i = 0; i < 2; i++) {cout << map[i];}
+	}
+	else {
+		for (int i = 0; i < MAX_Y; i++) {
+			gotoxy(0, i);
+			if (i > 2 && colorToggle) {
+				for (int j = 0; j < MAX_X; j++) {
+					char c = map[i][j];
+					int color = getColorForChar(c);
+					SetTextColor(color);
+					cout << c;
+				}
+				SetTextColor(WHITE); //reset to default color
 			}
-			SetTextColor(WHITE); //reset to default color
-		}
-		else {
-			cout << map[i];
+			else {
+				cout << map[i];
+			}
 		}
 	}
 }
@@ -76,26 +86,20 @@ bool Screen::isWall(const Point& p) const{
 
 void Screen::showPlayerInfo(const Player& p) {
 	char playerChar = p.getChar();
+			gotoxy(PLAYER1_LIVES_START_X, PLAYER_SIGN_Y);
+			cout << p.getLives() << std::flush;
 	switch (playerChar) {
 	case objSigns::PLAYER1:
 			gotoxy(PLAYER1_SIGN_START_X, PLAYER_SIGN_Y);
 			cout << playerChar << std::flush;
-			gotoxy(PLAYER1_LIVES_START_X, PLAYER_SIGN_Y);
-			cout << p.getLives() << std::flush;
 			gotoxy(PLAYER1_INV_START_X, PLAYER_INV_Y);
 			cout << p.getInventory() << std::flush;
-			gotoxy(PLAYER1_SCORE_START_X, PLAYER_INV_Y);
-			cout << p.getScore() << std::flush;
 		break;
 		case objSigns::PLAYER2:
 			gotoxy(PLAYER2_SIGN_START_X, PLAYER_SIGN_Y);
 			cout << playerChar << std::flush;
-			gotoxy(PLAYER2_LIVES_START_X, PLAYER_SIGN_Y);
-			cout << p.getLives()<< std::flush;
 			gotoxy(PLAYER2_INV_START_X, PLAYER_INV_Y);
-			cout << p.getInventory() << std::flush;
-			gotoxy(PLAYER2_SCORE_START_X, PLAYER_INV_Y);
-			cout << p.getScore() << std::flush;
+			cout << p.getInventory()<< std::flush;
 			break;
 	}
 }
@@ -127,7 +131,7 @@ void Screen::showKeyBinds() const
 		cout << (unsigned char)toupper(keys2[i]); //print uppercase
 	}
 }
-void Screen::showMessage(string msg){
+void Screen::showMessage(const char* msg){
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
 	std::cout << EMPTYLINE << std::flush;//clear the line before
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
@@ -147,6 +151,9 @@ void Screen::initaializeRoomsArray() {
 	if (ReadRoomLayoutFromFile(Room2PathWay, roomIndex::ROOM2)){ 
 		throw std::runtime_error("Something wrong with the file room2.txt"); 
 	}
+	if (ReadRoomLayoutFromFile(Room3PathWay, roomIndex::ROOM3)) {
+		throw std::runtime_error("Something wrong with the file room3.txt");
+	}
 	if (ReadRoomLayoutFromFile(EndingScreenPathWay, roomIndex::VICTORY)){
 		throw std::runtime_error("Something wrong with the file endingscreen.txt"); 
 	}	
@@ -155,6 +162,7 @@ void Screen::initaializeRoomsArray() {
 	Rooms[INSTRUCTIONS] = Instructions;
 	Rooms[ROOM1] = Room1;
 	Rooms[ROOM2] = Room2;
+	Rooms[ROOM3] = Room3;
 	Rooms[VICTORY] = EndingScreen;
 }
 
@@ -251,7 +259,6 @@ void Screen::loadItems() {//enter the items from the board to the vector
 	doors.clear();
 	keys.clear();
 	doorIDs.clear();
-	loadSprings();
 	for (int y = 3; y < BOARD_DIMENSION::MAX_Y; y++) {
 		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
 			char c = getCharAt(Point(x, y));
@@ -271,9 +278,12 @@ void Screen::loadItems() {//enter the items from the board to the vector
 			else if (c == objSigns::KEY) {
 				keys.push_back(Key(x, y));
 			}
-			else if (c == '?') {
-				std::string q = "What is 2 + 2?\n1) 3\n2) 4\n3) 5\n4) 6";//TODO: better riddle managment
-				riddles.push_back(Riddle(Point(x, y), q, '2'));
+			else if (c == objsigns::RIDDLE) {
+				//TODO: better riddle managment
+				std::string q = "What is 2 + 2?";
+				std::vector<std::string> options = { "3", "4", "5", "6" };
+				int correctIndex = 1;
+				riddles.push_back(Riddle(Point(x, y), q, options, correctIndex));
 			}
 		}
 		linkDoorsToKeysAndSwitches();
@@ -385,6 +395,58 @@ bool Screen::handleRiddle(const Point& p, Player& player) {
 		}
 	}
 	return false;
+}
+
+void Screen::updateLighting(const Point& p1, const Point& p1Prev, const Player& player1, const Point& p2, const Point& p2Prev, const Player& player2)
+{
+	int r1 = player1.hasItem(objSigns::TORCH) ? LIGHT_RADIUS_TORCH : LIGHT_RADIUS_DEFAULT;
+	int r2 = player2.hasItem(objSigns::TORCH) ? LIGHT_RADIUS_TORCH : LIGHT_RADIUS_DEFAULT;
+
+	//erase old aread
+	ProcessLightning(p1Prev.getX(), p1Prev.getY(), LIGHT_RADIUS_TORCH, true,p1,p2,r1,r2);
+	ProcessLightning(p2Prev.getX(), p2Prev.getY(), LIGHT_RADIUS_TORCH, true,p1,p2,r1,r2);
+
+	ProcessLightning(p1.getX(), p1.getY(), r1, false, p1, p2, r1, r2);
+	ProcessLightning(p2.getX(), p2.getY(), r2, false, p1, p2, r1, r2);
+
+}
+
+bool Screen::isLit(int x, int y, const Point& p, int radius) {
+	int dx = x - p.getX(); //calculate the the distance between two points by x
+	int dy = y - p.getY(); //calculate the the distance between two points by y
+	return (dx * dx + dy * dy) <= (radius * radius); //true if the given point is in player's light radius
+}
+
+void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point& p1,const Point& p2, const int r1, const int r2) {
+	for (int y = cy - radius; y <= cy + radius; y++) {
+		for (int x = cx - radius; x <= cx + radius; x++) {
+			if (x < 0 || x >= MAX_X || y < 3 || y >= MAX_Y)
+				continue;
+
+			bool inRange = isLit(x, y, Point(cx, cy), radius); //check if point in distance
+
+			if (inRange) {
+				if (erase) {
+					if (!isLit(x, y, p1, r1) && !isLit(x, y, p2, r2)) {
+						gotoxy(x, y);
+						std::cout << ' ';
+					}
+				}
+				else{
+					gotoxy(x, y);
+					char c = map[y][x];
+					if (colorToggle) {
+						SetTextColor(getColorForChar(c));
+						std::cout << c;
+						SetTextColor(WHITE);
+					}
+					else {
+						std::cout << c;
+					}
+				}
+			}
+		}
+	}
 }
 
 void Screen::updateBombs() {

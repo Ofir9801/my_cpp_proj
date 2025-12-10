@@ -1,12 +1,7 @@
 #include <iostream>
 #include <windows.h> // Required for Windows API console functions
 #include <cstdlib>
-#include <string>
-#include <fstream>
 #include "Utils.h"
-
-using std::string;
-
 
 void gotoxy(int x, int y) {
     std::cout.flush();
@@ -48,8 +43,11 @@ int getColorForChar(char c)
 		return GREEN;
 	else if (c == objSigns::SWITCH_OFF)
 		return RED;
+	else if (c == objSigns::TORCH)
+		return YELLOW;
 	else if (isdigit((unsigned char)c))
 		return DARKGREY;
+	
 	else
 		return WHITE;
 }
@@ -81,6 +79,9 @@ bool ReadRoomLayoutFromFile(string FileName, int roomIndex) {
 			break;
 		case roomIndex::ROOM2:
 			Room2[i] = templine;
+			break;
+		case roomIndex::ROOM3:
+			Room3[i] = templine;
 			break;
 		case roomIndex::VICTORY:
 			EndingScreen[i] = templine;
