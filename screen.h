@@ -44,7 +44,7 @@ public:
 	void showMessage(string msg);
 	char getCharAt(const Point& p) const { return map[p.getY()][p.getX()]; }
 	void setChar(const Point& p, char c);//function to set a character on Screen at Point p, like picking up a key
-	void showKeyBinds(const string keys1, const string keys2)const;
+	void showKeyBinds()const;
 	bool tryPushObstacle(const Point& obstaclePos, Keys direction, int force);
 	void loadSprings();
 	Spring* getSpringAt(const Point& p);

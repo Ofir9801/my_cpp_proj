@@ -17,19 +17,15 @@ using std::string;
 
 Screen::Screen() 
 {
-
 	initaializeRoomsArray();
 	for (int i = 0; i < MAX_Y; i++) {
 		map[i].resize(MAX_X, ' ');
 	}
-	//loadItems();
 }
 void Screen::loadMap(int roomNumber)
 {
 	for (int i = 0; i < MAX_Y; i++) {
 		map[i] = Rooms[roomNumber][i];
-		//strncpy(map[i], Rooms[roomNumber][i], MAX_X);
-		//map[i][MAX_X] = '\0'; //null-terminate each row
 	}
 	currentRoom = roomNumber;
 	loadItems();
@@ -118,7 +114,7 @@ void Screen::setChar(const Point& p, char c) {
 		cout << c;
 }
 
-void Screen::showKeyBinds(const string keys1, const string keys2) const
+void Screen::showKeyBinds() const
 {
 	int const INITIAL_Y = 19;
 	int const INITIAL_X1 = 11;

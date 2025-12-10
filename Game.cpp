@@ -119,7 +119,7 @@ void Game::showMenu(bool& started){
 				break;
 			case '8':
 				changeRoom(INSTRUCTIONS);
-				board.showKeyBinds(keys1,keys2);
+				board.showKeyBinds();
 				a = (char)_getch();
 				changeRoom(MENU);
 				break;
