@@ -8,7 +8,7 @@ void Bomb::explode(Screen& map) {
 	for (int dy = -1; dy <= 1; dy++) {//destroys adjacent walls
 		for (int dx = -1; dx <= 1; dx++) {
 			if (dx == 0 && dy == 0) continue;
-			point wallPos(bx + dx, by + dy);
+			Point wallPos(bx + dx, by + dy);
 			if (map.isWall(wallPos)) {
 				map.setChar(wallPos, ' ');
 			}
@@ -24,7 +24,7 @@ void Bomb::explode(Screen& map) {
 void Bomb::destroyCell(Screen& map, int x, int y) {
 	if (x < 0 || x >= BOARD_DIMENSION::MAX_X || y < 0 || y >= BOARD_DIMENSION::MAX_Y) return;
 
-	point target(x, y);
+	Point target(x, y);
 	if (map.isWall(target)) return;
 
 	char c = map.getCharAt(target);

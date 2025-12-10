@@ -43,8 +43,8 @@ public:
 	void finalizeMovement();
 	Point getPosition() const { return position; }
 	bool hasFinished() const { return finishedLevel; }
-	bool atDoor(unsigned char nextTile, point nextPos);
-	bool OpenDoorWithKey(int doorId, point nextPos);
+	bool atDoor(unsigned char nextTile, Point nextPos);
+	bool OpenDoorWithKey(int doorId, Point nextPos);
 	int getLives() const { return lives; }
 	int getScore() const { return score; }
 	void decreaseLife() { lives--; }

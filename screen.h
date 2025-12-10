@@ -61,5 +61,5 @@ public:
 	void RemoveKeyFromInventory(char p, Point newPos);
 	int GetDoorIdByKey(char p);
 	void updateBombs();
-	bool handleRiddle(const point& p, Player& player);
+	bool handleRiddle(const Point& p, Player& player);
 };

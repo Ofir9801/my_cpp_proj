@@ -251,16 +251,16 @@ void Screen::loadItems() {//enter the items from the board to the vector
 			}
 			else if (c == objSigns::KEY) {
 				keys.push_back(Key(x, y));
+			}
 			else if (c == '?') {
 				std::string q = "What is 2 + 2?\n1) 3\n2) 4\n3) 5\n4) 6";//TODO: better riddle managment
-				riddles.push_back(Riddle(point(x, y), q, '2'));
+				riddles.push_back(Riddle(Point(x, y), q, '2'));
 			}
 		}
+		linkDoorsToKeysAndSwitches();
 	}
-	linkDoorsToKeysAndSwitches();
-
 }
-void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number of switches and  is equal to the number of doors
+	void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number of switches and  is equal to the number of doors
 	std::vector <int> doorIdCopy = doorIDs;  //make copy of doorIds vector 
 
 	std::random_device rd;  //use gemini to get known of the shuffle algorithm and how to integrate it with the code
@@ -325,8 +325,7 @@ bool Screen::SwitchState(int doorId) {
 	}
 }
 
-void Screen::addKeyToInventory(Point position, char p)
-{
+void Screen::addKeyToInventory(Point position, char p){
 	for (auto& k : keys) {
 		if (k.getPosition() == position) {
 			k.setInUse(true, p);
@@ -345,9 +344,7 @@ void Screen::RemoveKeyFromInventory(char p, Point newPos) {
 	}
 }
 
-int Screen::GetDoorIdByKey(char p)
-{
-	bool flag = false;
+int Screen::GetDoorIdByKey(char p) {
 	for (auto& k : keys) {
 		if (k.getPlayerUse() == p) {
 			return k.getTargetDoorId();
@@ -355,8 +352,9 @@ int Screen::GetDoorIdByKey(char p)
 		}
 	}
 	return -1;
+}
 
-bool Screen::handleRiddle(const point& p, Player& player) {
+bool Screen::handleRiddle(const Point& p, Player& player) {
 	for (auto it = riddles.begin(); it != riddles.end(); ++it) {
 		if (it->isAt(p)) {
 			bool solved = it->engage(*this, player);
