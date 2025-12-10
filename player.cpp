@@ -64,7 +64,8 @@ void Player::dispose()
 		char c = inventory[0];
 		map.setChar(position, c);
 		if (c == objSigns::KEY) {map.RemoveKeyFromInventory(this->getChar(), position);}
-		else if (c == objSigns::BOMB) {map.addActiveBomb(position);}
+		else if (c == objSigns::BOMB) {//map.addActiveBomb(position);
+		}
 		position.draw(map.IsColor() ? getColorForChar(position.getChar()) : WHITE);
 		inventory[0] = ' ';
 	}

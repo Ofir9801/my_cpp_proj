@@ -1,4 +1,9 @@
 #pragma once
+#include <string>
+#include <iostream>
+
+using std::string;
+
 enum INFO_SLOTS {
 	PLAYER1_SIGN_START_X = 11,
 	PLAYER2_SIGN_START_X = 70,
@@ -55,18 +60,24 @@ enum Color {
 	WHITE = 15
 };
 
-const char EMPTYLINE[] = "                                                                                ";
-const char keys1[] = "wdsaeq";
-const char keys2[] = "ilkjou";
+const string EMPTYLINE = "                                                                                ";
+const string keys1 = "wdsaeq";
+const string keys2 = "ilkjou";
 const char ESC = 27;
-int const INVENTORY_SIZE = 1; //Player can hold up to one item
-int const NUM_KEYS = 6; //number of possible movement Keys
-int constexpr NUM_ROOMS = 5; //number of rooms in the Game
+inline string Room1[BOARD_DIMENSION::MAX_Y];
+inline string Room2[BOARD_DIMENSION::MAX_Y];
+inline string Menu[BOARD_DIMENSION::MAX_Y];
+inline string Instructions[BOARD_DIMENSION::MAX_Y];
+inline string EndingScreen[BOARD_DIMENSION::MAX_Y];
 
+int constexpr INVENTORY_SIZE = 1; //Player can hold up to one item
+int constexpr NUM_KEYS = 6; //number of possible movement Keys
+int constexpr NUM_ROOMS = 5; //number of rooms in the Game
 
 void gotoxy(int x, int y);
 void hideCursor();
 void cls();
 void SetTextColor(int color);
 int getColorForChar(char c);
+void ReadRoomLayoutFromFile(string FileName, int roomIndex);
 

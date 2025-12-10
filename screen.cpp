@@ -2,38 +2,36 @@
 #include <iostream>
 #include <windows.h>
 #include "Utils.h"
-#include "Rooms.h"
 #include "Player.h"
 #include "Spring.h"
 #include "Riddle.h"
 #include "Bomb.h"
 #include <random>
+#include <string>
 #include <algorithm>
-#include <Windows.h>
-
 #include <cctype> //  for tolower, isdigit
 
 using std::cout;
 using std::endl;
+using std::string;
 
 Screen::Screen() 
 {
-	loadItems();
-	memset(map, ' ', sizeof(map)); //initialize the map with spaces
-	for (int i = 0; i < MAX_Y; i++) {
-		map[i][MAX_X] = '\0'; //null-terminate each row
-	}
-	initaializeRoomsArray();
 
+	initaializeRoomsArray();
+	for (int i = 0; i < MAX_Y; i++) {
+		map[i].resize(MAX_X, ' ');
+	}
+	//loadItems();
 }
 void Screen::loadMap(int roomNumber)
 {
 	for (int i = 0; i < MAX_Y; i++) {
-		strncpy_s(map[i], Rooms[roomNumber][i],MAX_X);
-		map[i][MAX_X] = '\0'; //null-terminate each row
+		map[i] = Rooms[roomNumber][i];
+		//strncpy(map[i], Rooms[roomNumber][i], MAX_X);
+		//map[i][MAX_X] = '\0'; //null-terminate each row
 	}
 	currentRoom = roomNumber;
-	loadSprings();
 	loadItems();
 }
 void Screen::drawMap() {
@@ -112,7 +110,7 @@ void Screen::setChar(const Point& p, char c) {
 		cout << c;
 }
 
-void Screen::showKeyBinds(const char* keys1, const char* keys2) const
+void Screen::showKeyBinds(const string keys1, const string keys2) const
 {
 	int const INITIAL_Y = 19;
 	int const INITIAL_X1 = 11;
@@ -125,7 +123,7 @@ void Screen::showKeyBinds(const char* keys1, const char* keys2) const
 		cout << (unsigned char)toupper(keys2[i]); //print uppercase
 	}
 }
-void Screen::showMessage(const char* msg){
+void Screen::showMessage(string msg){
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
 	std::cout << EMPTYLINE << std::flush;//clear the line before
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
@@ -133,11 +131,18 @@ void Screen::showMessage(const char* msg){
 }
 
 void Screen::initaializeRoomsArray() {
-	Rooms[MENU] = menu;
-	Rooms[INSTRUCTIONS] = instructions;
-	Rooms[ROOM1] = room1;
-	Rooms[ROOM2] = room2;
-	Rooms[VICTORY] = endingScreen;
+	ReadRoomLayoutFromFile("Rooms/Menu.txt",roomIndex::MENU);
+	ReadRoomLayoutFromFile("Rooms/Instructions.txt", roomIndex::INSTRUCTIONS);
+	ReadRoomLayoutFromFile("Rooms/Room1.txt", roomIndex::ROOM1);
+	ReadRoomLayoutFromFile("Rooms/Room2.txt", roomIndex::ROOM2);
+	ReadRoomLayoutFromFile("Rooms/EndingScreen.txt", roomIndex::VICTORY);
+
+	
+	Rooms[MENU] = Menu;
+	Rooms[INSTRUCTIONS] = Instructions;
+	Rooms[ROOM1] = Room1;
+	Rooms[ROOM2] = Room2;
+	Rooms[VICTORY] = EndingScreen;
 }
 
 bool Screen::tryPushObstacle(const Point& obstaclePos, Keys direction, int force) {
@@ -233,6 +238,7 @@ void Screen::loadItems() {//enter the items from the board to the vector
 	doors.clear();
 	keys.clear();
 	doorIDs.clear();
+	loadSprings();
 	for (int y = 3; y < BOARD_DIMENSION::MAX_Y; y++) {
 		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
 			char c = getCharAt(Point(x, y));

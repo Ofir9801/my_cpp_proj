@@ -1,7 +1,12 @@
 #include <iostream>
 #include <windows.h> // Required for Windows API console functions
 #include <cstdlib>
+#include <string>
+#include <fstream>
 #include "Utils.h"
+
+using std::string;
+
 
 void gotoxy(int x, int y) {
     std::cout.flush();
@@ -47,4 +52,37 @@ int getColorForChar(char c)
 		return DARKGREY;
 	else
 		return WHITE;
+}
+
+void ReadRoomLayoutFromFile(string FileName, int roomIndex) {
+	std::ifstream inFile(FileName);
+	if (!inFile.is_open()) {
+		std::cerr << "Error: could not open file:" << FileName << std::endl;
+	}
+	string templine;
+	for (int i = 0; i < BOARD_DIMENSION::MAX_Y; i++) {
+		if (!std::getline(inFile, templine)) {
+			templine = "";
+		}
+		templine.resize(BOARD_DIMENSION::MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
+		switch (roomIndex) {
+		case roomIndex::MENU:
+			Menu[i] = templine;
+			break;
+		case roomIndex::INSTRUCTIONS:
+			Instructions[i] = templine;
+			break;
+		case roomIndex::ROOM1:
+			Room1[i] = templine;
+			break;
+		case roomIndex::ROOM2:
+			Room2[i] = templine;
+			break;
+		case roomIndex::VICTORY:
+			EndingScreen[i] = templine;
+			break;
+
+		}
+	}
+	inFile.close();
 }
