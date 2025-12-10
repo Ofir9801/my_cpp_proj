@@ -34,7 +34,7 @@ void Player::handleKeyPressed(char key_pressed) {
 	}
 }
 
-bool Player::addToInventory(char item, Point position)
+bool Player::addToInventory(char item, Point pos)
 {
 	bool added = false;
 	for (int i = 0; i < INVENTORY_SIZE && !added ; ++i) {
@@ -42,7 +42,7 @@ bool Player::addToInventory(char item, Point position)
 			inventory[i] = item; //add item to inventory
 			added = true;
 			if (item == objSigns::KEY)
-				map.addKeyToInventory(position, this->getChar());
+				map.addKeyToInventory(pos, this->getChar());
 		}
 	}
 	if (!added) {
@@ -180,6 +180,14 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 		}
 		return true; //if inventory is full its blocked
 	}
+	if (nextTile == objSigns::TORCH) {
+		if (addToInventory(objSigns::TORCH, nextPos)) {
+			map.setChar(nextPos, ' ');
+			return false;
+		}
+		return true; ////if inventory is full its blocked
+	}
+
 	if (isdigit((unsigned char)nextTile))  // check if it's a door
 		return atDoor(nextTile, nextPos);
 		
