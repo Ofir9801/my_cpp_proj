@@ -13,20 +13,25 @@ bool Riddle::engage(Screen& map, Player& player) const {
 	std::cout << question << std::endl;
 	std::cout << "----------------" << std::endl;
 	std::cout << "Press 1-4 to answer..." << std::endl;
-
-	char input = _getch();
-
-	if (input == answer) {
-		map.drawMap();
-		map.showMessage("Correct! +50 Points.");//random score for this moment
-		player.increaseScore(50);
-		map.setChar(position, ' ');
-		return true;
+	for(int i = 1; i <= options.size(); ++i) {
+		std::cout << i << ". " << options[i - 1] << std::endl;
 	}
-	else {
-		map.drawMap();
-		map.showMessage("WRONG! -1 Life.");
-		player.decreaseLife();
-		return false;
+	while (true) {//waiting for a proper answer from user
+		if (_kbhit()) {
+			char key = _getch();
+			if (key >= '1' && key < '1' + options.size()) {
+				int choiceIndex = key - '1';
+				if (choiceIndex == correctIndex) {
+					map.showMessage("Correct! The path is clear. +100 points!");
+					player.increaseScore(100);
+					return true; 
+				}
+				else {
+					map.showMessage("WRONG! You lost 50 points.");
+					player.increaseScore(-50);
+					return false;
+				}
+			}
+		}
 	}
 }

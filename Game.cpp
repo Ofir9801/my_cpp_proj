@@ -3,6 +3,7 @@
 #include <windows.h>
 #include "Game.h"
 #include "Utils.h"
+#include "Rooms.h"
 #include "Player.h"
 #include "Screen.h"
 #include <cctype> //  for tolower, isdigit
@@ -41,7 +42,7 @@ void Game::run() {
 		}
 
 		updateSwitches();
-		board.updateBombs();
+		board.updateBombs(player1, player2);
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
 		board.refreshSpringsDisplay(player1.getPosition(), player2.getPosition());

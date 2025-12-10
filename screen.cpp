@@ -2,36 +2,36 @@
 #include <iostream>
 #include <windows.h>
 #include "Utils.h"
+#include "Rooms.h"
 #include "Player.h"
 #include "Spring.h"
 #include "Riddle.h"
 #include "Bomb.h"
 #include <random>
-#include <string>
 #include <algorithm>
 #include <cctype> //  for tolower, isdigit
 
 using std::cout;
 using std::endl;
-using std::string;
 
 Screen::Screen() 
 {
-
-	initaializeRoomsArray();
+	loadItems();
+	memset(map, ' ', sizeof(map)); //initialize the map with spaces
 	for (int i = 0; i < MAX_Y; i++) {
-		map[i].resize(MAX_X, ' ');
+		map[i][MAX_X] = '\0'; //null-terminate each row
 	}
-	//loadItems();
+	initaializeRoomsArray();
+
 }
 void Screen::loadMap(int roomNumber)
 {
 	for (int i = 0; i < MAX_Y; i++) {
-		map[i] = Rooms[roomNumber][i];
-		//strncpy(map[i], Rooms[roomNumber][i], MAX_X);
-		//map[i][MAX_X] = '\0'; //null-terminate each row
+		strncpy_s(map[i], Rooms[roomNumber][i],MAX_X);
+		map[i][MAX_X] = '\0'; //null-terminate each row
 	}
 	currentRoom = roomNumber;
+	loadSprings();
 	loadItems();
 }
 void Screen::drawMap() {
@@ -84,22 +84,14 @@ void Screen::showPlayerInfo(const Player& p) {
 	case objSigns::PLAYER1:
 			gotoxy(PLAYER1_SIGN_START_X, PLAYER_SIGN_Y);
 			cout << playerChar << std::flush;
-			gotoxy(PLAYER1_LIVES_START_X, PLAYER_SIGN_Y);
-			cout << p.getLives() << std::flush;
 			gotoxy(PLAYER1_INV_START_X, PLAYER_INV_Y);
 			cout << p.getInventory() << std::flush;
-			gotoxy(PLAYER1_SCORE_START_X, PLAYER_INV_Y);
-			cout << p.getScore() << std::flush;
 		break;
 		case objSigns::PLAYER2:
 			gotoxy(PLAYER2_SIGN_START_X, PLAYER_SIGN_Y);
 			cout << playerChar << std::flush;
-			gotoxy(PLAYER2_LIVES_START_X, PLAYER_SIGN_Y);
-			cout << p.getLives()<< std::flush;
 			gotoxy(PLAYER2_INV_START_X, PLAYER_INV_Y);
-			cout << p.getInventory() << std::flush;
-			gotoxy(PLAYER2_SCORE_START_X, PLAYER_INV_Y);
-			cout << p.getScore() << std::flush;
+			cout << p.getInventory()<< std::flush;
 			break;
 	}
 }
@@ -118,7 +110,7 @@ void Screen::setChar(const Point& p, char c) {
 		cout << c;
 }
 
-void Screen::showKeyBinds(const string keys1, const string keys2) const
+void Screen::showKeyBinds(const char* keys1, const char* keys2) const
 {
 	int const INITIAL_Y = 19;
 	int const INITIAL_X1 = 11;
@@ -131,7 +123,7 @@ void Screen::showKeyBinds(const string keys1, const string keys2) const
 		cout << (unsigned char)toupper(keys2[i]); //print uppercase
 	}
 }
-void Screen::showMessage(string msg){
+void Screen::showMessage(const char* msg){
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
 	std::cout << EMPTYLINE << std::flush;//clear the line before
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
@@ -139,27 +131,11 @@ void Screen::showMessage(string msg){
 }
 
 void Screen::initaializeRoomsArray() {
-	if (ReadRoomLayoutFromFile(MenuPathWay, roomIndex::MENU)){
-		throw std::runtime_error("Something wrong with the file menu.txt");
-	}
-	if (ReadRoomLayoutFromFile(InstructionsPathWay, roomIndex::INSTRUCTIONS)) { 
-		throw std::runtime_error("Something wrong with the file instructiopn.txt"); 
-	}
-	if (ReadRoomLayoutFromFile(Room1PathWay, roomIndex::ROOM1)){
-		throw std::runtime_error("Something wrong with the file room1.txt"); 
-	}
-	if (ReadRoomLayoutFromFile(Room2PathWay, roomIndex::ROOM2)){ 
-		throw std::runtime_error("Something wrong with the file room2.txt"); 
-	}
-	if (ReadRoomLayoutFromFile(EndingScreenPathWay, roomIndex::VICTORY)){
-		throw std::runtime_error("Something wrong with the file endingscreen.txt"); 
-	}	
-	
-	Rooms[MENU] = Menu;
-	Rooms[INSTRUCTIONS] = Instructions;
-	Rooms[ROOM1] = Room1;
-	Rooms[ROOM2] = Room2;
-	Rooms[VICTORY] = EndingScreen;
+	Rooms[MENU] = menu;
+	Rooms[INSTRUCTIONS] = instructions;
+	Rooms[ROOM1] = room1;
+	Rooms[ROOM2] = room2;
+	Rooms[VICTORY] = endingScreen;
 }
 
 bool Screen::tryPushObstacle(const Point& obstaclePos, Keys direction, int force) {
@@ -255,7 +231,6 @@ void Screen::loadItems() {//enter the items from the board to the vector
 	doors.clear();
 	keys.clear();
 	doorIDs.clear();
-	loadSprings();
 	for (int y = 3; y < BOARD_DIMENSION::MAX_Y; y++) {
 		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
 			char c = getCharAt(Point(x, y));
@@ -276,8 +251,11 @@ void Screen::loadItems() {//enter the items from the board to the vector
 				keys.push_back(Key(x, y));
 			}
 			else if (c == '?') {
-				std::string q = "What is 2 + 2?\n1) 3\n2) 4\n3) 5\n4) 6";//TODO: better riddle managment
-				riddles.push_back(Riddle(Point(x, y), q, '2'));
+				//TODO: better riddle managment
+				std::string q = "What is 2 + 2?";
+				std::vector<std::string> options = { "3", "4", "5", "6" };
+				int correctIndex = 1;
+				riddles.push_back(Riddle(Point(x, y), q, options, correctIndex));
 			}
 		}
 		linkDoorsToKeysAndSwitches();
@@ -391,12 +369,13 @@ bool Screen::handleRiddle(const Point& p, Player& player) {
 	return false;
 }
 
-void Screen::updateBombs() {
-	for (size_t i = 0; i < activeBombs.size(); ) {
-		activeBombs[i].tick();
-		if (activeBombs[i].shouldExplode()) {
-			activeBombs[i].explode(*this);
-			setChar(activeBombs[i].getPosition(), ' ');
+void Screen::updateBombs(Player& p1, Player& p2) {
+	size_t i = 0;
+	for (auto& bomb : activeBombs) {
+		bomb.tick();
+		if (bomb.shouldExplode()) {
+			bomb.explode(*this, p1, p2);
+			setChar(bomb.getPosition(), ' ');
 			activeBombs.erase(activeBombs.begin() + i);
 		}
 		else {

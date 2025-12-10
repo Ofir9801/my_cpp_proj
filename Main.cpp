@@ -4,15 +4,11 @@
 #include "Utils.h"
 #include "Player.h"
 #include <windows.h>
+#include "Rooms.h"
 
 using std::cout;
 int main() {
-	try {
-		Screen board;
-		Game Game;
-		Game.run();
-	}
-	catch (const std::runtime_error& e) {
-		std::cout << "Exception caught: " << e.what() << std::endl;
-	}
+	Screen board;
+	Game Game;
+	Game.run();
 }

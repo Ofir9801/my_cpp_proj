@@ -8,18 +8,15 @@
 #include "Key.h"
 #include "Riddle.h"
 #include "Bomb.h"
-#include <string>
-#include <iostream>
 #include <vector>
 
 class Player; //forward declaration to avoid circular dependency
-using std::string;
+
 class Screen {
 private:
 	//Screen rectangle for 80x25 characters for the static objects
-	string map[MAX_Y];
-	//char map[MAX_Y][MAX_X + 1];
-	string* Rooms[NUM_ROOMS];
+	char map[MAX_Y][MAX_X + 1];
+	const char** Rooms[NUM_ROOMS];
 	size_t currentRoom = 0;
 	std::vector<Spring> springs;
 	std::vector<Switch> switches;
@@ -41,10 +38,10 @@ public:
 	size_t getCurrentRoom() const { return currentRoom; }
 	void showPlayerInfo(const Player& p);
 	void initaializeRoomsArray();
-	void showMessage(string msg);
+	void showMessage(const char* msg);
 	char getCharAt(const Point& p) const { return map[p.getY()][p.getX()]; }
 	void setChar(const Point& p, char c);//function to set a character on Screen at Point p, like picking up a key
-	void showKeyBinds(const string keys1, const string keys2)const;
+	void showKeyBinds(const char* keys1, const char* keys2)const;
 	bool tryPushObstacle(const Point& obstaclePos, Keys direction, int force);
 	void loadSprings();
 	Spring* getSpringAt(const Point& p);
@@ -63,6 +60,10 @@ public:
 	void addKeyToInventory(Point position, char p);
 	void RemoveKeyFromInventory(char p, Point newPos);
 	int GetDoorIdByKey(char p);
-	void updateBombs();
+	void updateBombs(Player& p1, Player& p2);
 	bool handleRiddle(const Point& p, Player& player);
+	bool isValid(const Point& p) const {
+		return p.getX() >= 0 && p.getX() < MAX_X &&p.getY() >= 0 && p.getY() < MAX_Y;
+	}
+	void addActiveBomb(const Point& p) { activeBombs.push_back(Bomb(p)); }
 };
