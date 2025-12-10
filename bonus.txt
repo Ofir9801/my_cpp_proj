@@ -10,3 +10,4 @@ doors - dark grey
 
 
 we change the switch that every time the player is hover above the switch it change his state in opposite to the possibility that when the switch turn on by the player it stay on the whole time.
+we did that every game isnt similar to previous one by randomize the keys and switches that in every game they linked to different door. 

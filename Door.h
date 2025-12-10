@@ -1,21 +1,21 @@
 #pragma once
-#include "point.h"
+#include "Point.h"
 class Screen;//forward declaration to avoid circular dependency
 
 class Door
 {
-	point position;
+	Point position;
 	char id = 0;
 	bool isOpen;
 	Screen* map;
 	bool connection = false; //indicates if the door is linked to a switch, default is false = no connection
 public:
 	Door(int x, int y, char _id, Screen* _map, bool connection = false) :
-		position(point(x, y, _id)),id(_id - '0'), isOpen(false), map(_map), connection(connection) {
+		position(Point(x, y, _id)),id(_id - '0'), isOpen(false), map(_map), connection(connection) {
 	}
 
 	void open();
-	bool isAt(const point& p) const {return position.getX() == p.getX() && position.getY() == p.getY(); }
+	bool isAt(const Point& p) const {return position == p;}
 	int getId() const { return id; }
 	bool getIsOpen() const { return isOpen; }
 	bool getConnection() const { return connection; }

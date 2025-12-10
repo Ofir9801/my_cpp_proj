@@ -7,6 +7,10 @@
 #include "Spring.h"
 #include "Riddle.h"
 #include "Bomb.h"
+#include <random>
+#include <algorithm>
+#include <Windows.h>
+
 #include <cctype> //  for tolower, isdigit
 
 using std::cout;
@@ -71,7 +75,7 @@ void Screen::drawMap(int roomNumber) {
 	else {drawMap();}
 }
 
-bool Screen::isWall(const point& p) const{
+bool Screen::isWall(const Point& p) const{
 	char c = getCharAt(p);
 	return c == '-' || c == '|' || c == 'X';
 }
@@ -93,7 +97,7 @@ void Screen::showPlayerInfo(const Player& p) {
 			break;
 	}
 }
-void Screen::setChar(const point& p, char c) {
+void Screen::setChar(const Point& p, char c) {
 	if (p.getX() < 0 || p.getX() >= MAX_X || p.getY() < 0 || p.getY() >= MAX_Y)
 		return;
 	map[p.getY()][p.getX()] = c;
@@ -136,9 +140,9 @@ void Screen::initaializeRoomsArray() {
 	Rooms[VICTORY] = endingScreen;
 }
 
-bool Screen::tryPushObstacle(const point& obstaclePos, Keys direction, int force) {
+bool Screen::tryPushObstacle(const Point& obstaclePos, Keys direction, int force) {
 	int chainLength = 0;
-	point scanner = obstaclePos;
+	Point scanner = obstaclePos;
 	while (getCharAt(scanner) == '*') {
 		chainLength++;
 		scanner.setDirection(direction);
@@ -158,39 +162,39 @@ void Screen::loadSprings() {
 	bool processed[BOARD_DIMENSION::MAX_Y][BOARD_DIMENSION::MAX_X] = { false };
 	for (int y = 0; y < BOARD_DIMENSION::MAX_Y; y++) {
 		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
-			point p(x, y);
+			Point p(x, y);
 			if (getCharAt(p) == objSigns::SPRING && !processed[y][x]) {
-				bool isHorizontal = (x + 1 < MAX_X && getCharAt(point(x + 1, y)) == objSigns::SPRING);
-				if (!isHorizontal && (y + 1 >= MAX_Y || getCharAt(point(x, y + 1)) != objSigns::SPRING)) {
+				bool isHorizontal = (x + 1 < MAX_X && getCharAt(Point(x + 1, y)) == objSigns::SPRING);
+				if (!isHorizontal && (y + 1 >= MAX_Y || getCharAt(Point(x, y + 1)) != objSigns::SPRING)) {
 					isHorizontal = true;
 				}
 
 				int length = 0;
 				Keys dir = Keys::STAY;
-				point currentStart(x, y);
+				Point currentStart(x, y);
 
 				if (isHorizontal) {//horizontal
 					int currX = x;
-					while (currX < MAX_X && getCharAt(point(currX, y)) == objSigns::SPRING) {
+					while (currX < MAX_X && getCharAt(Point(currX, y)) == objSigns::SPRING) {
 						processed[y][currX] = true;
 						length++;
 						currX++;
 					}
-					if (isWall(point(x - 1, y))) dir = Keys::RIGHT;
-					else if (isWall(point(x + length, y))) dir = Keys::LEFT;
-					else if (isWall(point(x, y - 1))) dir = Keys::DOWN;
-					else if (isWall(point(x, y + 1))) dir = Keys::UP;
+					if (isWall(Point(x - 1, y))) dir = Keys::RIGHT;
+					else if (isWall(Point(x + length, y))) dir = Keys::LEFT;
+					else if (isWall(Point(x, y - 1))) dir = Keys::DOWN;
+					else if (isWall(Point(x, y + 1))) dir = Keys::UP;
 				}
 				else { //vertical
 					int currY = y;
-					while (currY < MAX_Y && getCharAt(point(x, currY)) == objSigns::SPRING) {
+					while (currY < MAX_Y && getCharAt(Point(x, currY)) == objSigns::SPRING) {
 						processed[currY][x] = true;
 						length++;
 						currY++;
 					}
 					// walls check
-					if (isWall(point(x, y - 1))) dir = Keys::DOWN;
-					else if (isWall(point(x, y + length))) dir = Keys::UP;
+					if (isWall(Point(x, y - 1))) dir = Keys::DOWN;
+					else if (isWall(Point(x, y + length))) dir = Keys::UP;
 				}
 				if (dir != Keys::STAY) {
 					springs.push_back(Spring(currentStart, length, dir, *this));
@@ -199,7 +203,7 @@ void Screen::loadSprings() {
 		}
 	}
 }
-Spring* Screen::getSpringAt(const point& p) {
+Spring* Screen::getSpringAt(const Point& p) {
 	for (auto& s : springs) {
 		if (s.isPlayerOn(p)) {
 			return &s;
@@ -207,12 +211,12 @@ Spring* Screen::getSpringAt(const point& p) {
 	}
 	return nullptr;
 }
-void Screen::refreshSpringsDisplay(const point& p1, const point& p2) const {
+void Screen::refreshSpringsDisplay(const Point& p1, const Point& p2) const {
 	for (const auto& s : springs) {
 		bool p1On = s.isPlayerOn(p1);
 		bool p2On = s.isPlayerOn(p2);
 		if (!p1On && !p2On) {
-			s.draw(point(0, 0), false);
+			s.draw(Point(0, 0), false);
 		}
 	}
 }
@@ -227,38 +231,60 @@ void Screen::loadItems() {//enter the items from the board to the vector
 	switches.clear();
 	obstacles.clear();
 	doors.clear();
-	for (int y = 0; y < BOARD_DIMENSION::MAX_Y; y++) {
+	keys.clear();
+	doorIDs.clear();
+	for (int y = 3; y < BOARD_DIMENSION::MAX_Y; y++) {
 		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
-			char c = getCharAt(point(x, y));
-			if (c == '\\') {
+			char c = getCharAt(Point(x, y));
+			if (c == objSigns::SWITCH_OFF) {
 				switches.push_back(Switch(x, y, this, false));
 			}
-			else if (c == '/') {
+			else if (c == objSigns::SWITCH_ON) {
 				switches.push_back(Switch(x, y, this, true));
 			}
-			else if (c == '*') {
+			else if (c == objSigns::OBSTACLE) {
 				obstacles.push_back(Obstacle(x, y, this, 1));
 			}
 			else if (isdigit((unsigned char)c)) {
+				doorIDs.push_back(c - '0');
 				doors.push_back(Door(x, y, c, this));
 			}
+			else if (c == objSigns::KEY) {
+				keys.push_back(Key(x, y));
 			else if (c == '?') {
 				std::string q = "What is 2 + 2?\n1) 3\n2) 4\n3) 5\n4) 6";//TODO: better riddle managment
 				riddles.push_back(Riddle(point(x, y), q, '2'));
 			}
 		}
 	}
-	autoLinkSwitchesAndDoors();
+	linkDoorsToKeysAndSwitches();
+
 }
-void Screen::autoLinkSwitchesAndDoors() {
-	int levelNum = getCurrentRoom() - 1;
-	int currentDoorId = levelNum;
-	for (auto& s : switches) {
-		s.setTargetDoorId(currentDoorId);
+void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number of switches and  is equal to the number of doors
+	std::vector <int> doorIdCopy = doorIDs;  //make copy of doorIds vector 
+
+	std::random_device rd;  //use gemini to get known of the shuffle algorithm and how to integrate it with the code
+	std::mt19937 g(rd());	//the prompt is "give me idea to connect between doors id to switches and keys in randomize pattern in complexicity lower than o(n^2)
+
+	std::shuffle(doorIdCopy.begin(), doorIdCopy.end(), g);
+	for (int i = 0; i < keys.size(); i++) {
+		if (i >= doorIdCopy.size())
+			break;
+		int currentDoorId = doorIdCopy[i];
+		keys[i].setTargetDoorId(currentDoorId);
+	}
+	
+	std::shuffle(doorIdCopy.begin(), doorIdCopy.end(), g);
+	for (int i = 0; i < switches.size(); i++) {
+		if (i >= doorIdCopy.size())
+			break;
+		int currentDoorId = doorIdCopy[i];
+		switches[i].setTargetDoorId(currentDoorId);
 		setconnection(currentDoorId);
-		currentDoorId++;
 	}
 }
+
+
 bool Screen::isDoorOpen(int door_id)
 {
 	for (const auto& d : doors) {
@@ -298,6 +324,37 @@ bool Screen::SwitchState(int doorId) {
 			return s.getIsOn();
 	}
 }
+
+void Screen::addKeyToInventory(Point position, char p)
+{
+	for (auto& k : keys) {
+		if (k.getPosition() == position) {
+			k.setInUse(true, p);
+			break;
+		}
+	}
+}
+
+void Screen::RemoveKeyFromInventory(char p, Point newPos) {
+	for (auto& k : keys) {
+		if (k.getInUse() == true && k.getPlayerUse() == p) {
+			k.setInUse(false, ' ');
+			k.SetPosition(newPos);
+			break;
+		}
+	}
+}
+
+int Screen::GetDoorIdByKey(char p)
+{
+	bool flag = false;
+	for (auto& k : keys) {
+		if (k.getPlayerUse() == p) {
+			return k.getTargetDoorId();
+			break;
+		}
+	}
+	return -1;
 
 bool Screen::handleRiddle(const point& p, Player& player) {
 	for (auto it = riddles.begin(); it != riddles.end(); ++it) {

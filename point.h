@@ -3,14 +3,14 @@
 #include <iostream>
 #include <Windows.h>
 
-class point //classic point class for 2D coordinates
+class Point //classic Point class for 2D coordinates
 {
 	int x, y;// private fields by default
 	int diff_x = 0; //direction x
 	int diff_y = 0; //direction y
 	char ch; //character to draw
 public:
-	point(int _x = 0, int _y = 0, char _ch = ' ') { x = _x; y = _y; ch = _ch; }//constractor with default values
+	Point(int _x = 0, int _y = 0, char _ch = ' ') { x = _x; y = _y; ch = _ch; }//constractor with default values
 	//some general functions, may remove those later
 	int getX() const { return x; }
 	int getY() const { return y; }
@@ -19,12 +19,9 @@ public:
 	void setChar(char _ch) { ch = _ch; }
 	char getChar() const { return ch; }
 	void draw(char c, int color);
-	void draw(int color) {
-		draw(ch, color);
-	}
+	void draw(int color) {draw(ch, color);}
 	void move();
 	void setDirection(Keys dir, bool state = true, int speed = 1 );
 	Keys getDirectionEnum() const;
-
+	bool operator== (const Point& otherPos) const;
 };
-

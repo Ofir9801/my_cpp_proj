@@ -2,7 +2,7 @@
 #include "Screen.h"
 #include <cmath>
 
-bool Spring::isPlayerOn(const point& p) const {
+bool Spring::isPlayerOn(const Point& p) const {
     if (pushDirection == Keys::RIGHT || pushDirection == Keys::LEFT) {//horizontal check
         if (p.getY() != startPos.getY()) return false;
         return (p.getX() >= startPos.getX() && p.getX() < startPos.getX() + length);
@@ -13,7 +13,7 @@ bool Spring::isPlayerOn(const point& p) const {
     }
 }
 
-int Spring::calculateForce(const point& playerPos) const {
+int Spring::calculateForce(const Point& playerPos) const {
     int distFromStart = 0;
 
     if (pushDirection == Keys::RIGHT || pushDirection == Keys::LEFT) {
@@ -30,11 +30,11 @@ int Spring::calculateForce(const point& playerPos) const {
         return distFromStart + 1;
 	}
 }
-void Spring::draw(const point& playerPos, bool active) const{
+void Spring::draw(const Point& playerPos, bool active) const{
 	//logic: iterate through each segment of the spring
 	//deleting temporarily the spring character if the player is on/were on it
     for (int i = 0; i < length; i++) {
-        point currentSegment = startPos;
+        Point currentSegment = startPos;
         if (pushDirection == Keys::RIGHT || pushDirection == Keys::LEFT)
             currentSegment.setX(startPos.getX() + i);
         else
@@ -43,11 +43,8 @@ void Spring::draw(const point& playerPos, bool active) const{
             currentSegment.draw(objSigns::SPRING,map.IsColor() ? getColorForChar(objSigns::SPRING) : WHITE);
             continue;
         }
-        if (currentSegment.getX() == playerPos.getX() && currentSegment.getY() == playerPos.getY()) {
-        }
-        else {
-            currentSegment.draw(objSigns::SPRING, getColorForChar(playerPos.getChar()));
-           // currentSegment.draw(objSigns::SPRING,  BLACK);
+        if (currentSegment != playerPos) {
+            currentSegment.draw(objSigns::SPRING, map.IsColor() ? getColorForChar(playerPos.getChar()) : WHITE );
         }
     }
 }

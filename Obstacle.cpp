@@ -6,7 +6,7 @@ void Obstacle::push(int force, Keys dir) {
 	if (force < weight) {
 		return; // Not enough force to move the obstacle
 	}
-	point originalPos = position;
+	Point originalPos = position;
 	position.setDirection(dir);
 	position.move();
 	char next = map->getCharAt(position);

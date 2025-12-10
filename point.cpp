@@ -1,7 +1,7 @@
-#include "point.h"
+#include "Point.h"
 #include "Screen.h"
 
-void point::draw(char c, int color)
+void Point::draw(char c, int color)
 {
 	gotoxy(x, y);
 	SetTextColor(color);
@@ -9,12 +9,12 @@ void point::draw(char c, int color)
 	SetTextColor(WHITE); //reset to default color
 }
 
-void point::move() {
+void Point::move() {
 	x = (x + diff_x);
 	y = (y + diff_y);
 }
 
-void point::setDirection(Keys dir, bool state, int speed)
+void Point::setDirection(Keys dir, bool state, int speed)
 {
 	if (state) {
 		switch (dir) {
@@ -45,7 +45,7 @@ void point::setDirection(Keys dir, bool state, int speed)
 		diff_y = 0;
 	}
 }
-Keys point::getDirectionEnum() const
+Keys Point::getDirectionEnum() const
 {
 	if (diff_y < 0) {
 		return Keys::UP;
@@ -60,4 +60,10 @@ Keys point::getDirectionEnum() const
 		return Keys::LEFT;
 	}
 		return Keys::STAY;
+}
+
+bool Point::operator== (const Point& otherPos) const {
+	if (x == otherPos.x && y == otherPos.y)
+		return true;
+	return false;
 }

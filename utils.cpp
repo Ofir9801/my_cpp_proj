@@ -1,7 +1,6 @@
 #include <iostream>
 #include <windows.h> // Required for Windows API console functions
 #include <cstdlib>
-
 #include "Utils.h"
 
 void gotoxy(int x, int y) {

@@ -34,13 +34,15 @@ void Player::handleKeyPressed(char key_pressed) {
 	}
 }
 
-bool Player::addToInventory(char item)
+bool Player::addToInventory(char item, Point position)
 {
 	bool added = false;
 	for (int i = 0; i < INVENTORY_SIZE && !added ; ++i) {
 		if (inventory[i] == ' ') {
 			inventory[i] = item; //add item to inventory
 			added = true;
+			if (item == objSigns::KEY)
+				map.addKeyToInventory(position, this->getChar());
 		}
 	}
 	if (!added) {
@@ -50,10 +52,17 @@ bool Player::addToInventory(char item)
 	return true;
 }
 
+void Player::removeItem()
+{
+	map.RemoveKeyFromInventory(this->getChar(), position);
+	inventory[0] = ' '; 
+}
+
 void Player::dispose()
 {
-	if (inventory[0] != ' ') {
+	if (inventory[0] != ' ') { //fix this function
 		map.setChar(position, inventory[0]);
+		map.RemoveKeyFromInventory(this->getChar(),position);
 		if (inventory[0] == objSigns::BOMB) {
 			map.addActiveBomb(position);
 		}
@@ -100,8 +109,8 @@ int Player::computeStepsToTake() const {
 }
 
 bool Player::takeStep() {
-	point originalPos = position;
-	point nextCandidate = position;
+	Point originalPos = position;
+	Point nextCandidate = position;
 	nextCandidate.move();
 	char nextTile = map.getCharAt(nextCandidate);
 	bool blocked = false;
@@ -142,7 +151,7 @@ void Player::handleActiveSpring() {
 	// now we want to 'visualize' the spring if we are on one
 	if (activeSpring != nullptr) {
 		activeSpring->draw(position, true);
-		point checkWall = position;
+		Point checkWall = position;
 		checkWall.move();
 		if (map.isWall(checkWall)) {
 			int force = activeSpring->calculateForce(position);
@@ -162,9 +171,9 @@ void Player::finalizeMovement() {
 	}
 }
 
-bool Player::handleSpecialObjects(char nextTile, point nextPos, int force) {//function to handle special objects
+bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//function to handle special objects
 	if (nextTile == objSigns::KEY) {
-		if (addToInventory(objSigns::KEY)) {
+		if (addToInventory(objSigns::KEY,nextPos)) {
 			// clear the key from the tile we are moving onto (nextPos), not the player's old position
 			map.setChar(nextPos, ' ');
 			return false;
@@ -185,7 +194,7 @@ bool Player::handleSpecialObjects(char nextTile, point nextPos, int force) {//fu
 	return false;
 }
 
-void Player::reset(point newPosition) {
+void Player::reset(Point newPosition) {
 	position = newPosition;
 	state = true;
 	position.setDirection(Keys::STAY);
@@ -194,7 +203,7 @@ void Player::reset(point newPosition) {
 	finishedLevel = false;
 }
 
-bool Player::atDoor(unsigned char nextTile, point nextPos) {
+bool Player::atDoor(unsigned char nextTile, Point nextPos) {
 	int doorId = nextTile - '0';
 	if (map.ConnectionStatus(doorId)){ // connected to a switch
 		if (map.SwitchState(doorId)) {return OpenDoorWithKey(doorId, nextPos);}//true = switch is on 
@@ -208,14 +217,15 @@ bool Player::atDoor(unsigned char nextTile, point nextPos) {
 }
 
 
-bool Player::OpenDoorWithKey(int doorId, point nextPos) {
+bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
 	if (map.isDoorOpen(doorId)) {
 		clearFromScreen();
 		finishedLevel = true;
 		return false;
 	}
 	else {
-		if (hasItem(objSigns::KEY)) {
+			int keyDoorId = map.GetDoorIdByKey(this->getChar());
+			if(hasItem(objSigns::KEY) && keyDoorId == doorId){
 			removeItem();
 			map.showPlayerInfo(*this);
 			if (map.isWinningDoor(doorId)) {
@@ -232,7 +242,7 @@ bool Player::OpenDoorWithKey(int doorId, point nextPos) {
 			}
 		}
 		else {
-			map.showMessage("try look for a key to unlock this door");
+			map.showMessage("try look for the right key to unlock this door");
 			return true;
 		}
 	}

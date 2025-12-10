@@ -3,7 +3,7 @@
 class Screen;//forward declaration to avoid circular dependency
 class Obstacle
 {
-	point position;
+	Point position;
 	int weight;
 	Screen* map;
 public:
