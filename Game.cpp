@@ -118,7 +118,7 @@ void Game::showMenu(bool& started){
 			char key = (char)_getch();
 			switch (key) {
 			case '1':
-				changeRoom(ROOM3);
+				changeRoom(ROOM1);
 				inMenu = false;
 				break;
 			case '2':
@@ -148,9 +148,11 @@ void Game::changeRoom(int roomNumber)
 	if (roomNumber != MENU && roomNumber != INSTRUCTIONS && roomNumber != VICTORY) {
 	player1.reset(Point(1, 4, objSigns::PLAYER1));
 	player2.reset(Point(75, 4, objSigns::PLAYER2));
-		player1.draw();
-		player2.draw();
+	player1.draw();
+	player2.draw();
 	}
+	if (roomNumber == 3)
+		board.showMessage("it is very dark in here, you will need something to light it up");
 }
 
 void Game::updateSwitches() {

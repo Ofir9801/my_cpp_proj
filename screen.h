@@ -68,7 +68,7 @@ public:
 	bool handleRiddle(const Point& p, Player& player);
 	bool isDark() const { return isDarkRoom; }
 	void updateLighting(const Point& p1, const Point& p1Prev, const Player& player1,
-		const Point& p2, const Point& p2Prev, const Player& player2);
+						const Point& p2, const Point& p2Prev, const Player& player2);
 	bool isLit(int x, int y, const Point& p, int r);
 	void ProcessLightning(int cx, int cy, int radius, bool erase, const Point& p1, const Point& p2, const int r1, const int r2);
 };

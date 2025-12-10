@@ -39,8 +39,7 @@ void Screen::loadMap(int roomNumber)
 void Screen::drawMap() {
 	cls(); //clear the console
 	if (isDarkRoom) {
-		for (int i = 0; i < 2; i++){ cout << map[i]; }
-		showMessage("it is very dark in here, you will need something to light it up");
+		for (int i = 0; i < 2; i++) {cout << map[i];}
 	}
 	else {
 		for (int i = 0; i < MAX_Y; i++) {
@@ -426,7 +425,7 @@ bool Screen::isLit(int x, int y, const Point& p, int radius) {
 void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point& p1,const Point& p2, const int r1, const int r2) {
 	for (int y = cy - radius; y <= cy + radius; y++) {
 		for (int x = cx - radius; x <= cx + radius; x++) {
-			if (x < 2 || x >= MAX_X || y < 2 || y >= MAX_Y)
+			if (x < 0 || x >= MAX_X || y < 3 || y >= MAX_Y)
 				continue;
 
 			bool inRange = isLit(x, y, Point(cx, cy), radius); //check if point in distance

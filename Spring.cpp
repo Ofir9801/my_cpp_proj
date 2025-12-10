@@ -33,6 +33,9 @@ int Spring::calculateForce(const Point& playerPos) const {
 void Spring::draw(const Point& playerPos, bool active) const{
 	//logic: iterate through each segment of the spring
 	//deleting temporarily the spring character if the player is on/were on it
+    if (map.isDark()) {
+        return;
+    }
     for (int i = 0; i < length; i++) {
         Point currentSegment = startPos;
         if (pushDirection == Keys::RIGHT || pushDirection == Keys::LEFT)
