@@ -84,14 +84,22 @@ void Screen::showPlayerInfo(const Player& p) {
 	case objSigns::PLAYER1:
 			gotoxy(PLAYER1_SIGN_START_X, PLAYER_SIGN_Y);
 			cout << playerChar << std::flush;
+			gotoxy(PLAYER1_LIVES_START_X, PLAYER_SIGN_Y);
+			cout << p.getLives() << std::flush;
 			gotoxy(PLAYER1_INV_START_X, PLAYER_INV_Y);
 			cout << p.getInventory() << std::flush;
+			gotoxy(PLAYER1_SCORE_START_X, PLAYER_INV_Y);
+			cout << p.getScore() << std::flush;
 		break;
 		case objSigns::PLAYER2:
 			gotoxy(PLAYER2_SIGN_START_X, PLAYER_SIGN_Y);
 			cout << playerChar << std::flush;
+			gotoxy(PLAYER2_LIVES_START_X, PLAYER_SIGN_Y);
+			cout << p.getLives()<< std::flush;
 			gotoxy(PLAYER2_INV_START_X, PLAYER_INV_Y);
-			cout << p.getInventory()<< std::flush;
+			cout << p.getInventory() << std::flush;
+			gotoxy(PLAYER2_SCORE_START_X, PLAYER_INV_Y);
+			cout << p.getScore() << std::flush;
 			break;
 	}
 }
