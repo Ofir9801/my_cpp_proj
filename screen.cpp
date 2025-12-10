@@ -7,7 +7,6 @@
 #include "Riddle.h"
 #include "Bomb.h"
 #include <random>
-#include <string>
 #include <algorithm>
 #include <cctype> //  for tolower, isdigit
 
@@ -17,11 +16,10 @@ using std::string;
 
 Screen::Screen() 
 {
-
 	initaializeRoomsArray();
-	for (int i = 0; i < MAX_Y; i++) {
-		map[i].resize(MAX_X, ' ');
-	}
+for (int i = 0; i < MAX_Y; i++) {
+	map[i].resize(MAX_X, ' ');
+}
 	
 }
 void Screen::loadMap(int roomNumber)
@@ -91,22 +89,14 @@ void Screen::showPlayerInfo(const Player& p) {
 	case objSigns::PLAYER1:
 			gotoxy(PLAYER1_SIGN_START_X, PLAYER_SIGN_Y);
 			cout << playerChar << std::flush;
-			gotoxy(PLAYER1_LIVES_START_X, PLAYER_SIGN_Y);
-			cout << p.getLives() << std::flush;
 			gotoxy(PLAYER1_INV_START_X, PLAYER_INV_Y);
 			cout << p.getInventory() << std::flush;
-			gotoxy(PLAYER1_SCORE_START_X, PLAYER_INV_Y);
-			cout << p.getScore() << std::flush;
 		break;
 		case objSigns::PLAYER2:
 			gotoxy(PLAYER2_SIGN_START_X, PLAYER_SIGN_Y);
 			cout << playerChar << std::flush;
-			gotoxy(PLAYER2_LIVES_START_X, PLAYER_SIGN_Y);
-			cout << p.getLives()<< std::flush;
 			gotoxy(PLAYER2_INV_START_X, PLAYER_INV_Y);
-			cout << p.getInventory() << std::flush;
-			gotoxy(PLAYER2_SCORE_START_X, PLAYER_INV_Y);
-			cout << p.getScore() << std::flush;
+			cout << p.getInventory()<< std::flush;
 			break;
 	}
 }
@@ -138,7 +128,7 @@ void Screen::showKeyBinds() const
 		cout << (unsigned char)toupper(keys2[i]); //print uppercase
 	}
 }
-void Screen::showMessage(string msg){
+void Screen::showMessage(const char* msg){
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
 	std::cout << EMPTYLINE << std::flush;//clear the line before
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
@@ -266,7 +256,6 @@ void Screen::loadItems() {//enter the items from the board to the vector
 	doors.clear();
 	keys.clear();
 	doorIDs.clear();
-	loadSprings();
 	for (int y = 3; y < BOARD_DIMENSION::MAX_Y; y++) {
 		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
 			char c = getCharAt(Point(x, y));
@@ -286,9 +275,12 @@ void Screen::loadItems() {//enter the items from the board to the vector
 			else if (c == objSigns::KEY) {
 				keys.push_back(Key(x, y));
 			}
-			else if (c == objSigns::RIDDLE) {
-				std::string q = "What is 2 + 2?\n1) 3\n2) 4\n3) 5\n4) 6";//TODO: better riddle managment
-				riddles.push_back(Riddle(Point(x, y), q, '2'));
+			else if (c == objsigns::RIDDLE) {
+				//TODO: better riddle managment
+				std::string q = "What is 2 + 2?";
+				std::vector<std::string> options = { "3", "4", "5", "6" };
+				int correctIndex = 1;
+				riddles.push_back(Riddle(Point(x, y), q, options, correctIndex));
 			}
 		}
 		linkDoorsToKeysAndSwitches();

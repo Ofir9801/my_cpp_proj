@@ -1,21 +1,10 @@
 #pragma once
-#include <string>
-#include <iostream>
-
-using std::string;
-
 enum INFO_SLOTS {
 	PLAYER1_SIGN_START_X = 11,
-	PLAYER1_LIVES_START_X = 24,
-	PLAYER1_SCORE_START_X = 24,
-	PLAYER1_INV_START_X = 11,
-
-	PLAYER2_SIGN_START_X = 63,
-	PLAYER2_LIVES_START_X = 74,
-	PLAYER2_SCORE_START_X = 74,
-	PLAYER2_INV_START_X = 63,
-
+	PLAYER2_SIGN_START_X = 70,
 	PLAYER_SIGN_Y = 0,
+	PLAYER1_INV_START_X = 11,
+	PLAYER2_INV_START_X = 70,
 	PLAYER_INV_Y = 1
 };
 enum BOARD_DIMENSION{ MAX_X = 80, MAX_Y = 25 };
@@ -49,6 +38,7 @@ enum objSigns {
 	SWITCH_OFF = '\\',
 	SWITCH_ON = '/',
 	BOMB = '@',
+	RIDDLE = '?',
 };
 enum Color {
 	BLACK = 0,
@@ -98,5 +88,4 @@ void hideCursor();
 void cls();
 void SetTextColor(int color);
 int getColorForChar(char c);
-bool ReadRoomLayoutFromFile(string FileName, int roomIndex);
 
