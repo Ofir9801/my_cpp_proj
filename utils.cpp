@@ -54,10 +54,14 @@ int getColorForChar(char c)
 		return WHITE;
 }
 
-void ReadRoomLayoutFromFile(string FileName, int roomIndex) {
+bool ReadRoomLayoutFromFile(string FileName, int roomIndex) {
 	std::ifstream inFile(FileName);
+	//if (!inFile.is_open()) {
+	//	std::cerr << "Error: could not open file:" << FileName << std::endl;
+	//}
+	bool error = false;
 	if (!inFile.is_open()) {
-		std::cerr << "Error: could not open file:" << FileName << std::endl;
+		error = true;
 	}
 	string templine;
 	for (int i = 0; i < BOARD_DIMENSION::MAX_Y; i++) {
@@ -85,4 +89,5 @@ void ReadRoomLayoutFromFile(string FileName, int roomIndex) {
 		}
 	}
 	inFile.close();
+	return error;
 }

@@ -139,12 +139,11 @@ void Screen::showMessage(string msg){
 }
 
 void Screen::initaializeRoomsArray() {
-	ReadRoomLayoutFromFile("Rooms/Menu.txt",roomIndex::MENU);
-	ReadRoomLayoutFromFile("Rooms/Instructions.txt", roomIndex::INSTRUCTIONS);
-	ReadRoomLayoutFromFile("Rooms/Room1.txt", roomIndex::ROOM1);
-	ReadRoomLayoutFromFile("Rooms/Room2.txt", roomIndex::ROOM2);
-	ReadRoomLayoutFromFile("Rooms/EndingScreen.txt", roomIndex::VICTORY);
-
+	if (ReadRoomLayoutFromFile(MenuPathWay, roomIndex::MENU)){throw std::runtime_error("Something wrong with the file menu.txt");}
+	if (ReadRoomLayoutFromFile(InstructionsPathWay, roomIndex::INSTRUCTIONS)) { throw std::runtime_error("Something wrong with the file instructiopn.txt"); }
+	if (ReadRoomLayoutFromFile(Room1PathWay, roomIndex::ROOM1)){ throw std::runtime_error("Something wrong with the file room1.txt"); }
+	if (ReadRoomLayoutFromFile(Room2PathWay, roomIndex::ROOM2)){ throw std::runtime_error("Something wrong with the file room2.txt"); }
+	if (ReadRoomLayoutFromFile(EndingScreenPathWay, roomIndex::VICTORY)){ throw std::runtime_error("Something wrong with the file endingscreen.txt"); }	
 	
 	Rooms[MENU] = Menu;
 	Rooms[INSTRUCTIONS] = Instructions;
