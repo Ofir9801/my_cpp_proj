@@ -1,5 +1,7 @@
 #pragma once
 #include "point.h"//using Point class for Player position
+#include <string>
+#include <iostream>
 class Screen;//forward declaration to avoid circular dependency
 
 
@@ -10,7 +12,7 @@ class Player
 	Point springDir; //direction of the flight
 	Point position; //Player's position on the map
 	char inventory[INVENTORY_SIZE+1]; //Player can hold up to one item
-	char p_keys[NUM_KEYS];
+	string p_keys;
 	Screen& map; //reference to the Game Screen
 	bool state = true; //Player state - can move or not
 	bool finishedLevel = false;
@@ -20,8 +22,8 @@ class Player
 	int score = 0;
 
 public:
-	Player(const Point& point, const char(&the_keys)[NUM_KEYS + 1], Screen& theScreen) :map(theScreen), position(point) {
-		memcpy(p_keys, the_keys, NUM_KEYS * sizeof(p_keys[0]));
+	Player(const Point& point, const string(&keys), Screen& theScreen) :map(theScreen), position(point), p_keys(keys)
+	{
 		inventory[0] = ' '; //empty inventory
 		inventory[INVENTORY_SIZE] = '\0'; //null-terminate the inventory string
 	}

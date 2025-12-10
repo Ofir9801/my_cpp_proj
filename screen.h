@@ -11,12 +11,13 @@
 #include <vector>
 
 class Player; //forward declaration to avoid circular dependency
+using std::string;
 
 class Screen {
 private:
 	//Screen rectangle for 80x25 characters for the static objects
-	char map[MAX_Y][MAX_X + 1];
-	const char** Rooms[NUM_ROOMS];
+	string map[MAX_Y];
+	string* Rooms[NUM_ROOMS];
 	size_t currentRoom = 0;
 	std::vector<Spring> springs;
 	std::vector<Switch> switches;
@@ -39,7 +40,7 @@ public:
 	size_t getCurrentRoom() const { return currentRoom; }
 	void showPlayerInfo(const Player& p);
 	void initaializeRoomsArray();
-	void showMessage(const char* msg);
+	void showMessage(string msg);
 	char getCharAt(const Point& p) const { return map[p.getY()][p.getX()]; }
 	void setChar(const Point& p, char c);//function to set a character on Screen at Point p, like picking up a key
 	void showKeyBinds()const;
@@ -61,7 +62,7 @@ public:
 	void addKeyToInventory(Point position, char p);
 	void RemoveKeyFromInventory(char p, Point newPos);
 	int GetDoorIdByKey(char p);
-	void updateBombs(Player& p1, Player& p2);
+	void updateBombs();
 	bool handleRiddle(const Point& p, Player& player);
 	bool isDark() const { return isDarkRoom; }
 	void updateLighting(const Point& p1, const Point& p1Prev, const Player& player1,

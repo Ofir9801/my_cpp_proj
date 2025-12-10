@@ -26,7 +26,6 @@ void Screen::loadMap(int roomNumber)
 {
 	for (int i = 0; i < MAX_Y; i++) {
 		map[i] = Rooms[roomNumber][i];
-
 	}
 	currentRoom = roomNumber;
 	if (roomNumber == roomIndex::ROOM3)
@@ -86,21 +85,28 @@ bool Screen::isWall(const Point& p) const{
 
 void Screen::showPlayerInfo(const Player& p) {
 	char playerChar = p.getChar();
-			gotoxy(PLAYER1_LIVES_START_X, PLAYER_SIGN_Y);
-			cout << p.getLives() << std::flush;
+
 	switch (playerChar) {
 	case objSigns::PLAYER1:
-			gotoxy(PLAYER1_SIGN_START_X, PLAYER_SIGN_Y);
-			cout << playerChar << std::flush;
-			gotoxy(PLAYER1_INV_START_X, PLAYER_INV_Y);
-			cout << p.getInventory() << std::flush;
+		gotoxy(PLAYER1_SIGN_START_X, PLAYER_SIGN_Y);
+		cout << playerChar << std::flush;
+		gotoxy(PLAYER1_LIVES_START_X, PLAYER_SIGN_Y);
+		cout << p.getLives() << std::flush;
+		gotoxy(PLAYER1_INV_START_X, PLAYER_INV_Y);
+		cout << p.getInventory() << std::flush;
+		gotoxy(PLAYER1_SCORE_START_X, PLAYER_INV_Y);
+		cout << p.getScore() << std::flush;
 		break;
-		case objSigns::PLAYER2:
-			gotoxy(PLAYER2_SIGN_START_X, PLAYER_SIGN_Y);
-			cout << playerChar << std::flush;
-			gotoxy(PLAYER2_INV_START_X, PLAYER_INV_Y);
-			cout << p.getInventory()<< std::flush;
-			break;
+	case objSigns::PLAYER2:
+		gotoxy(PLAYER2_SIGN_START_X, PLAYER_SIGN_Y);
+		cout << playerChar << std::flush;
+		gotoxy(PLAYER2_LIVES_START_X, PLAYER_SIGN_Y);
+		cout << p.getLives() << std::flush;
+		gotoxy(PLAYER2_INV_START_X, PLAYER_INV_Y);
+		cout << p.getInventory() << std::flush;
+		gotoxy(PLAYER2_SCORE_START_X, PLAYER_INV_Y);
+		cout << p.getScore() << std::flush;
+		break;
 	}
 }
 void Screen::setChar(const Point& p, char c) {
@@ -131,7 +137,7 @@ void Screen::showKeyBinds() const
 		cout << (unsigned char)toupper(keys2[i]); //print uppercase
 	}
 }
-void Screen::showMessage(const char* msg){
+void Screen::showMessage(string msg){
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
 	std::cout << EMPTYLINE << std::flush;//clear the line before
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
@@ -278,7 +284,7 @@ void Screen::loadItems() {//enter the items from the board to the vector
 			else if (c == objSigns::KEY) {
 				keys.push_back(Key(x, y));
 			}
-			else if (c == objsigns::RIDDLE) {
+			else if (c == objSigns::RIDDLE) {
 				//TODO: better riddle managment
 				std::string q = "What is 2 + 2?";
 				std::vector<std::string> options = { "3", "4", "5", "6" };
@@ -402,7 +408,7 @@ void Screen::updateLighting(const Point& p1, const Point& p1Prev, const Player& 
 	int r1 = player1.hasItem(objSigns::TORCH) ? LIGHT_RADIUS_TORCH : LIGHT_RADIUS_DEFAULT;
 	int r2 = player2.hasItem(objSigns::TORCH) ? LIGHT_RADIUS_TORCH : LIGHT_RADIUS_DEFAULT;
 
-	//erase old aread
+	//erase old area
 	ProcessLightning(p1Prev.getX(), p1Prev.getY(), LIGHT_RADIUS_TORCH, true,p1,p2,r1,r2);
 	ProcessLightning(p2Prev.getX(), p2Prev.getY(), LIGHT_RADIUS_TORCH, true,p1,p2,r1,r2);
 

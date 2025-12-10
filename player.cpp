@@ -3,7 +3,6 @@
 #include "Spring.h"
 #include <cctype>
 #include <windows.h>
-#include <conio.h> //?
 
 void Player::draw()
 {
@@ -54,7 +53,7 @@ bool Player::addToInventory(char item, Point pos)
 
 void Player::removeItem()
 {
-	map.RemoveKeyFromInventory(this->getChar(), position);
+	if (inventory[0] == objSigns::KEY){map.RemoveKeyFromInventory(this->getChar(), position);}
 	inventory[0] = ' '; 
 }
 
