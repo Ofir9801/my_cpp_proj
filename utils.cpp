@@ -43,8 +43,52 @@ int getColorForChar(char c)
 		return GREEN;
 	else if (c == objSigns::SWITCH_OFF)
 		return RED;
+	else if (c == objSigns::TORCH)
+		return YELLOW;
 	else if (isdigit((unsigned char)c))
 		return DARKGREY;
+	
 	else
 		return WHITE;
+}
+
+bool ReadRoomLayoutFromFile(string FileName, int roomIndex) {
+	std::ifstream inFile(FileName);
+	//if (!inFile.is_open()) {
+	//	std::cerr << "Error: could not open file:" << FileName << std::endl;
+	//}
+	bool error = false;
+	if (!inFile.is_open()) {
+		error = true;
+	}
+	string templine;
+	for (int i = 0; i < BOARD_DIMENSION::MAX_Y; i++) {
+		if (!std::getline(inFile, templine)) {
+			templine = "";
+		}
+		templine.resize(BOARD_DIMENSION::MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
+		switch (roomIndex) {
+		case roomIndex::MENU:
+			Menu[i] = templine;
+			break;
+		case roomIndex::INSTRUCTIONS:
+			Instructions[i] = templine;
+			break;
+		case roomIndex::ROOM1:
+			Room1[i] = templine;
+			break;
+		case roomIndex::ROOM2:
+			Room2[i] = templine;
+			break;
+		case roomIndex::ROOM3:
+			Room3[i] = templine;
+			break;
+		case roomIndex::VICTORY:
+			EndingScreen[i] = templine;
+			break;
+
+		}
+	}
+	inFile.close();
+	return error;
 }

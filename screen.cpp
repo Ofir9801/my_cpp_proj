@@ -2,7 +2,6 @@
 #include <iostream>
 #include <windows.h>
 #include "Utils.h"
-#include "Rooms.h"
 #include "Player.h"
 #include "Spring.h"
 #include "Riddle.h"
@@ -13,42 +12,48 @@
 
 using std::cout;
 using std::endl;
+using std::string;
 
 Screen::Screen() 
 {
-	loadItems();
-	memset(map, ' ', sizeof(map)); //initialize the map with spaces
-	for (int i = 0; i < MAX_Y; i++) {
-		map[i][MAX_X] = '\0'; //null-terminate each row
-	}
 	initaializeRoomsArray();
-
+for (int i = 0; i < MAX_Y; i++) {
+	map[i].resize(MAX_X, ' ');
+}
+	
 }
 void Screen::loadMap(int roomNumber)
 {
 	for (int i = 0; i < MAX_Y; i++) {
-		strncpy_s(map[i], Rooms[roomNumber][i],MAX_X);
-		map[i][MAX_X] = '\0'; //null-terminate each row
+		map[i] = Rooms[roomNumber][i];	
 	}
 	currentRoom = roomNumber;
-	loadSprings();
+	if (roomNumber == roomIndex::ROOM3)
+		isDarkRoom = true;
+	else
+		isDarkRoom = false;
 	loadItems();
 }
 void Screen::drawMap() {
 	cls(); //clear the console
-	for (int i = 0; i < MAX_Y; i++) {
-		gotoxy(0, i);
-		if (i > 2 && colorToggle) {
-			for (int j = 0; j < MAX_X; j++) {
-				char c = map[i][j];
-				int color = getColorForChar(c);
-				SetTextColor(color);
-				cout << c;
+	if (isDarkRoom) {
+		for (int i = 0; i < 2; i++) {cout << map[i];}
+	}
+	else {
+		for (int i = 0; i < MAX_Y; i++) {
+			gotoxy(0, i);
+			if (i > 2 && colorToggle) {
+				for (int j = 0; j < MAX_X; j++) {
+					char c = map[i][j];
+					int color = getColorForChar(c);
+					SetTextColor(color);
+					cout << c;
+				}
+				SetTextColor(WHITE); //reset to default color
 			}
-			SetTextColor(WHITE); //reset to default color
-		}
-		else {
-			cout << map[i];
+			else {
+				cout << map[i];
+			}
 		}
 	}
 }
@@ -110,7 +115,7 @@ void Screen::setChar(const Point& p, char c) {
 		cout << c;
 }
 
-void Screen::showKeyBinds(const char* keys1, const char* keys2) const
+void Screen::showKeyBinds() const
 {
 	int const INITIAL_Y = 19;
 	int const INITIAL_X1 = 11;
@@ -131,11 +136,31 @@ void Screen::showMessage(const char* msg){
 }
 
 void Screen::initaializeRoomsArray() {
-	Rooms[MENU] = menu;
-	Rooms[INSTRUCTIONS] = instructions;
-	Rooms[ROOM1] = room1;
-	Rooms[ROOM2] = room2;
-	Rooms[VICTORY] = endingScreen;
+	if (ReadRoomLayoutFromFile(MenuPathWay, roomIndex::MENU)){
+		throw std::runtime_error("Something wrong with the file menu.txt");
+	}
+	if (ReadRoomLayoutFromFile(InstructionsPathWay, roomIndex::INSTRUCTIONS)) { 
+		throw std::runtime_error("Something wrong with the file instructiopn.txt"); 
+	}
+	if (ReadRoomLayoutFromFile(Room1PathWay, roomIndex::ROOM1)){
+		throw std::runtime_error("Something wrong with the file room1.txt"); 
+	}
+	if (ReadRoomLayoutFromFile(Room2PathWay, roomIndex::ROOM2)){ 
+		throw std::runtime_error("Something wrong with the file room2.txt"); 
+	}
+	if (ReadRoomLayoutFromFile(Room3PathWay, roomIndex::ROOM3)) {
+		throw std::runtime_error("Something wrong with the file room3.txt");
+	}
+	if (ReadRoomLayoutFromFile(EndingScreenPathWay, roomIndex::VICTORY)){
+		throw std::runtime_error("Something wrong with the file endingscreen.txt"); 
+	}	
+	
+	Rooms[MENU] = Menu;
+	Rooms[INSTRUCTIONS] = Instructions;
+	Rooms[ROOM1] = Room1;
+	Rooms[ROOM2] = Room2;
+	Rooms[ROOM3] = Room3;
+	Rooms[VICTORY] = EndingScreen;
 }
 
 bool Screen::tryPushObstacle(const Point& obstaclePos, Keys direction, int force) {
@@ -250,7 +275,7 @@ void Screen::loadItems() {//enter the items from the board to the vector
 			else if (c == objSigns::KEY) {
 				keys.push_back(Key(x, y));
 			}
-			else if (c == '?') {
+			else if (c == objsigns::RIDDLE) {
 				//TODO: better riddle managment
 				std::string q = "What is 2 + 2?";
 				std::vector<std::string> options = { "3", "4", "5", "6" };
@@ -369,13 +394,64 @@ bool Screen::handleRiddle(const Point& p, Player& player) {
 	return false;
 }
 
-void Screen::updateBombs(Player& p1, Player& p2) {
-	size_t i = 0;
-	for (auto& bomb : activeBombs) {
-		bomb.tick();
-		if (bomb.shouldExplode()) {
-			bomb.explode(*this, p1, p2);
-			setChar(bomb.getPosition(), ' ');
+void Screen::updateLighting(const Point& p1, const Point& p1Prev, const Player& player1, const Point& p2, const Point& p2Prev, const Player& player2)
+{
+	int r1 = player1.hasItem(objSigns::TORCH) ? LIGHT_RADIUS_TORCH : LIGHT_RADIUS_DEFAULT;
+	int r2 = player2.hasItem(objSigns::TORCH) ? LIGHT_RADIUS_TORCH : LIGHT_RADIUS_DEFAULT;
+
+	//erase old aread
+	ProcessLightning(p1Prev.getX(), p1Prev.getY(), LIGHT_RADIUS_TORCH, true,p1,p2,r1,r2);
+	ProcessLightning(p2Prev.getX(), p2Prev.getY(), LIGHT_RADIUS_TORCH, true,p1,p2,r1,r2);
+
+	ProcessLightning(p1.getX(), p1.getY(), r1, false, p1, p2, r1, r2);
+	ProcessLightning(p2.getX(), p2.getY(), r2, false, p1, p2, r1, r2);
+
+}
+
+bool Screen::isLit(int x, int y, const Point& p, int radius) {
+	int dx = x - p.getX(); //calculate the the distance between two points by x
+	int dy = y - p.getY(); //calculate the the distance between two points by y
+	return (dx * dx + dy * dy) <= (radius * radius); //true if the given point is in player's light radius
+}
+
+void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point& p1,const Point& p2, const int r1, const int r2) {
+	for (int y = cy - radius; y <= cy + radius; y++) {
+		for (int x = cx - radius; x <= cx + radius; x++) {
+			if (x < 0 || x >= MAX_X || y < 3 || y >= MAX_Y)
+				continue;
+
+			bool inRange = isLit(x, y, Point(cx, cy), radius); //check if point in distance
+
+			if (inRange) {
+				if (erase) {
+					if (!isLit(x, y, p1, r1) && !isLit(x, y, p2, r2)) {
+						gotoxy(x, y);
+						std::cout << ' ';
+					}
+				}
+				else{
+					gotoxy(x, y);
+					char c = map[y][x];
+					if (colorToggle) {
+						SetTextColor(getColorForChar(c));
+						std::cout << c;
+						SetTextColor(WHITE);
+					}
+					else {
+						std::cout << c;
+					}
+				}
+			}
+		}
+	}
+}
+
+void Screen::updateBombs() {
+	for (size_t i = 0; i < activeBombs.size(); ) {
+		activeBombs[i].tick();
+		if (activeBombs[i].shouldExplode()) {
+			activeBombs[i].explode(*this);
+			setChar(activeBombs[i].getPosition(), ' ');
 			activeBombs.erase(activeBombs.begin() + i);
 		}
 		else {

@@ -40,6 +40,8 @@ void Game::run() {
 			Sleep(2000);
 			firstMessage = false;
 		}
+		Point p1Prev = player1.getPosition();
+		Point p2Prev = player2.getPosition();
 
 		updateSwitches();
 		board.updateBombs(player1, player2);
@@ -50,6 +52,14 @@ void Game::run() {
 
 		player1.move();
 		player2.move();
+
+		if (board.isDark()) {
+			board.updateLighting(player1.getPosition(), p1Prev, player1,
+								player2.getPosition(), p2Prev, player2);
+		}
+		player1.draw();
+		player2.draw();
+
 		Sleep(130);
 		
 		if (_kbhit()) {
@@ -79,8 +89,7 @@ void Game::run() {
 				player2.handleKeyPressed((char)key);
 			}
 		}
-		player1.draw();
-		player2.draw();
+
 		gamecycle++;
 
 		if (player1.hasFinished() && player2.hasFinished()) {
@@ -120,7 +129,7 @@ void Game::showMenu(bool& started){
 				break;
 			case '8':
 				changeRoom(INSTRUCTIONS);
-				board.showKeyBinds(keys1,keys2);
+				board.showKeyBinds();
 				a = (char)_getch();
 				changeRoom(MENU);
 				break;
@@ -140,9 +149,11 @@ void Game::changeRoom(int roomNumber)
 	if (roomNumber != MENU && roomNumber != INSTRUCTIONS && roomNumber != VICTORY) {
 	player1.reset(Point(1, 4, objSigns::PLAYER1));
 	player2.reset(Point(75, 4, objSigns::PLAYER2));
-		player1.draw();
-		player2.draw();
+	player1.draw();
+	player2.draw();
 	}
+	if (roomNumber == 3)
+		board.showMessage("it is very dark in here, you will need something to light it up");
 }
 
 void Game::updateSwitches() {

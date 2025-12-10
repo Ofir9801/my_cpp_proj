@@ -27,6 +27,7 @@ private:
 	std::vector<Riddle> riddles;
 	std::vector<Bomb> activeBombs;
 	bool colorToggle = false;
+	bool isDarkRoom = false;
 public:
 	friend class Game;
 	Screen();
@@ -41,7 +42,7 @@ public:
 	void showMessage(const char* msg);
 	char getCharAt(const Point& p) const { return map[p.getY()][p.getX()]; }
 	void setChar(const Point& p, char c);//function to set a character on Screen at Point p, like picking up a key
-	void showKeyBinds(const char* keys1, const char* keys2)const;
+	void showKeyBinds()const;
 	bool tryPushObstacle(const Point& obstaclePos, Keys direction, int force);
 	void loadSprings();
 	Spring* getSpringAt(const Point& p);
@@ -62,6 +63,11 @@ public:
 	int GetDoorIdByKey(char p);
 	void updateBombs(Player& p1, Player& p2);
 	bool handleRiddle(const Point& p, Player& player);
+	bool isDark() const { return isDarkRoom; }
+	void updateLighting(const Point& p1, const Point& p1Prev, const Player& player1,
+						const Point& p2, const Point& p2Prev, const Player& player2);
+	bool isLit(int x, int y, const Point& p, int r);
+	void ProcessLightning(int cx, int cy, int radius, bool erase, const Point& p1, const Point& p2, const int r1, const int r2);
 	bool isValid(const Point& p) const {
 		return p.getX() >= 0 && p.getX() < MAX_X &&p.getY() >= 0 && p.getY() < MAX_Y;
 	}

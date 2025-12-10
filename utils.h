@@ -14,7 +14,8 @@ enum roomIndex {
 	INSTRUCTIONS = 1,
 	ROOM1 = 2,
 	ROOM2 = 3,
-	VICTORY = 4
+	ROOM3 = 4,
+	VICTORY = 5
 };
 enum Keys {
 	UP,
@@ -29,9 +30,11 @@ enum objSigns {
 	PLAYER2 = '&',
 	KEY = 'K',
 	OBSTACLE = '*',
+	TORCH = '!',
 	SPRING = '#',
 	DOOR = '1',
 	EMPTY = ' ',
+	RIDDLE = '?',
 	SWITCH_OFF = '\\',
 	SWITCH_ON = '/',
 	BOMB = '@',
@@ -56,15 +59,30 @@ enum Color {
 	WHITE = 15
 };
 
-const char EMPTYLINE[] = "                                                                                ";
-const char keys1[] = "wdsaeq";
-const char keys2[] = "ilkjou";
 const char ESC = 27;
-int const INVENTORY_SIZE = 1; //Player can hold up to one item
-int const NUM_KEYS = 6; //number of possible movement Keys
-int constexpr NUM_ROOMS = 5; //number of rooms in the Game
+const string EMPTYLINE = "                                                                                ";
+const string keys1 = "wdsaeq";
+const string keys2 = "ilkjou";
 
+inline string Room1[BOARD_DIMENSION::MAX_Y];
+inline string Room2[BOARD_DIMENSION::MAX_Y];
+inline string Room3[BOARD_DIMENSION::MAX_Y];
+inline string Menu[BOARD_DIMENSION::MAX_Y];
+inline string Instructions[BOARD_DIMENSION::MAX_Y];
+inline string EndingScreen[BOARD_DIMENSION::MAX_Y];
 
+const string MenuPathWay = "Rooms/Menu.txt";
+const string Room1PathWay = "Rooms/Room1.txt";
+const string Room2PathWay = "Rooms/Room2.txt";
+const string Room3PathWay = "Rooms/Room3.txt";
+const string EndingScreenPathWay = "Rooms/EndingScreen.txt";
+const string InstructionsPathWay = "Rooms/Instructions.txt";
+
+int constexpr INVENTORY_SIZE = 1; //Player can hold up to one item
+int constexpr NUM_KEYS = 6; //number of possible movement wdKeys
+int constexpr NUM_ROOMS = 6; //number of rooms in the Game
+int constexpr LIGHT_RADIUS_TORCH = 7;
+int constexpr LIGHT_RADIUS_DEFAULT = 2;
 void gotoxy(int x, int y);
 void hideCursor();
 void cls();
