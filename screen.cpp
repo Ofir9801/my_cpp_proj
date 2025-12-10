@@ -139,11 +139,21 @@ void Screen::showMessage(string msg){
 }
 
 void Screen::initaializeRoomsArray() {
-	if (ReadRoomLayoutFromFile(MenuPathWay, roomIndex::MENU)){throw std::runtime_error("Something wrong with the file menu.txt");}
-	if (ReadRoomLayoutFromFile(InstructionsPathWay, roomIndex::INSTRUCTIONS)) { throw std::runtime_error("Something wrong with the file instructiopn.txt"); }
-	if (ReadRoomLayoutFromFile(Room1PathWay, roomIndex::ROOM1)){ throw std::runtime_error("Something wrong with the file room1.txt"); }
-	if (ReadRoomLayoutFromFile(Room2PathWay, roomIndex::ROOM2)){ throw std::runtime_error("Something wrong with the file room2.txt"); }
-	if (ReadRoomLayoutFromFile(EndingScreenPathWay, roomIndex::VICTORY)){ throw std::runtime_error("Something wrong with the file endingscreen.txt"); }	
+	if (ReadRoomLayoutFromFile(MenuPathWay, roomIndex::MENU)){
+		throw std::runtime_error("Something wrong with the file menu.txt");
+	}
+	if (ReadRoomLayoutFromFile(InstructionsPathWay, roomIndex::INSTRUCTIONS)) { 
+		throw std::runtime_error("Something wrong with the file instructiopn.txt"); 
+	}
+	if (ReadRoomLayoutFromFile(Room1PathWay, roomIndex::ROOM1)){
+		throw std::runtime_error("Something wrong with the file room1.txt"); 
+	}
+	if (ReadRoomLayoutFromFile(Room2PathWay, roomIndex::ROOM2)){ 
+		throw std::runtime_error("Something wrong with the file room2.txt"); 
+	}
+	if (ReadRoomLayoutFromFile(EndingScreenPathWay, roomIndex::VICTORY)){
+		throw std::runtime_error("Something wrong with the file endingscreen.txt"); 
+	}	
 	
 	Rooms[MENU] = Menu;
 	Rooms[INSTRUCTIONS] = Instructions;
