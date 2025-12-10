@@ -33,7 +33,8 @@ enum objSigns {
 	DOOR = '1',
 	EMPTY = ' ',
 	SWITCH_OFF = '\\',
-	SWITCH_ON = '/'
+	SWITCH_ON = '/',
+	BOMB = '@',
 };
 enum Color {
 	BLACK = 0,

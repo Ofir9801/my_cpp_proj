@@ -42,6 +42,7 @@ void Game::run() {
 		}
 
 		updateSwitches();
+		board.updateBombs();
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
 		board.refreshSpringsDisplay(player1.getPosition(), player2.getPosition());

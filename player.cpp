@@ -60,9 +60,12 @@ void Player::removeItem()
 
 void Player::dispose()
 {
-	if (inventory[0] != ' ') {
+	if (inventory[0] != ' ') { //fix this function
 		map.setChar(position, inventory[0]);
 		map.RemoveKeyFromInventory(this->getChar(),position);
+		if (inventory[0] == objSigns::BOMB) {
+			map.addActiveBomb(position);
+		}
 		position.draw(map.IsColor() ? getColorForChar(position.getChar()) : WHITE);
 		inventory[0] = ' ';
 	}

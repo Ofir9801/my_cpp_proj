@@ -6,6 +6,8 @@
 #include "Obstacle.h"
 #include "Door.h"
 #include "Key.h"
+#include "Riddle.h"
+#include "Bomb.h"
 #include <vector>
 
 class Player; //forward declaration to avoid circular dependency
@@ -22,6 +24,8 @@ private:
 	std::vector<Door> doors;
 	std::vector<int>doorIDs;
 	std::vector<Key> keys;
+	std::vector<Riddle> riddles;
+	std::vector<Bomb> activeBombs;
 	bool colorToggle = false;
 public:
 	friend class Game;
@@ -56,4 +60,6 @@ public:
 	void addKeyToInventory(Point position, char p);
 	void RemoveKeyFromInventory(char p, Point newPos);
 	int GetDoorIdByKey(char p);
+	void updateBombs();
+	bool handleRiddle(const point& p, Player& player);
 };
