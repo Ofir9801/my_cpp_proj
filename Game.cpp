@@ -43,7 +43,7 @@ void Game::run() {
 		Point p2Prev = player2.getPosition();
 
 		updateSwitches();
-		board.updateBombs();
+		board.updateBombs(player1, player2);
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
 		board.refreshSpringsDisplay(player1.getPosition(), player2.getPosition());
@@ -88,7 +88,13 @@ void Game::run() {
 				player2.handleKeyPressed((char)key);
 			}
 		}
-
+		if(isGameOver()) {
+			cls();
+			gotoxy(30, 10);
+			board.showMessage("Game Over! both of the players has no lives left.");
+			exitGame = false;
+			continue;
+		}
 		gamecycle++;
 
 		if (player1.hasFinished() && player2.hasFinished()) {

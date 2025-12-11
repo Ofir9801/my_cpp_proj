@@ -95,7 +95,6 @@ void Player::move() {
 }
 
 
-
 void Player::applySpringDirectionIfNeeded() {
 	if (springCyclesLeft > 0) {
 		position.setDirection(springDir.getDirectionEnum());
@@ -267,4 +266,18 @@ bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
 			return true;
 		}
 	}
+}
+void Player::decreaseLife() {
+	if (lives > 0) {
+		lives--;
+		if (lives == 0) {
+			state = false;
+			map.showMessage("You have lost all your lives!");
+			clearFromScreen();
+		}
+		else {
+			map.showMessage("You lost a life! Lives left: " + std::to_string(lives));
+		}
+	}
+
 }

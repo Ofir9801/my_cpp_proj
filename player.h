@@ -49,7 +49,7 @@ public:
 	bool OpenDoorWithKey(int doorId, Point nextPos);
 	int getLives() const { return lives; }
 	int getScore() const { return score; }
-	void decreaseLife() { lives--; }
+	void decreaseLife();
 	void increaseScore(int amount) { score += amount; }
 	bool isAlive() const { return lives > 0; }
 };
