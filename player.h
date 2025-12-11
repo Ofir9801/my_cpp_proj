@@ -31,7 +31,7 @@ public:
 	void draw(); 
 	void handleKeyPressed(char key_pressed);
 	bool addToInventory(char item,Point position);
-	char getChar() const { return position.getChar(); }
+	char getChar() const { return position.getChar(); } 
 	const char* getInventory() const { return inventory; }
 	bool hasItem(char item) const { return inventory[0] == item; }
 	void removeItem();

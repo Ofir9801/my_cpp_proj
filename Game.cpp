@@ -46,6 +46,7 @@ void Game::run() {
 		Point p2Prev = player2.getPosition();
 
 		updateSwitches();
+		LoadRiddles();
 		board.updateBombs(player1, player2);
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
@@ -132,7 +133,7 @@ void Game::showMenu(bool& started){
 				break;
 			case '2':
 				SetColorfullGame();
-				changeRoom(ROOM1);
+				changeRoom(ROOM3);
 				inMenu = false;
 				break;
 			case '8':
