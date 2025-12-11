@@ -5,6 +5,9 @@
 #include "Utils.h"
 #include "Player.h"
 #include "Screen.h"
+#include <fstream>
+#include <random>
+#include <algorithm>
 #include <cctype> //  for tolower, isdigit
 
 
@@ -171,4 +174,65 @@ void Game::updateSwitches() {
 void Game::SetColorfullGame() {
 	// Enable color mode in the game
 	board.colorToggle = true;
+}
+
+void Game::LoadRiddles()
+{
+	for (int i = 0; i < NUMS_OF_RIDDLES; i++) {
+		bool error = false;
+		Riddle temp = ReadRiddleFromFile(RiddlePathWay, i, error);
+		if (error) {
+			throw std::runtime_error("Something wrong with the file riddle.txt");
+		}
+		else {
+			board.riddles.push_back(temp);
+		}
+		
+	}
+	
+}
+Riddle Game::ReadRiddleFromFile(string FileName, int RiddleIndex, bool& error) {
+	std::ifstream inFile(FileName);
+	std::string question;
+	std::string correctAnswer;
+	std::vector<std::string> options;
+	int correctIndex;
+
+	if (!inFile.is_open()) {
+		error = true;
+	}
+	string templine;
+	for (int i = 0; i < RiddleIndex; i++) { //skip to the right riddle index
+		for (int j = 0; j < 5; j++) { //every riddle is represnt by 5 lines in riddle.txt
+			if (!std::getline(inFile, templine)) {
+				templine = "";
+			}
+		}
+	}
+
+	for (int i = 0; i < 5; i++) {
+		if (!std::getline(inFile, templine)) {
+			templine = "";
+		}
+		if (i == 0) { question = templine; } //first line is the question
+		else if (i == 1) { //second line is the right answers
+			correctAnswer = templine;
+			options.push_back(correctAnswer);
+		}
+		else { options.push_back(templine); } // other 3 lines is wrong answers
+	}
+
+	inFile.close();
+
+	//randomize the possible answers
+	std::random_device rd;
+	std::mt19937 g(rd());
+
+	std::shuffle(options.begin(), options.end(), g);
+	for (int i = 0; i < options.size(); i++) {
+		if (options[i] == correctAnswer)
+			correctIndex = i;
+	}
+
+	return Riddle(question, options, correctIndex);
 }

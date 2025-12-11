@@ -284,13 +284,13 @@ void Screen::loadItems() {//enter the items from the board to the vector
 			else if (c == objSigns::KEY) {
 				keys.push_back(Key(x, y));
 			}
-			else if (c == objSigns::RIDDLE) {
-				//TODO: better riddle managment
-				std::string q = "What is 2 + 2?";
-				std::vector<std::string> options = { "3", "4", "5", "6" };
-				int correctIndex = 1;
-				riddles.push_back(Riddle(Point(x, y), q, options, correctIndex));
-			}
+			//else if (c == objSigns::RIDDLE) {
+			//	//TODO: better riddle managment
+			//	std::string q = "What is 2 + 2?";
+			//	std::vector<std::string> options = { "3", "4", "5", "6" };
+			//	int correctIndex = 1;
+			//	riddles.push_back(Riddle(Point(x, y), q, options, correctIndex));
+			//}
 		}
 		linkDoorsToKeysAndSwitches();
 	}
@@ -389,12 +389,15 @@ int Screen::GetDoorIdByKey(char p) {
 	return -1;
 }
 
-bool Screen::handleRiddle(const Point& p, Player& player) {
+
+
+bool Screen::handleRiddle(Player& p) {
 	for (auto it = riddles.begin(); it != riddles.end(); ++it) {
-		if (it->isAt(p)) {
-			bool solved = it->engage(*this, player);
+		if (it->isSolved()) { continue; }
+		else{
+			bool solved = it->engage(*this, p);
 			if (solved) {
-				riddles.erase(it);
+				it->ChangeSolve(true);
 				return true;
 			}
 			return false;

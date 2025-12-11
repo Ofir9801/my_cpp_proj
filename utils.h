@@ -87,12 +87,15 @@ const string Room2PathWay = "Rooms/Room2.txt";
 const string Room3PathWay = "Rooms/Room3.txt";
 const string EndingScreenPathWay = "Rooms/EndingScreen.txt";
 const string InstructionsPathWay = "Rooms/Instructions.txt";
+const string RiddlePathWay = "riddle.txt";
+
 
 int constexpr INVENTORY_SIZE = 1; //Player can hold up to one item
 int constexpr NUM_KEYS = 6; //number of possible movement wdKeys
 int constexpr NUM_ROOMS = 6; //number of rooms in the Game
 int constexpr LIGHT_RADIUS_TORCH = 7;
 int constexpr LIGHT_RADIUS_DEFAULT = 2;
+int constexpr NUMS_OF_RIDDLES = 4;
 void gotoxy(int x, int y);
 void hideCursor();
 void cls();

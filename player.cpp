@@ -182,14 +182,13 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 			map.setChar(nextPos, ' ');
 			return false;
 		}
-		return true; ////if inventory is full its blocked
+		return true; //if inventory is full its blocked
 	}
 	if(nextTile == objSigns::RIDDLE){
-		if (map.handleRiddle(nextPos, *this)) {
+		if (map.handleRiddle(*this)){
 			return false;
 		}
 		else {
-			//map.setChar(nextPos, ' ');
 			return true;
 		}
 	}
@@ -198,7 +197,7 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 			map.setChar(nextPos, ' ');
 			return false;
 		}
-		return true; ////if inventory is full its blocked
+		return true; //if inventory is full its blocked
 	}
 	if (isdigit((unsigned char)nextTile))  // check if it's a door
 		return atDoor(nextTile, nextPos);

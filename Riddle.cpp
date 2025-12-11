@@ -4,6 +4,7 @@
 #include <iostream>
 #include <conio.h>
 #include "Utils.h"
+#include <fstream>
 
 bool Riddle::engage(Screen& map, Player& player) const {
 	cls();

@@ -58,9 +58,6 @@ int getColorForChar(char c)
 
 bool ReadRoomLayoutFromFile(string FileName, int roomIndex) {
 	std::ifstream inFile(FileName);
-	//if (!inFile.is_open()) {
-	//	std::cerr << "Error: could not open file:" << FileName << std::endl;
-	//}
 	bool error = false;
 	if (!inFile.is_open()) {
 		error = true;

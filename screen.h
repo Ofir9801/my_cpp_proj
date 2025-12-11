@@ -63,7 +63,7 @@ public:
 	void RemoveKeyFromInventory(char p, Point newPos);
 	int GetDoorIdByKey(char p);
 	void updateBombs(Player& p1, Player& p2);
-	bool handleRiddle(const Point& p, Player& player);
+	bool handleRiddle(Player &player);
 	bool isDark() const { return isDarkRoom; }
 	void updateLighting(const Point& p1, const Point& p1Prev, const Player& player1,
 						const Point& p2, const Point& p2Prev, const Player& player2);
