@@ -21,5 +21,5 @@ public:
 	}
 	bool engage(Screen& map, Player& player) const;
 	bool isSolved() { return solved; }
-	bool ChangeSolve(bool b) { solved = b; }
+	void ChangeSolve(bool b) { solved = b; }
 };
