@@ -293,6 +293,7 @@ void Screen::loadItems() {//enter the items from the board to the vector
 			//}
 		}
 		linkDoorsToKeysAndSwitches();
+		loadSprings();
 	}
 }
 	void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number of switches and  is equal to the number of doors
