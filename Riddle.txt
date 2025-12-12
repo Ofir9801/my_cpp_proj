@@ -1,17 +1,17 @@
 What is the symbol of player 1?
-#
-@
 $
+@
+#
 %
 What is the capital of France?
-Pariz
-Berlin
 Paris
+Berlin
+Pariz
 Madrid
 Which language is this game written in?
-Python
-Java
 C++
+Java
+Python
 C#
 What is the mass of the sun?
 2*10^30
