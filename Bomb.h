@@ -12,7 +12,7 @@ class Bomb
 	void destroyCell(Screen& map, Player& p1, Player& p2, int x, int y, int distance); //helper function, self explanatory
 	void handlePlayerHit(Player& player); //helper function, self explanatory
 public:
-	Bomb(const Point& pos) : position(pos), timer(5), active(true) {
+	Bomb(const Point& pos) : position(pos), timer(10000), active(true) {
 		position.setChar(objSigns::BOMB);
 	}
 	void tick() { if (active) timer--;}

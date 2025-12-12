@@ -128,6 +128,7 @@ bool Player::takeStep() {
 			currentForce = 1;
 		}
 		position = originalPos;
+		position.setDirection(Keys::STAY);
 		return true; // stop further steps
 	}
 	else { // success: move to nextCandidate
@@ -151,6 +152,7 @@ void Player::handleActiveSpring() {
 		Point checkWall = position;
 		checkWall.move();
 		if (map.isWall(checkWall)) {
+			Sleep(200); //pause to show the spring effect
 			int force = activeSpring->calculateForce(position);
 			springCyclesLeft = force * force;
 			currentForce = force;
@@ -185,7 +187,8 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 		return true; //if inventory is full its blocked
 	}
 	if(nextTile == objSigns::RIDDLE){
-		if (map.handleRiddle(*this)){
+		this->position.setDirection(Keys::STAY); //try to make it stay when hit a riddle to avoid touching it several times in a row
+		if (map.handleRiddle(nextPos, *this)){
 			return false;
 		}
 		else {

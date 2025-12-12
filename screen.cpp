@@ -392,19 +392,23 @@ int Screen::GetDoorIdByKey(char p) {
 
 
 
-bool Screen::handleRiddle(Player& p) {
+bool Screen::handleRiddle(Point riddlePos, Player& p) {
 	for (auto it = riddles.begin(); it != riddles.end(); ++it) {
-		if (it->isSolved()) { continue; }
+		if (it->isSolved()) { continue; }//continuing if solved
 		else{
 			bool solved = it->engage(*this, p);
+			drawMap(); //redraw the map after riddle engagement
 			if (solved) {
 				it->ChangeSolve(true);
+				setChar(riddlePos, ' '); //remove riddle from the map
 				return true;
 			}
 			return false;
 		}
 	}
-	return false;
+	this->showMessage("No more riddles left!");
+	setChar(riddlePos, ' '); //remove riddle from the map if no more riddles left
+	return true;
 }
 
 void Screen::updateLighting(const Point& p1, const Point& p1Prev, const Player& player1, const Point& p2, const Point& p2Prev, const Player& player2)

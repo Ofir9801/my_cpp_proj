@@ -8,7 +8,7 @@
 
 bool Riddle::engage(Screen& map, Player& player) const {
 	cls();
-	gotoxy(0, 10);
+	gotoxy(10, 10);
 	std::cout << "RIDDLE TIME!" << std::endl;
 	std::cout << "----------------" << std::endl;
 	std::cout << question << std::endl;
