@@ -109,6 +109,10 @@ bool Player::takeStep() {
 	Point originalPos = position;
 	Point nextCandidate = position;
 	nextCandidate.move();
+
+	if (originalPos == nextCandidate)
+		return true;
+
 	char nextTile = board.getCharAt(nextCandidate);
 	bool blocked = false;
 
