@@ -445,6 +445,9 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 					}
 				}
 				else{
+					if ((x == p1.getX() && y == p1.getY()) || (x == p2.getX() && y == p2.getY())){
+						continue;
+					}
 					gotoxy(x, y);
 					char c = board[y][x];
 					if (colorToggle) {
