@@ -497,19 +497,6 @@ void Screen::deleteSpring(Point position)
 	}
 }
 
-/*
-
-	bool flag = false;
-	std::vector<Spring>::iterator it = springs.begin();
-	while (it != springs.end() && !flag) {
-		if (it->isPointOn(position)){
-			it = springs.erase(it);
-			flag = true;
-		}
-		else { ++it; }
-	}
-}*/
-
 void Screen::deleteSwitch(Point position){
 	bool flag = false;
 	std::vector<Switch>::iterator it = switches.begin();

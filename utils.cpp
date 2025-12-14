@@ -47,6 +47,10 @@ int getColorForChar(char c)
 		return GREEN;
 	else if (c == objSigns::SWITCH_OFF)
 		return RED;
+	else if (c == objSigns::BOMB)
+		return LIGHTRED;
+	else if (c == objSigns::RIDDLE)
+		return LIGHTGREEN;
 	else if (c == objSigns::TORCH)
 		return YELLOW;
 	else if (isdigit((unsigned char)c))

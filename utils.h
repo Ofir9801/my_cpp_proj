@@ -43,7 +43,6 @@ enum objSigns {
 	OBSTACLE = '*',
 	TORCH = '!',
 	SPRING = '#',
-	DOOR = '1',
 	EMPTY = ' ',
 	RIDDLE = '?',
 	SWITCH_OFF = '\\',
