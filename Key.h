@@ -4,7 +4,6 @@ class Screen;//forward declaration to avoid circular dependency
 
 class Key {
     Point position;
-    //Screen* map;
     int targetDoorId = -1;
     bool inUse = false;
     char playerUse = ' ' ; //the id of the player who use the key,' ' = not in use

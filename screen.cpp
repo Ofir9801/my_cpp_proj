@@ -19,13 +19,13 @@ Screen::Screen()
 {
 	initaializeRoomsArray();
 	for (int i = 0; i < MAX_Y; i++) {
-		map[i].resize(MAX_X, ' ');
+		board[i].resize(MAX_X, ' ');
 	}
 }
 void Screen::loadMap(int roomNumber)
 {
 	for (int i = 0; i < MAX_Y; i++) {
-		map[i] = Rooms[roomNumber][i];
+		board[i] = Rooms[roomNumber][i];
 	}
 	currentRoom = roomNumber;
 	if (roomNumber == roomIndex::ROOM3)
@@ -37,14 +37,14 @@ void Screen::loadMap(int roomNumber)
 void Screen::drawMap() {
 	cls(); //clear the console
 	if (isDarkRoom) {
-		for (int i = 0; i < 2; i++) {cout << map[i];}
+		for (int i = 0; i < 2; i++) {cout << board[i];}
 	}
 	else {
 		for (int i = 0; i < MAX_Y; i++) {
 			gotoxy(0, i);
 			if (i > 2 && colorToggle) {
 				for (int j = 0; j < MAX_X; j++) {
-					char c = map[i][j];
+					char c = board[i][j];
 					int color = getColorForChar(c);
 					SetTextColor(color);
 					cout << c;
@@ -52,7 +52,7 @@ void Screen::drawMap() {
 				SetTextColor(WHITE); //reset to default color
 			}
 			else {
-				cout << map[i];
+				cout << board[i];
 			}
 		}
 	}
@@ -64,14 +64,14 @@ void Screen::drawMap(int roomNumber) {
 			gotoxy(0, i);
 			if (i > 2) {
 				for (int j = 0; j < MAX_X; j++) {
-					char c = map[i][j];
+					char c = board[i][j];
 					SetTextColor(BROWN);
 					cout << c;
 				}
 				SetTextColor(WHITE); //reset to default color
 			}
 			else {
-				cout << map[i];
+				cout << board[i];
 			}
 		}
 	}
@@ -112,7 +112,7 @@ void Screen::showPlayerInfo(const Player& p) {
 void Screen::setChar(const Point& p, char c) {
 	if (p.getX() < 0 || p.getX() >= MAX_X || p.getY() < 0 || p.getY() >= MAX_Y)
 		return;
-	map[p.getY()][p.getX()] = c;
+	board[p.getY()][p.getX()] = c;
 	gotoxy(p.getX(), p.getY());
 	if (colorToggle) {
 		SetTextColor(getColorForChar(c));
@@ -255,7 +255,7 @@ void Screen::refreshSpringsDisplay(const Point& p1, const Point& p2) const {
 
 void Screen::clearMessegeArea(int const counter)
 {
-	if (counter % 20 == 0) // clear message area every 20 cycles
+	if (counter % 40 == 0) // clear message area every 40 cycles
 		showMessage(EMPTYLINE);
 }
 
@@ -397,17 +397,22 @@ bool Screen::handleRiddle(Point riddlePos, Player& p) {
 		if (it->isSolved()) { continue; }//continuing if solved
 		else{
 			bool solved = it->engage(*this, p);
-			drawMap(); //redraw the map after riddle engagement
+			drawMap(); //redraw the board after riddle engagement
 			if (solved) {
 				it->ChangeSolve(true);
-				setChar(riddlePos, ' '); //remove riddle from the map
+				showMessage("Correct! The path is clear. +100 points!");
+				setChar(riddlePos, ' '); //remove riddle from the board
 				return true;
 			}
-			return false;
+			else {
+				showMessage("WRONG! You lost 50 points.");
+				return false;
+			}
+			
 		}
 	}
 	this->showMessage("No more riddles left!");
-	setChar(riddlePos, ' '); //remove riddle from the map if no more riddles left
+	setChar(riddlePos, ' '); //remove riddle from the board if no more riddles left
 	return true;
 }
 
@@ -448,7 +453,7 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 				}
 				else{
 					gotoxy(x, y);
-					char c = map[y][x];
+					char c = board[y][x];
 					if (colorToggle) {
 						SetTextColor(getColorForChar(c));
 						std::cout << c;

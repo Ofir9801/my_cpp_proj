@@ -19,7 +19,7 @@ public:
 		correctAnswer = options[correctIndex];
 	
 	}
-	bool engage(Screen& map, Player& player) const;
+	bool engage(Screen& board, Player& player) const;
 	bool isSolved() { return solved; }
 	void ChangeSolve(bool b) { solved = b; }
 };

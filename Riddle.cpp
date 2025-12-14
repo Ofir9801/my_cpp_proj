@@ -6,7 +6,7 @@
 #include "Utils.h"
 #include <fstream>
 
-bool Riddle::engage(Screen& map, Player& player) const {
+bool Riddle::engage(Screen& board, Player& player) const {
 	cls();
 	gotoxy(10, 10);
 	std::cout << "RIDDLE TIME!" << std::endl;
@@ -23,12 +23,10 @@ bool Riddle::engage(Screen& map, Player& player) const {
 			if (key >= '1' && key < '1' + options.size()) {
 				int choiceIndex = key - '1';
 				if (choiceIndex == correctIndex) {
-					map.showMessage("Correct! The path is clear. +100 points!");
 					player.increaseScore(100);
 					return true; 
 				}
 				else {
-					map.showMessage("WRONG! You lost 50 points.");
 					player.increaseScore(-50);
 					return false;
 				}

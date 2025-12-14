@@ -4,44 +4,44 @@
 #include "Utils.h"
 #include <algorithm> // for std::max, std::abs
 
-void Bomb::explode(Screen& map, Player& p1, Player& p2) {
+void Bomb::explode(Screen& board, Player& p1, Player& p2) {
 	active = false;
-	map.showMessage("BOOM! The bomb exploded.");
+	board.showMessage("BOOM! The bomb exploded.");
 	std::vector<Point> affectedPoints;//collecting first all the exploded tiles
 	int bx = position.getX();
 	int by = position.getY();
 	for (int dy = -3; dy <= 3; dy++) {
 		for (int dx = -3; dx <= 3; dx++) {
 			Point target(bx + dx, by + dy);
-			if (!map.isValid(target)) continue; //none board tiles
-			if (isShielded(map, position, target)) continue;
+			if (!board.isValid(target)) continue; //none board tiles
+			if (isShielded(board, position, target)) continue;
 			affectedPoints.push_back(target);
 		}
 	}
 	for (const auto& p : affectedPoints) {
-		char currentChar = map.getCharAt(p);
-		if (currentChar == ' ' || currentChar == objSigns::OBSTACLE || map.isWall(p)) {//currently without player
-			map.setChar(p, 'B');//for visual purposes
+		char currentChar = board.getCharAt(p);
+		if (currentChar == ' ' || currentChar == objSigns::OBSTACLE || board.isWall(p)) {//currently without player
+			board.setChar(p, 'B');//for visual purposes
 		}
 	}
 	Sleep(300);
 	for (const auto& p : affectedPoints) {
 		int distance = (std::max)(std::abs(p.getX() - bx), std::abs(p.getY() - by));
-		destroyCell(map, p1, p2, p.getX(), p.getY(), distance);
+		destroyCell(board, p1, p2, p.getX(), p.getY(), distance);
 	}
 }
 
-void Bomb::destroyCell(Screen& map, Player& p1, Player& p2, int x, int y, int distance) {
+void Bomb::destroyCell(Screen& board, Player& p1, Player& p2, int x, int y, int distance) {
 	Point target(x, y);
-	if (map.isWall(target)) {
-		if (distance <= 1) map.setChar(target, ' ');
-		else map.setChar(target, '|');
+	if (board.isWall(target)) {
+		if (distance <= 1) board.setChar(target, ' ');
+		else board.setChar(target, '|');
 		return;
 	}
 	if (p1.getPosition() == target) handlePlayerHit(p1);
 	if (p2.getPosition() == target) handlePlayerHit(p2);
 	if (p1.getPosition() != target && p2.getPosition() != target) {
-		map.setChar(target, ' ');
+		board.setChar(target, ' ');
 	}
 
 }
@@ -52,7 +52,7 @@ void Bomb::handlePlayerHit(Player& player) {
 	Sleep(500);
 	player.reset(Point(dest.getX(), dest.getY(), player.getChar()));
 }
-bool Bomb::isShielded(Screen& map, Point bombPos, Point targetPos) {//bonus - handling walls. prototype so far
+bool Bomb::isShielded(Screen& board, Point bombPos, Point targetPos) {//bonus - handling walls. prototype so far
 	if (bombPos == targetPos) return false;
 	int dx = targetPos.getX() - bombPos.getX();
 	int dy = targetPos.getY() - bombPos.getY();
@@ -67,7 +67,7 @@ bool Bomb::isShielded(Screen& map, Point bombPos, Point targetPos) {//bonus - ha
 		currY += yStep;
 		Point p((int)round(currX), (int)round(currY));
 
-		if (map.isWall(p)) return true; // true if a wall is found
+		if (board.isWall(p)) return true; // true if a wall is found
 	}
 	return false;
 }

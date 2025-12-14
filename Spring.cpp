@@ -33,7 +33,7 @@ int Spring::calculateForce(const Point& playerPos) const {
 void Spring::draw(const Point& playerPos, bool active) const{
 	//logic: iterate through each segment of the spring
 	//deleting temporarily the spring character if the player is on/were on it
-    if (map.isDark()) {
+    if (board.isDark()) {
         return;
     }
     for (int i = 0; i < length; i++) {
@@ -43,11 +43,11 @@ void Spring::draw(const Point& playerPos, bool active) const{
         else
             currentSegment.setY(startPos.getY() + i);
         if (!active) {
-            currentSegment.draw(objSigns::SPRING,map.IsColor() ? getColorForChar(objSigns::SPRING) : WHITE);
+            currentSegment.draw(objSigns::SPRING,board.IsColor() ? getColorForChar(objSigns::SPRING) : WHITE);
             continue;
         }
         if (currentSegment != playerPos) {
-            currentSegment.draw(objSigns::SPRING, map.IsColor() ? getColorForChar(playerPos.getChar()) : WHITE );
+            currentSegment.draw(objSigns::SPRING, board.IsColor() ? getColorForChar(playerPos.getChar()) : WHITE );
         }
     }
 }

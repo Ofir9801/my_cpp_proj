@@ -7,12 +7,12 @@ class Switch {
     Point position;
     bool isOn;
     bool wasToggled = false;
-    Screen* map; 
+    Screen* board; 
     int targetDoorId = -1;
 
 public:
     Switch(int x, int y, Screen* theMap, int targetDoorId = -1, bool initialState = false)
-        : position(x, y, objSigns::SWITCH_OFF), map(theMap), isOn(initialState), targetDoorId(targetDoorId) {
+        : position(x, y, objSigns::SWITCH_OFF), board(theMap), isOn(initialState), targetDoorId(targetDoorId) {
     }
 
     void toggle();

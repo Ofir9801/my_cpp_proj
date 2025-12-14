@@ -5,6 +5,6 @@
 void Door::open() {
 	if (!isOpen) {
 		isOpen = true;
-		map->showMessage("Door opened!");
+		board->showMessage("Door opened!");
 	}
 }

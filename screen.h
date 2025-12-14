@@ -16,7 +16,7 @@ using std::string;
 class Screen {
 private:
 	//Screen rectangle for 80x25 characters for the static objects
-	string map[MAX_Y];
+	string board[MAX_Y];
 	string* Rooms[NUM_ROOMS];
 	size_t currentRoom = 0;
 	std::vector<Spring> springs;
@@ -32,16 +32,16 @@ private:
 public:
 	friend class Game;
 	Screen();
-	void loadMap(int roomNumber); //function to load the map from a string array
+	void loadMap(int roomNumber); //function to load the board from a string array
 	void drawMap(); 
-	void drawMap(int roomNumber); //function to draw the map to the console
+	void drawMap(int roomNumber); //function to draw the board to the console
 	//function to get the character at a specific position
 	bool isWall(const Point& p) const;
 	size_t getCurrentRoom() const { return currentRoom; }
 	void showPlayerInfo(const Player& p);
 	void initaializeRoomsArray();
 	void showMessage(string msg);
-	char getCharAt(const Point& p) const { return map[p.getY()][p.getX()]; }
+	char getCharAt(const Point& p) const {return board[p.getY()][p.getX()];}
 	void setChar(const Point& p, char c);//function to set a character on Screen at Point p, like picking up a key
 	void showKeyBinds()const;
 	bool tryPushObstacle(const Point& obstaclePos, Keys direction, int force);

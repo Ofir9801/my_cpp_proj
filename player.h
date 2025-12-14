@@ -10,10 +10,10 @@ class Player
 	int springCyclesLeft = 0;
 	int currentForce = 1; //acts as speed
 	Point springDir; //direction of the flight
-	Point position; //Player's position on the map
+	Point position; //Player's position on the board
 	char inventory[INVENTORY_SIZE+1]; //Player can hold up to one item
 	string p_keys;
-	Screen& map; //reference to the Game Screen
+	Screen& board; //reference to the Game Screen
 	bool state = true; //Player state - can move or not
 	bool finishedLevel = false;
 	bool handleSpecialObjects(char nextTile, Point nextPos, int force);
@@ -22,7 +22,7 @@ class Player
 	int score = 0;
 
 public:
-	Player(const Point& point, const string(&keys), Screen& theScreen) :map(theScreen), position(point), p_keys(keys)
+	Player(const Point& point, const string(&keys), Screen& theScreen) :board(theScreen), position(point), p_keys(keys)
 	{
 		inventory[0] = ' '; //empty inventory
 		inventory[INVENTORY_SIZE] = '\0'; //null-terminate the inventory string

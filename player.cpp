@@ -7,7 +7,7 @@
 void Player::draw()
 {
 	{
-		if (map.IsColor()) {
+		if (board.IsColor()) {
 			char c = position.getChar();
 			position.draw(c, color);
 		}
@@ -41,11 +41,11 @@ bool Player::addToInventory(char item, Point pos)
 			inventory[i] = item; //add item to inventory
 			added = true;
 			if (item == objSigns::KEY)
-				map.addKeyToInventory(pos, this->getChar());
+				board.addKeyToInventory(pos, this->getChar());
 		}
 	}
 	if (!added) {
-		map.showMessage("Inventory full!");
+		board.showMessage("Inventory full!");
 		return false;
 	}
 	return true;
@@ -53,7 +53,7 @@ bool Player::addToInventory(char item, Point pos)
 
 void Player::removeItem()
 {
-	if (inventory[0] == objSigns::KEY){map.RemoveKeyFromInventory(this->getChar(), position);}
+	if (inventory[0] == objSigns::KEY){board.RemoveKeyFromInventory(this->getChar(), position);}
 	inventory[0] = ' '; 
 }
 
@@ -61,14 +61,14 @@ void Player::dispose()
 {
 	if (inventory[0] != ' ') { //fix this function
 		char c = inventory[0];
-		map.setChar(position, c);
-		if (c == objSigns::KEY) {map.RemoveKeyFromInventory(this->getChar(), position);}
-		else if (c == objSigns::BOMB) {map.addActiveBomb(position);}
-		position.draw(map.IsColor() ? getColorForChar(position.getChar()) : WHITE);
+		board.setChar(position, c);
+		if (c == objSigns::KEY) {board.RemoveKeyFromInventory(this->getChar(), position);}
+		else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
+		position.draw(board.IsColor() ? getColorForChar(position.getChar()) : WHITE);
 		inventory[0] = ' ';
 	}
 	else {
-		map.showMessage("No item to dispose.");
+		board.showMessage("No item to dispose.");
 	}
 }
 
@@ -76,7 +76,7 @@ void Player::clearFromScreen()
 {
 	state = false;
 	position.setDirection(Keys::STAY);
-	map.setChar(position, ' ');
+	board.setChar(position, ' ');
 	position.setChar(' ');
 }
 
@@ -109,10 +109,10 @@ bool Player::takeStep() {
 	Point originalPos = position;
 	Point nextCandidate = position;
 	nextCandidate.move();
-	char nextTile = map.getCharAt(nextCandidate);
+	char nextTile = board.getCharAt(nextCandidate);
 	bool blocked = false;
 
-	if (map.isWall(nextCandidate)) {
+	if (board.isWall(nextCandidate)) {
 		blocked = true;
 	}
 	else { // not a wall
@@ -133,25 +133,25 @@ bool Player::takeStep() {
 	}
 	else { // success: move to nextCandidate
 		if (originalPos.getX() != nextCandidate.getX() || originalPos.getY() != nextCandidate.getY()) {
-			if (map.getSpringAt(originalPos) == nullptr) {
-				char underlying = map.getCharAt(originalPos);
-				map.setChar(originalPos, underlying); // leaving no trail
+			if (board.getSpringAt(originalPos) == nullptr) {
+				char underlying = board.getCharAt(originalPos);
+				board.setChar(originalPos, underlying); // leaving no trail
 			}
 		}
 		position = nextCandidate;
-		position.draw(map.IsColor() ? getColorForChar(position.getChar()) : WHITE);
+		position.draw(board.IsColor() ? getColorForChar(position.getChar()) : WHITE);
 		return false; // can continue
 	}
 }
 
 void Player::handleActiveSpring() {
-	Spring* activeSpring = map.getSpringAt(position);
+	Spring* activeSpring = board.getSpringAt(position);
 	// now we want to 'visualize' the spring if we are on one
 	if (activeSpring != nullptr) {
 		activeSpring->draw(position, true);
 		Point checkWall = position;
 		checkWall.move();
-		if (map.isWall(checkWall)) {
+		if (board.isWall(checkWall)) {
 			Sleep(200); //pause to show the spring effect
 			int force = activeSpring->calculateForce(position);
 			springCyclesLeft = force * force;
@@ -174,21 +174,21 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 	if (nextTile == objSigns::KEY) {
 		if (addToInventory(objSigns::KEY,nextPos)) {
 			// clear the key from the tile we are moving onto (nextPos), not the player's old position
-			map.setChar(nextPos, ' ');
+			board.setChar(nextPos, ' ');
 			return false;
 		}
 		return true; //if inventory is full its blocked
 	}
 	if (nextTile == objSigns::TORCH) {
 		if (addToInventory(objSigns::TORCH, nextPos)) {
-			map.setChar(nextPos, ' ');
+			board.setChar(nextPos, ' ');
 			return false;
 		}
 		return true; //if inventory is full its blocked
 	}
 	if(nextTile == objSigns::RIDDLE){
 		this->position.setDirection(Keys::STAY); //try to make it stay when hit a riddle to avoid touching it several times in a row
-		if (map.handleRiddle(nextPos, *this)){
+		if (board.handleRiddle(nextPos, *this)){
 			return false;
 		}
 		else {
@@ -197,7 +197,7 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 	}
 	if(nextTile == objSigns::BOMB){
 		if (addToInventory(objSigns::BOMB, nextPos)) {
-			map.setChar(nextPos, ' ');
+			board.setChar(nextPos, ' ');
 			return false;
 		}
 		return true; //if inventory is full its blocked
@@ -208,7 +208,7 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 	if (nextTile == objSigns::OBSTACLE) {
 		Keys pushDir = (springCyclesLeft > 0) ? springDir.getDirectionEnum() : position.getDirectionEnum();
 
-		if (map.tryPushObstacle(nextPos, pushDir, force)) {
+		if (board.tryPushObstacle(nextPos, pushDir, force)) {
 			return false;
 		}
 		return true;
@@ -227,10 +227,10 @@ void Player::reset(Point newPosition) {
 
 bool Player::atDoor(unsigned char nextTile, Point nextPos) {
 	int doorId = nextTile - '0';
-	if (map.ConnectionStatus(doorId)){ // connected to a switch
-		if (map.SwitchState(doorId)) {return OpenDoorWithKey(doorId, nextPos);}//true = switch is on 
+	if (board.ConnectionStatus(doorId)){ // connected to a switch
+		if (board.SwitchState(doorId)) {return OpenDoorWithKey(doorId, nextPos);}//true = switch is on 
 		else { //switch is off
-			map.showMessage("The door is locked. Find the switch to open it.");
+			board.showMessage("The door is locked. Find the switch to open it.");
 			return true;
 		}
 	}
@@ -240,31 +240,31 @@ bool Player::atDoor(unsigned char nextTile, Point nextPos) {
 
 
 bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
-	if (map.isDoorOpen(doorId)) {
+	if (board.isDoorOpen(doorId)) {
 		clearFromScreen();
 		finishedLevel = true;
 		return false;
 	}
 	else {
-			int keyDoorId = map.GetDoorIdByKey(this->getChar());
+			int keyDoorId = board.GetDoorIdByKey(this->getChar());
 			if(hasItem(objSigns::KEY) && keyDoorId == doorId){
 			removeItem();
-			map.showPlayerInfo(*this);
-			if (map.isWinningDoor(doorId)) {
-				map.openDoor(doorId);
+			board.showPlayerInfo(*this);
+			if (board.isWinningDoor(doorId)) {
+				board.openDoor(doorId);
 				clearFromScreen();
-				map.showMessage("Correct door! Unlocked.");
+				board.showMessage("Correct door! Unlocked.");
 				finishedLevel = true;
 				return false;
 			}
 			else {
-				map.setChar(nextPos, 'X');
-				map.showMessage("Wrong door! It's a dead end.");
+				board.setChar(nextPos, 'X');
+				board.showMessage("Wrong door! It's a dead end.");
 				return true;
 			}
 		}
 		else {
-			map.showMessage("try look for the right key to unlock this door");
+			board.showMessage("try look for the right key to unlock this door");
 			return true;
 		}
 	}
@@ -274,11 +274,11 @@ void Player::decreaseLife() {
 		lives--;
 		if (lives == 0) {
 			state = false;
-			map.showMessage("You have lost all your lives!");
+			board.showMessage("You have lost all your lives!");
 			clearFromScreen();
 		}
 		else {
-			map.showMessage("You lost a life! Lives left: " + std::to_string(lives));
+			board.showMessage("You lost a life! Lives left: " + std::to_string(lives));
 		}
 	}
 
