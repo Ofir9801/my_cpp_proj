@@ -396,7 +396,7 @@ bool Screen::handleRiddle(Point riddlePos, Player& p) {
 	for (auto it = riddles.begin(); it != riddles.end(); ++it) {
 		if (it->isSolved()) { continue; }//continuing if solved
 		else{
-			bool solved = it->engage(*this, p);
+			bool solved = it->engage(p);
 			drawMap(); //redraw the board after riddle engagement
 			if (solved) {
 				it->ChangeSolve(true);
@@ -430,7 +430,7 @@ void Screen::updateLighting(const Point& p1, const Point& p1Prev, const Player& 
 
 }
 
-bool Screen::isLit(int x, int y, const Point& p, int radius) {
+bool Screen::Distance(int x, int y, const Point& p, int radius) {
 	int dx = x - p.getX(); //calculate the the distance between two points by x
 	int dy = y - p.getY(); //calculate the the distance between two points by y
 	return (dx * dx + dy * dy) <= (radius * radius); //true if the given point is in player's light radius
@@ -442,11 +442,11 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 			if (x < 0 || x >= MAX_X || y < 3 || y >= MAX_Y)
 				continue;
 
-			bool inRange = isLit(x, y, Point(cx, cy), radius); //check if point in distance
+			bool inRange = Distance(x, y, Point(cx, cy), radius); //check if point in distance
 
 			if (inRange) {
 				if (erase) {
-					if (!isLit(x, y, p1, r1) && !isLit(x, y, p2, r2)) {
+					if (!Distance(x, y, p1, r1) && !Distance(x, y, p2, r2)) {
 						gotoxy(x, y);
 						std::cout << ' ';
 					}
@@ -466,6 +466,12 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 			}
 		}
 	}
+}
+
+bool Screen::isValid(const Point& p) const{
+	int x = p.getX();
+	int y = p.getY();
+	return x > 0 && x < MAX_X - 1 && y > 3 && y < MAX_Y - 1;
 }
 
 void Screen::updateBombs(Player& p1, Player& p2) {

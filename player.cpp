@@ -223,6 +223,7 @@ void Player::reset(Point newPosition) {
 	springCyclesLeft = 0;
 	currentForce = 1;
 	finishedLevel = false;
+	draw();
 }
 
 bool Player::atDoor(unsigned char nextTile, Point nextPos) {

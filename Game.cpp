@@ -12,8 +12,8 @@
 
 
 Game::Game() :
-	player1(Point(1, 4, objSigns::PLAYER1), keys1, board),
-	player2(Point(75, 4, objSigns::PLAYER2), keys2, board) {}
+	player1(Point(PLAYER_1_START_X, PLAYER_1_START_Y, objSigns::PLAYER1), keys1, board),
+	player2(Point(PLAYER_2_START_X, PLAYER_2_START_Y, objSigns::PLAYER2), keys2, board) {}
 
 void Game::run() {
 	hideCursor();
@@ -51,7 +51,7 @@ void Game::run() {
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
 		board.refreshSpringsDisplay(player1.getPosition(), player2.getPosition());
-		//board.clearMessegeArea(gamecycle);
+		board.clearMessegeArea(gamecycle);
 
 		player1.move();
 		player2.move();
@@ -158,10 +158,8 @@ void Game::changeRoom(int roomNumber)
 	if (roomNumber != MENU && roomNumber != INSTRUCTIONS && roomNumber != VICTORY) {
 	player1.reset(Point(1, 4, objSigns::PLAYER1));
 	player2.reset(Point(75, 4, objSigns::PLAYER2));
-	player1.draw();
-	player2.draw();
 	}
-	if (roomNumber == 3)
+	if (roomNumber == roomIndex::ROOM3)
 		board.showMessage("it is very dark in here, you will need something to light it up");
 }
 

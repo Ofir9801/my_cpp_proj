@@ -97,6 +97,12 @@ int constexpr LIGHT_RADIUS_TORCH = 7;
 int constexpr LIGHT_RADIUS_DEFAULT = 2;
 int constexpr NUMS_OF_RIDDLES = 4;
 int constexpr EXPLODE_BOMB_TIME = 35;
+int constexpr BOMB_RADIUS = 3;
+int constexpr PLAYER_1_START_X = 1;
+int constexpr PLAYER_1_START_Y = 4;
+int constexpr PLAYER_2_START_X = 75;
+int constexpr PLAYER_2_START_Y = 4;
+
 void gotoxy(int x, int y);
 void hideCursor();
 void cls();

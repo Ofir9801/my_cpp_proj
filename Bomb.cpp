@@ -8,49 +8,57 @@ void Bomb::explode(Screen& board, Player& p1, Player& p2) {
 	active = false;
 	board.showMessage("BOOM! The bomb exploded.");
 	std::vector<Point> affectedPoints;//collecting first all the exploded tiles
-	int bx = position.getX();
-	int by = position.getY();
-	for (int dy = -3; dy <= 3; dy++) {
-		for (int dx = -3; dx <= 3; dx++) {
-			Point target(bx + dx, by + dy);
-			if (!board.isValid(target)) continue; //none board tiles
-			if (isShielded(board, position, target)) continue;
-			affectedPoints.push_back(target);
+	int bx = position.getX(); // bomb x
+	int by = position.getY(); // bomb y
+	for (int y = by-BOMB_RADIUS; y <= by + BOMB_RADIUS; y++) {
+		for (int x = bx - BOMB_RADIUS; x <= bx + BOMB_RADIUS; x++) {
+			if (board.Distance(x, y, position, BOMB_RADIUS)){
+				Point target(x, y);
+				if (!board.isValid(target)) continue; //none board tiles
+				if (isShielded(board, position, target)) continue;
+				affectedPoints.push_back(target);
+			}
 		}
 	}
 	for (const auto& p : affectedPoints) {
-		char currentChar = board.getCharAt(p);
-		if (currentChar == ' ' || currentChar == objSigns::OBSTACLE || board.isWall(p)) {//currently without player
-			board.setChar(p, 'B');//for visual purposes
-		}
+		board.setChar(p, 'B');//for visual purposes
+
 	}
 	Sleep(300);
 	for (const auto& p : affectedPoints) {
-		int distance = (std::max)(std::abs(p.getX() - bx), std::abs(p.getY() - by));
-		destroyCell(board, p1, p2, p.getX(), p.getY(), distance);
+		
+		destroyCell(board, p1, p2, p);
 	}
 }
 
-void Bomb::destroyCell(Screen& board, Player& p1, Player& p2, int x, int y, int distance) {
-	Point target(x, y);
-	if (board.isWall(target)) {
-		if (distance <= 1) board.setChar(target, ' ');
-		else board.setChar(target, '|');
-		return;
-	}
-	if (p1.getPosition() == target) handlePlayerHit(p1);
-	if (p2.getPosition() == target) handlePlayerHit(p2);
-	if (p1.getPosition() != target && p2.getPosition() != target) {
-		board.setChar(target, ' ');
-	}
-
+void Bomb::destroyCell(Screen& board, Player& p1, Player& p2, Point target) {
+	if (p1.getPosition() == target) { handlePlayerHit(p1); }
+	if (p2.getPosition() == target){ handlePlayerHit(p2); }
+	if (p1.getPosition() != target && p2.getPosition() != target){board.setChar(target, ' ');}
 }
+
 void Bomb::handlePlayerHit(Player& player) {
-	Point dest = player.getPosition();
+	Point newPos;
 	player.decreaseLife();
+	char c = player.getChar();
 	player.clearFromScreen();
-	Sleep(500);
-	player.reset(Point(dest.getX(), dest.getY(), player.getChar()));
+	Sleep(300);
+	switch (c) {
+		case objSigns::PLAYER1:
+			newPos.setX(PLAYER_1_START_X);
+			newPos.setY(PLAYER_1_START_Y);
+			newPos.setChar(objSigns::PLAYER1);
+			player.reset(newPos);
+			
+			break;
+		case objSigns::PLAYER2:
+			newPos.setX(PLAYER_2_START_X);
+			newPos.setY(PLAYER_2_START_Y);
+			newPos.setChar(objSigns::PLAYER2);
+			player.reset(newPos);
+			
+			break;
+	}
 }
 bool Bomb::isShielded(Screen& board, Point bombPos, Point targetPos) {//bonus - handling walls. prototype so far
 	if (bombPos == targetPos) return false;

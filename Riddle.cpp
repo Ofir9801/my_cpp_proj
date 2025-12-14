@@ -6,7 +6,7 @@
 #include "Utils.h"
 #include <fstream>
 
-bool Riddle::engage(Screen& board, Player& player) const {
+bool Riddle::engage(Player& player) const {
 	cls();
 	gotoxy(10, 10);
 	std::cout << "RIDDLE TIME!" << std::endl;

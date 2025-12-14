@@ -67,10 +67,8 @@ public:
 	bool isDark() const { return isDarkRoom; }
 	void updateLighting(const Point& p1, const Point& p1Prev, const Player& player1,
 						const Point& p2, const Point& p2Prev, const Player& player2);
-	bool isLit(int x, int y, const Point& p, int r);
+	bool Distance(int x, int y, const Point& p, int r);
 	void ProcessLightning(int cx, int cy, int radius, bool erase, const Point& p1, const Point& p2, const int r1, const int r2);
-	bool isValid(const Point& p) const {
-		return p.getX() >= 0 && p.getX() < MAX_X &&p.getY() >= 0 && p.getY() < MAX_Y;
-	}
+	bool isValid(const Point& p) const;
 	void addActiveBomb(const Point& p) { activeBombs.push_back(Bomb(p)); }
 };

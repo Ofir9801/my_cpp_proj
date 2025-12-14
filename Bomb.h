@@ -9,7 +9,7 @@ class Bomb
 	Point position;
 	int timer;
 	bool active;
-	void destroyCell(Screen& board, Player& p1, Player& p2, int x, int y, int distance); //helper function, self explanatory
+	void destroyCell(Screen& board, Player& p1, Player& p2, Point target); //helper function, self explanatory
 	void handlePlayerHit(Player& player); //helper function, self explanatory
 public:
 	Bomb(const Point& pos) : position(pos), timer(EXPLODE_BOMB_TIME), active(true) {
