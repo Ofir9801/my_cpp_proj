@@ -471,6 +471,8 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 void Screen::updateBombs(Player& p1, Player& p2) {
 	for (size_t i = 0; i < activeBombs.size(); ) {
 		activeBombs[i].tick();
+		int time = activeBombs[i].getTimer();
+		setChar(activeBombs[i].getPosition(),'0' + time / 10);
 		if (activeBombs[i].shouldExplode()) {
 			activeBombs[i].explode(*this, p1, p2);
 			setChar(activeBombs[i].getPosition(), ' ');

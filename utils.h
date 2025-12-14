@@ -48,7 +48,7 @@ enum objSigns {
 	RIDDLE = '?',
 	SWITCH_OFF = '\\',
 	SWITCH_ON = '/',
-	BOMB = '@',
+	BOMB = '@'
 };
 enum Color {
 	BLACK = 0,
@@ -96,6 +96,7 @@ int constexpr NUM_ROOMS = 6; //number of rooms in the Game
 int constexpr LIGHT_RADIUS_TORCH = 7;
 int constexpr LIGHT_RADIUS_DEFAULT = 2;
 int constexpr NUMS_OF_RIDDLES = 4;
+int constexpr EXPLODE_BOMB_TIME = 35;
 void gotoxy(int x, int y);
 void hideCursor();
 void cls();

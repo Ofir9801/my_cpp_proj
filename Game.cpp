@@ -51,7 +51,7 @@ void Game::run() {
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
 		board.refreshSpringsDisplay(player1.getPosition(), player2.getPosition());
-		board.clearMessegeArea(gamecycle);
+		//board.clearMessegeArea(gamecycle);
 
 		player1.move();
 		player2.move();
@@ -63,7 +63,7 @@ void Game::run() {
 		player1.draw();
 		player2.draw();
 
-		Sleep(130);
+		Sleep(100);
 		
 		if (_kbhit()) {
 			int key = _getch();
@@ -133,7 +133,7 @@ void Game::showMenu(bool& started){
 				break;
 			case '2':
 				SetColorfullGame();
-				changeRoom(ROOM1);
+				changeRoom(ROOM3);
 				inMenu = false;
 				break;
 			case '8':
