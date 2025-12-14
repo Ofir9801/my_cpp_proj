@@ -17,7 +17,7 @@ public:
 
     void toggle();
     void update(bool isPressed);
-
+    Point getPosition()const { return position; };
     void setTargetDoorId(int doorId) { targetDoorId = doorId; }
     int getTargetDoorId() const {return targetDoorId;}
     bool isAt(const Point& p) const {return position == p;}

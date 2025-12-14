@@ -16,6 +16,8 @@ void Bomb::explode(Screen& board, Player& p1, Player& p2) {
 				Point target(x, y);
 				if (!board.isValid(target)) continue; //none board tiles
 				if (isShielded(board, position, target)) continue;
+				char realCharAtBoard = board.getCharAt(target);
+				target.setChar(realCharAtBoard);
 				affectedPoints.push_back(target);
 			}
 		}
@@ -26,15 +28,40 @@ void Bomb::explode(Screen& board, Player& p1, Player& p2) {
 	}
 	Sleep(300);
 	for (const auto& p : affectedPoints) {
-		
 		destroyCell(board, p1, p2, p);
 	}
 }
 
 void Bomb::destroyCell(Screen& board, Player& p1, Player& p2, Point target) {
-	if (p1.getPosition() == target) { handlePlayerHit(p1); }
-	if (p2.getPosition() == target){ handlePlayerHit(p2); }
-	if (p1.getPosition() != target && p2.getPosition() != target){board.setChar(target, ' ');}
+	bool playerHit = false;
+	
+	if (p1.getPosition() == target) {
+		handlePlayerHit(p1);
+		playerHit = true;
+	}
+	if (p2.getPosition() == target) {
+		handlePlayerHit(p2);
+		playerHit = true;
+	}
+	if (!playerHit){
+		char c = target.getChar();
+		if (c == objSigns::KEY) { 
+			board.deleteKey(target);
+			board.setChar(target, ' ');
+		}
+		else if (c == objSigns::SPRING) {
+			board.deleteSpring(target);
+			board.setChar(target, ' ');
+		}
+		else if (c == objSigns::SWITCH_ON || c == objSigns::SWITCH_OFF) {
+			board.deleteSwitch(target);
+			board.setChar(target, ' ');
+		}
+		else if (isdigit(c)){board.deleteDoor(target); 
+		board.setChar(target, 'X');
+		}
+		else{ board.setChar(target, ' '); }
+	}
 }
 
 void Bomb::handlePlayerHit(Player& player) {
@@ -49,14 +76,12 @@ void Bomb::handlePlayerHit(Player& player) {
 			newPos.setY(PLAYER_1_START_Y);
 			newPos.setChar(objSigns::PLAYER1);
 			player.reset(newPos);
-			
 			break;
 		case objSigns::PLAYER2:
 			newPos.setX(PLAYER_2_START_X);
 			newPos.setY(PLAYER_2_START_Y);
 			newPos.setChar(objSigns::PLAYER2);
 			player.reset(newPos);
-			
 			break;
 	}
 }

@@ -172,7 +172,7 @@ void Screen::initaializeRoomsArray() {
 	Rooms[VICTORY] = EndingScreen;
 }
 
-bool Screen::tryPushObstacle(const Point& obstaclePos, Keys direction, int force) {
+bool Screen::tryPushObstacle(const Point& obstaclePos, Keyboard_bind direction, int force) {
 	int chainLength = 0;
 	Point scanner = obstaclePos;
 	while (getCharAt(scanner) == '*') {
@@ -202,7 +202,7 @@ void Screen::loadSprings() {
 				}
 
 				int length = 0;
-				Keys dir = Keys::STAY;
+				Keyboard_bind dir = Keyboard_bind::STAY;
 				Point currentStart(x, y);
 
 				if (isHorizontal) {//horizontal
@@ -212,10 +212,10 @@ void Screen::loadSprings() {
 						length++;
 						currX++;
 					}
-					if (isWall(Point(x - 1, y))) dir = Keys::RIGHT;
-					else if (isWall(Point(x + length, y))) dir = Keys::LEFT;
-					else if (isWall(Point(x, y - 1))) dir = Keys::DOWN;
-					else if (isWall(Point(x, y + 1))) dir = Keys::UP;
+					if (isWall(Point(x - 1, y))) dir = Keyboard_bind::RIGHT;
+					else if (isWall(Point(x + length, y))) dir = Keyboard_bind::LEFT;
+					else if (isWall(Point(x, y - 1))) dir = Keyboard_bind::DOWN;
+					else if (isWall(Point(x, y + 1))) dir = Keyboard_bind::UP;
 				}
 				else { //vertical
 					int currY = y;
@@ -225,11 +225,11 @@ void Screen::loadSprings() {
 						currY++;
 					}
 					// walls check
-					if (isWall(Point(x, y - 1))) dir = Keys::DOWN;
-					else if (isWall(Point(x, y + length))) dir = Keys::UP;
+					if (isWall(Point(x, y - 1))) dir = Keyboard_bind::DOWN;
+					else if (isWall(Point(x, y + length))) dir = Keyboard_bind::UP;
 				}
-				if (dir != Keys::STAY) {
-					springs.push_back(Spring(currentStart, length, dir, *this));
+				if (dir != Keyboard_bind::STAY) {
+					springs.push_back(Spring(currentStart, length, dir));
 				}
 			}
 		}
@@ -248,7 +248,7 @@ void Screen::refreshSpringsDisplay(const Point& p1, const Point& p2) const {
 		bool p1On = s.isPlayerOn(p1);
 		bool p2On = s.isPlayerOn(p2);
 		if (!p1On && !p2On) {
-			s.draw(Point(0, 0), false);
+			s.draw(Point(0, 0),*this, false);
 		}
 	}
 }
@@ -284,13 +284,6 @@ void Screen::loadItems() {//enter the items from the board to the vector
 			else if (c == objSigns::KEY) {
 				keys.push_back(Key(x, y));
 			}
-			//else if (c == objSigns::RIDDLE) {
-			//	//TODO: better riddle managment
-			//	std::string q = "What is 2 + 2?";
-			//	std::vector<std::string> options = { "3", "4", "5", "6" };
-			//	int correctIndex = 1;
-			//	riddles.push_back(Riddle(Point(x, y), q, options, correctIndex));
-			//}
 		}
 		linkDoorsToKeysAndSwitches();
 		loadSprings();
@@ -471,7 +464,89 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 bool Screen::isValid(const Point& p) const{
 	int x = p.getX();
 	int y = p.getY();
-	return x > 0 && x < MAX_X - 1 && y > 3 && y < MAX_Y - 1;
+	char c = board[y][x];
+	bool door = isdigit(c);
+	bool insideBoard = x > 0 && x < MAX_X - 1 && y > 3 && y < MAX_Y - 1;
+	return door ||insideBoard;
+}
+
+void Screen::deleteKey(Point position){
+	bool flag = false;
+	std::vector<Key>::iterator it = keys.begin();
+	while (it != keys.end() && !flag) {
+		if (it->getPosition() == position)
+		{
+			it = keys.erase(it);
+			flag = true;
+		}
+		else { ++it; }
+	}
+}
+
+void Screen::deleteSpring(Point position)
+{
+	for (size_t i = 0; i < springs.size(); ++i) {
+		if (springs[i].isPointOn(position)) {
+			int hitIndex = springs[i].getSegmentIndex(position);
+			springs[i].setLength(hitIndex);
+			if (springs[i].getLength() <= 0) {
+				springs.erase(springs.begin() + i);
+			}
+			return;
+		}
+	}
+}
+
+/*
+
+	bool flag = false;
+	std::vector<Spring>::iterator it = springs.begin();
+	while (it != springs.end() && !flag) {
+		if (it->isPointOn(position)){
+			it = springs.erase(it);
+			flag = true;
+		}
+		else { ++it; }
+	}
+}*/
+
+void Screen::deleteSwitch(Point position){
+	bool flag = false;
+	std::vector<Switch>::iterator it = switches.begin();
+	while (it != switches.end() && !flag) {
+		if (it->getPosition() == position)
+		{
+			it = switches.erase(it);
+			flag = true;
+		}
+		else { ++it; }
+	}
+}
+
+void Screen::deleteDoor(Point position){
+	bool flag = false;
+	std::vector<Door>::iterator it = doors.begin();
+	while (it != doors.end() && !flag ) {
+		if (it->getId() == position.getChar() - '0') {
+			if (it->getId() == getCurrentRoom() - 1) //explode winning door
+			{
+				gameState = false;
+			}
+			it = doors.erase(it);
+			flag = true;
+		}
+		else { ++it; }
+	}
+}
+
+bool Screen::isBombAt(const Point& p) const
+{
+	for (const auto& bomb : activeBombs) {
+		if (bomb.getPosition() == p) {
+			return true;
+		}
+	}
+	return false;
 }
 
 void Screen::updateBombs(Player& p1, Player& p2) {

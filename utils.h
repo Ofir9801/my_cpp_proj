@@ -28,7 +28,7 @@ enum roomIndex {
 	ROOM3 = 4,
 	VICTORY = 5
 };
-enum Keys {
+enum Keyboard_bind {
 	UP,
 	RIGHT,
 	DOWN,
@@ -91,7 +91,7 @@ const string RiddlePathWay = "Riddle.txt";
 
 
 int constexpr INVENTORY_SIZE = 1; //Player can hold up to one item
-int constexpr NUM_KEYS = 6; //number of possible movement wdKeys
+int constexpr NUM_KEYS = 6; //number of possible movement Keys
 int constexpr NUM_ROOMS = 6; //number of rooms in the Game
 int constexpr LIGHT_RADIUS_TORCH = 7;
 int constexpr LIGHT_RADIUS_DEFAULT = 2;

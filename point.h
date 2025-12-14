@@ -21,7 +21,7 @@ public:
 	void draw(char c, int color);
 	void draw(int color) {draw(ch, color);}
 	void move();
-	void setDirection(Keys dir, bool state = true, int speed = 1 );
-	Keys getDirectionEnum() const;
+	void setDirection(Keyboard_bind dir, bool state = true, int speed = 1 );
+	Keyboard_bind getDirectionEnum() const;
 	bool operator== (const Point& otherPos) const;
 };

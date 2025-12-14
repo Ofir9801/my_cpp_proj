@@ -14,27 +14,27 @@ void Point::move() {
 	y = (y + diff_y);
 }
 
-void Point::setDirection(Keys dir, bool state, int speed)
+void Point::setDirection(Keyboard_bind dir, bool state, int speed)
 {
 	if (state) {
 		switch (dir) {
-		case Keys::UP:
+		case Keyboard_bind::UP:
 			diff_x = 0;
 			diff_y = -1 * speed;
 			break;
-		case Keys::RIGHT:
+		case Keyboard_bind::RIGHT:
 			diff_x = 1 * speed;
 			diff_y = 0;
 			break;
-		case Keys::DOWN:
+		case Keyboard_bind::DOWN:
 			diff_x = 0;
 			diff_y = 1 * speed;
 			break;
-		case Keys::LEFT:
+		case Keyboard_bind::LEFT:
 			diff_x = -1 * speed;
 			diff_y = 0;
 			break;
-		case Keys::STAY:
+		case Keyboard_bind::STAY:
 			diff_x = 0;
 			diff_y = 0;
 			break;
@@ -45,21 +45,21 @@ void Point::setDirection(Keys dir, bool state, int speed)
 		diff_y = 0;
 	}
 }
-Keys Point::getDirectionEnum() const
+Keyboard_bind Point::getDirectionEnum() const
 {
 	if (diff_y < 0) {
-		return Keys::UP;
+		return Keyboard_bind::UP;
 	}
 	else if (diff_x > 0) {
-		return Keys::RIGHT;
+		return Keyboard_bind::RIGHT;
 	}
 	else if (diff_y > 0) {
-		return Keys::DOWN;
+		return Keyboard_bind::DOWN;
 	}
 	else if (diff_x < 0) {
-		return Keys::LEFT;
+		return Keyboard_bind::LEFT;
 	}
-		return Keys::STAY;
+		return Keyboard_bind::STAY;
 }
 
 bool Point::operator== (const Point& otherPos) const {

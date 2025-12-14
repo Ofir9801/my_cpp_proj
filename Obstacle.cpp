@@ -2,7 +2,7 @@
 #include "Obstacle.h"
 #include "Screen.h"
 
-void Obstacle::push(int force, Keys dir) {
+void Obstacle::push(int force, Keyboard_bind dir) {
 	if (force < weight) {
 		return; // Not enough force to move the obstacle
 	}
@@ -12,7 +12,7 @@ void Obstacle::push(int force, Keys dir) {
 	char next = board->getCharAt(position);
 	if (board->isWall(position) || isdigit(next)) {
 		position = originalPos; // Revert to original position if blocked by a door or a wall
-		position.setDirection(Keys::STAY);
+		position.setDirection(Keyboard_bind::STAY);
 		return;
 	}
 		

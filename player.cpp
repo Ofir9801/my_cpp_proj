@@ -21,7 +21,7 @@ void Player::handleKeyPressed(char key_pressed) {
 	for (char k : p_keys) {
 		if (std::tolower((unsigned char)k) == std::tolower(key_pressed)) {
 			if(index != NUM_KEYS - 1){
-				position.setDirection((Keys)index);
+				position.setDirection((Keyboard_bind)index);
 				return;
 			}
 			else {
@@ -75,7 +75,7 @@ void Player::dispose()
 void Player::clearFromScreen()
 {
 	state = false;
-	position.setDirection(Keys::STAY);
+	position.setDirection(Keyboard_bind::STAY);
 	board.setChar(position, ' ');
 	position.setChar(' ');
 }
@@ -128,7 +128,7 @@ bool Player::takeStep() {
 			currentForce = 1;
 		}
 		position = originalPos;
-		position.setDirection(Keys::STAY);
+		position.setDirection(Keyboard_bind::STAY);
 		return true; // stop further steps
 	}
 	else { // success: move to nextCandidate
@@ -148,7 +148,7 @@ void Player::handleActiveSpring() {
 	Spring* activeSpring = board.getSpringAt(position);
 	// now we want to 'visualize' the spring if we are on one
 	if (activeSpring != nullptr) {
-		activeSpring->draw(position, true);
+		activeSpring->draw(position,board, true);
 		Point checkWall = position;
 		checkWall.move();
 		if (board.isWall(checkWall)) {
@@ -187,7 +187,7 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 		return true; //if inventory is full its blocked
 	}
 	if(nextTile == objSigns::RIDDLE){
-		this->position.setDirection(Keys::STAY); //try to make it stay when hit a riddle to avoid touching it several times in a row
+		this->position.setDirection(Keyboard_bind::STAY); //try to make it stay when hit a riddle to avoid touching it several times in a row
 		if (board.handleRiddle(nextPos, *this)){
 			return false;
 		}
@@ -202,11 +202,14 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 		}
 		return true; //if inventory is full its blocked
 	}
-	if (isdigit((unsigned char)nextTile))  // check if it's a door
+	if (isdigit((unsigned char)nextTile)) {  // check if it's a door
+		if (board.isBombAt(nextPos))
+			return true;
 		return atDoor(nextTile, nextPos);
+	}
 		
 	if (nextTile == objSigns::OBSTACLE) {
-		Keys pushDir = (springCyclesLeft > 0) ? springDir.getDirectionEnum() : position.getDirectionEnum();
+		Keyboard_bind pushDir = (springCyclesLeft > 0) ? springDir.getDirectionEnum() : position.getDirectionEnum();
 
 		if (board.tryPushObstacle(nextPos, pushDir, force)) {
 			return false;
@@ -219,7 +222,7 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 void Player::reset(Point newPosition) {
 	position = newPosition;
 	state = true;
-	position.setDirection(Keys::STAY);
+	position.setDirection(Keyboard_bind::STAY);
 	springCyclesLeft = 0;
 	currentForce = 1;
 	finishedLevel = false;

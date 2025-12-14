@@ -30,7 +30,6 @@ void Game::run() {
 		return;
 	}
 
-
 	char winningDoorId = char(board.getCurrentRoom() - 1 + '0');
 	board.drawMap();
 	player1.draw();
@@ -95,7 +94,8 @@ void Game::run() {
 		if(isGameOver()) {
 			cls();
 			gotoxy(30, 10);
-			board.showMessage("Game Over! both of the players has no lives left.");
+			board.showMessage("Game Over! you lost!");
+			Sleep(2000);
 			exitGame = false;
 			continue;
 		}

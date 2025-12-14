@@ -29,6 +29,7 @@ private:
 	std::vector<Bomb> activeBombs;
 	bool colorToggle = false;
 	bool isDarkRoom = false;
+	bool gameState = true;
 public:
 	friend class Game;
 	Screen();
@@ -44,7 +45,7 @@ public:
 	char getCharAt(const Point& p) const {return board[p.getY()][p.getX()];}
 	void setChar(const Point& p, char c);//function to set a character on Screen at Point p, like picking up a key
 	void showKeyBinds()const;
-	bool tryPushObstacle(const Point& obstaclePos, Keys direction, int force);
+	bool tryPushObstacle(const Point& obstaclePos, Keyboard_bind direction, int force);
 	void loadSprings();
 	Spring* getSpringAt(const Point& p);
 	void refreshSpringsDisplay(const Point& p1, const Point& p2) const;
@@ -71,4 +72,9 @@ public:
 	void ProcessLightning(int cx, int cy, int radius, bool erase, const Point& p1, const Point& p2, const int r1, const int r2);
 	bool isValid(const Point& p) const;
 	void addActiveBomb(const Point& p) { activeBombs.push_back(Bomb(p)); }
+	void deleteKey(Point position);
+	void deleteSpring(Point position);
+	void deleteSwitch(Point position);
+	void deleteDoor(Point position);
+	bool isBombAt(const Point& p)const;
 };
