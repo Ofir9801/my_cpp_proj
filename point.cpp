@@ -67,3 +67,9 @@ bool Point::operator== (const Point& otherPos) const {
 		return true;
 	return false;
 }
+
+bool Point::operator<(const Point& other) const
+{
+	if (y != other.y) return y < other.y;
+	return x < other.x;
+}

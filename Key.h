@@ -9,6 +9,8 @@ class Key {
     char playerUse = ' ' ; //the id of the player who use the key,' ' = not in use
 
 public:
+    Key() : position(0, 0, ' '), targetDoorId(-1), playerUse(' ') {} //default constructor for empty key for map
+
     Key(int x, int y, int targetDoorId = -1, char playerUse = ' ')
         : position(x, y, objSigns::KEY), targetDoorId(targetDoorId), playerUse(playerUse) {
     }   

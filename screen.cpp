@@ -283,26 +283,37 @@ void Screen::loadItems() {//enter the items from the board to the vector
 				doorIDs.push_back(door_id);
 			}
 			else if (c == objSigns::KEY) {
-				keys.push_back(Key(x, y));
+				keys[Point(x, y)] = Key(x, y);
+				//keys.push_back(Key(x, y));
 			}
 		}
 		linkDoorsToKeysAndSwitches();
 		loadSprings();
 	}
 }
-	void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number of switches and  is equal to the number of doors
+
+void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number of switches and  is equal to the number of doors
 	std::vector <int> doorIdCopy = doorIDs;  //make copy of doorIds vector 
 
 	std::random_device rd;  //use gemini to get known of the shuffle algorithm and how to integrate it with the code
 	std::mt19937 g(rd());	//the prompt is "give me idea to connect between doors id to switches and keys in randomize pattern in complexicity lower than o(n^2)
 
+	int currentIndex = 0;
 	std::shuffle(doorIdCopy.begin(), doorIdCopy.end(), g);
-	for (int i = 0; i < keys.size(); i++) {
+	auto it = keys.begin();
+	while (it != keys.end() && currentIndex < doorIdCopy.size()) {
+			int currentDoorId = doorIdCopy[currentIndex];
+			it->second.setTargetDoorId(currentDoorId);
+			++it;
+			currentIndex++;
+	}
+	
+	/*for (int i = 0; i < keys.size(); i++) {
 		if (i >= doorIdCopy.size())
 			break;
 		int currentDoorId = doorIdCopy[i];
-		keys[i].setTargetDoorId(currentDoorId);
-	}
+		//keys[i].setTargetDoorId(currentDoorId);
+	}*/
 	
 	std::shuffle(doorIdCopy.begin(), doorIdCopy.end(), g);
 	for (int i = 0; i < switches.size(); i++) {
@@ -354,19 +365,24 @@ bool Screen::SwitchState(int doorId) {
 }
 
 void Screen::addKeyToInventory(Point position, char p){
-	for (auto& k : keys) {
+	auto it = keys.find(position);
+	if (it != keys.end()) {
+		it->second.setInUse(true, p);
+	}
+
+	/*for (auto& k : keys) {
 		if (k.getPosition() == position) {
 			k.setInUse(true, p);
 			break;
 		}
-	}
+	}*/
 }
 
 void Screen::RemoveKeyFromInventory(char p, Point newPos) {
 	for (auto& k : keys) {
-		if (k.getInUse() == true && k.getPlayerUse() == p) {
-			k.setInUse(false, ' ');
-			k.SetPosition(newPos);
+		if (k.second.getInUse() == true && k.second.getPlayerUse() == p) {
+			k.second.setInUse(false, ' ');
+			k.second.SetPosition(newPos);
 			break;
 		}
 	}
@@ -374,8 +390,8 @@ void Screen::RemoveKeyFromInventory(char p, Point newPos) {
 
 int Screen::GetDoorIdByKey(char p) {
 	for (auto& k : keys) {
-		if (k.getPlayerUse() == p) {
-			return k.getTargetDoorId();
+		if (k.second.getPlayerUse() == p) {
+			return k.second.getTargetDoorId();
 			break;
 		}
 	}
@@ -471,7 +487,12 @@ bool Screen::isValid(const Point& p) const{
 }
 
 void Screen::deleteKey(Point position){
-	bool flag = false;
+	auto it = keys.find(position);
+	if (it != keys.end()) {
+		keys.erase(it);
+	}
+	
+	/*bool flag = false;
 	std::vector<Key>::iterator it = keys.begin();
 	while (it != keys.end() && !flag) {
 		if (it->getPosition() == position){
@@ -479,7 +500,7 @@ void Screen::deleteKey(Point position){
 			flag = true;
 		}
 		else { ++it; }
-	}
+	}*/
 }
 
 void Screen::deleteSpring(Point position)
