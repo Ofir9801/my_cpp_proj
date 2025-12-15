@@ -1,5 +1,5 @@
-Player 1:      Lives:                               Player 2:      Lives:    
-Inventory:     Score:                               Inventory:     Score:     
+Player 1:                 Score:          Lives:                Player 2:         
+Inventory:                                                      Inventory:         
                                                                                 
 -------------------3------------------------------------------------------------
 |     |###        **                             |                ?|           |

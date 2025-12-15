@@ -88,26 +88,22 @@ void Screen::showPlayerInfo(const Player& p) {
 
 	switch (playerChar) {
 	case objSigns::PLAYER1:
-		gotoxy(PLAYER1_SIGN_START_X, PLAYER_SIGN_Y);
+		gotoxy(PLAYER1_SIGN_START_X, PLAYER_SIGN_Y); //print player char
 		cout << playerChar << std::flush;
-		gotoxy(PLAYER1_LIVES_START_X, PLAYER_SIGN_Y);
-		cout << p.getLives() << std::flush;
-		gotoxy(PLAYER1_INV_START_X, PLAYER_INV_Y);
+		gotoxy(PLAYER1_INV_START_X, PLAYER_INV_Y); //print inventory
 		cout << p.getInventory() << std::flush;
-		gotoxy(PLAYER1_SCORE_START_X, PLAYER_INV_Y);
-		cout << p.getScore() << std::flush;
 		break;
 	case objSigns::PLAYER2:
-		gotoxy(PLAYER2_SIGN_START_X, PLAYER_SIGN_Y);
+		gotoxy(PLAYER2_SIGN_START_X, PLAYER_SIGN_Y); //print player char
 		cout << playerChar << std::flush;
-		gotoxy(PLAYER2_LIVES_START_X, PLAYER_SIGN_Y);
-		cout << p.getLives() << std::flush;
-		gotoxy(PLAYER2_INV_START_X, PLAYER_INV_Y);
+		gotoxy(PLAYER2_INV_START_X, PLAYER_INV_Y);//print inventory
 		cout << p.getInventory() << std::flush;
-		gotoxy(PLAYER2_SCORE_START_X, PLAYER_INV_Y);
-		cout << p.getScore() << std::flush;
 		break;
 	}
+	gotoxy(SCORE_START_X, PLAYER_SIGN_Y); //print score
+	cout << p.getLives() << std::flush;
+	gotoxy(LIVES_START_X, PLAYER_SIGN_Y); //print lives
+	cout << p.getScore() << std::flush;
 }
 void Screen::setChar(const Point& p, char c) {
 	if (p.getX() < 0 || p.getX() >= MAX_X || p.getY() < 0 || p.getY() >= MAX_Y)
