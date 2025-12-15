@@ -30,6 +30,8 @@ private:
 	bool colorToggle = false;
 	bool isDarkRoom = false;
 	bool gameState = true;
+	int sharedLives = 4;
+	int sharedScore = 0;
 public:
 	friend class Game;
 	Screen();
@@ -77,4 +79,9 @@ public:
 	void deleteSwitch(Point position);
 	void deleteDoor(Point position);
 	bool isBombAt(const Point& p)const;
+	void addScore(int amount) { sharedScore += amount; }
+	int getScore() const { return sharedScore; }
+	int getLives() const { return sharedLives; }
+	void decreaseLife();
+	void resetStats() { sharedLives = 4; sharedScore = 0; }
 };

@@ -277,17 +277,3 @@ bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
 		}
 	}
 }
-void Player::decreaseLife() {
-	if (lives > 0) {
-		lives--;
-		if (lives == 0) {
-			state = false;
-			board.showMessage("You have lost all your lives!");
-			clearFromScreen();
-		}
-		else {
-			board.showMessage("You lost a life! Lives left: " + std::to_string(lives));
-		}
-	}
-
-}

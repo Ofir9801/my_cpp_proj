@@ -554,4 +554,15 @@ void Screen::updateBombs(Player& p1, Player& p2) {
 		}
 	}
 }
-
+void Screen::decreaseLife() {
+	if (sharedLives > 0) {
+		sharedLives--;
+		showMessage("Life lost, be carefull! Lives left: " + std::to_string(sharedLives));
+	}
+	else
+	{
+		gameState = false;
+		showMessage("No lives left! Game Over!");
+		cls();
+	}
+}

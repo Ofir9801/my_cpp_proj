@@ -18,8 +18,6 @@ class Player
 	bool finishedLevel = false;
 	bool handleSpecialObjects(char nextTile, Point nextPos, int force);
 	int color = CYAN;
-	int lives = 3;
-	int score = 0;
 
 public:
 	Player(const Point& point, const string(&keys), Screen& theScreen) :board(theScreen), position(point), p_keys(keys)
@@ -47,9 +45,9 @@ public:
 	bool hasFinished() const { return finishedLevel; }
 	bool atDoor(unsigned char nextTile, Point nextPos);
 	bool OpenDoorWithKey(int doorId, Point nextPos);
-	int getLives() const { return lives; }
-	int getScore() const { return score; }
-	void decreaseLife();
-	void increaseScore(int amount) { score += amount; }
-	bool isAlive() const { return lives > 0; }
+	int getLives() const { return board.getLives(); }
+	int getScore() const { return board.getScore(); }
+	void decreaseLife() { board.decreaseLife(); }
+	void increaseScore(int amount) { board.addScore(amount); }
+	bool isAlive() const { return board.getLives() > 0; }
 };
