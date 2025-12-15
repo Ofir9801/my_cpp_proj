@@ -9,6 +9,8 @@
 #include "Riddle.h"
 #include "Bomb.h"
 #include <vector>
+//#include <unordered_map>
+#include <map>
 
 class Player; //forward declaration to avoid circular dependency
 using std::string;
@@ -22,8 +24,9 @@ private:
 	std::vector<Spring> springs;
 	std::vector<Switch> switches;
 	std::vector<Obstacle> obstacles;
-	std::vector<Door> doors;
-	std::vector<int>doorIDs;
+	std::map<int,Door>doors;
+	std::vector<int>doorIDs; //keys to the doors map
+	//std::vector<Door> doors;
 	std::vector<Key> keys;
 	std::vector<Riddle> riddles;
 	std::vector<Bomb> activeBombs;
@@ -59,7 +62,7 @@ public:
 	bool isDoorOpen(int door_id);
 	void openDoor(int door_id);
 	void setconnection(int door_id);
-	bool ConnectionStatus(int doorId);
+	bool ConnectionStatus(int door_id);
 	bool SwitchState(int doorId);
 	bool IsColor() const { return colorToggle; }
 	void addKeyToInventory(Point position, char p);

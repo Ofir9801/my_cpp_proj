@@ -264,7 +264,7 @@ void Screen::loadItems() {//enter the items from the board to the vector
 	obstacles.clear();
 	doors.clear();
 	keys.clear();
-	doorIDs.clear();
+	//doorIDs.clear();
 	for (int y = 3; y < BOARD_DIMENSION::MAX_Y; y++) {
 		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
 			char c = getCharAt(Point(x, y));
@@ -278,8 +278,9 @@ void Screen::loadItems() {//enter the items from the board to the vector
 				obstacles.push_back(Obstacle(x, y, this, 1));
 			}
 			else if (isdigit((unsigned char)c)) {
-				doorIDs.push_back(c - '0');
-				doors.push_back(Door(x, y, c, this));
+				int door_id = c - '0';
+				doors[door_id] = Door(x, y, c);
+				doorIDs.push_back(door_id);
 			}
 			else if (c == objSigns::KEY) {
 				keys.push_back(Key(x, y));
@@ -314,37 +315,32 @@ void Screen::loadItems() {//enter the items from the board to the vector
 }
 
 
-bool Screen::isDoorOpen(int door_id)
-{
-	for (const auto& d : doors) {
-		if (d.getId() == door_id) {
-			return d.getIsOpen();
-		}
+bool Screen::isDoorOpen(int door_id){
+	auto it = doors.find(door_id);
+	if (it != doors.end()) {
+		return it->second.getIsOpen();
 	}
 	return false;
 }
-void Screen::openDoor(int door_id)
-{
-	for (auto& d : doors) {
-		if (d.getId() == door_id) {
-			d.open();
-		}
+void Screen::openDoor(int door_id){
+	auto it = doors.find(door_id);
+	if (it != doors.end()) {
+		it->second.open();
+		showMessage("Door opened!");
 	}
 }
 
-void Screen::setconnection(int doorId) {
-	for (auto& d : doors) {
-		if (d.getId() == doorId) {
-			d.setConnection(true);
-		}
+void Screen::setconnection(int door_id) {
+	auto it = doors.find(door_id);
+	if (it != doors.end()) {
+		it->second.setConnection(true);
 	}
 }
 
-bool Screen::ConnectionStatus(int doorId) {
-	for (const auto& d : doors) {
-		if (d.getId() == doorId) {
-			return d.getConnection();
-		}
+bool Screen::ConnectionStatus(int door_id) {
+	auto it = doors.find(door_id);
+	if (it != doors.end()) {
+		return it->second.getConnection();
 	}
 	return false;
 }
@@ -385,8 +381,6 @@ int Screen::GetDoorIdByKey(char p) {
 	}
 	return -1;
 }
-
-
 
 bool Screen::handleRiddle(Point riddlePos, Player& p) {
 	for (auto it = riddles.begin(); it != riddles.end(); ++it) {
@@ -480,8 +474,7 @@ void Screen::deleteKey(Point position){
 	bool flag = false;
 	std::vector<Key>::iterator it = keys.begin();
 	while (it != keys.end() && !flag) {
-		if (it->getPosition() == position)
-		{
+		if (it->getPosition() == position){
 			it = keys.erase(it);
 			flag = true;
 		}
@@ -517,18 +510,15 @@ void Screen::deleteSwitch(Point position){
 }
 
 void Screen::deleteDoor(Point position){
-	bool flag = false;
-	std::vector<Door>::iterator it = doors.begin();
-	while (it != doors.end() && !flag ) {
-		if (it->getId() == position.getChar() - '0') {
-			if (it->getId() == getCurrentRoom() - 1) //explode winning door
-			{
-				gameState = false;
-			}
-			it = doors.erase(it);
-			flag = true;
+	int door_id = position.getChar() - '0';
+	auto it = doors.find(door_id);
+	if (it != doors.end()) {
+		//it->second.setConnection(true);
+		if (it->second.getId() == getCurrentRoom() - 1) //explode winning door
+		{
+			gameState = false;
 		}
-		else { ++it; }
+		doors.erase(it);
 	}
 }
 
