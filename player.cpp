@@ -259,7 +259,6 @@ bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
 			removeItem();
 			board.showPlayerInfo(*this);
 			if (board.isWinningDoor(doorId)) {
-				Beep(700, 200);// for sound effect, from microsoft copilot
 				if (board.getScore() < MIN_SCORE) {
 					string msg = "You need at least " + std::to_string(MIN_SCORE) + " points to finish the game!";
 					board.showMessage(msg);

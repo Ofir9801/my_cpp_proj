@@ -66,7 +66,6 @@ void Bomb::destroyCell(Screen& board, Player& p1, Player& p2, Point target) {
 }
 
 void Bomb::handlePlayerHit(Player& player) {
-	Beep(200, 150);// for sound effect, from microsoft copilot
 	Point newPos;
 	player.decreaseLife();
 	char c = player.getChar();

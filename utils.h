@@ -97,7 +97,7 @@ int constexpr PLAYER_1_START_X = 1;
 int constexpr PLAYER_1_START_Y = 4;
 int constexpr PLAYER_2_START_X = 75;
 int constexpr PLAYER_2_START_Y = 4;
-int constexpr MIN_SCORE = 200;
+int constexpr MIN_SCORE = 300;
 
 void gotoxy(int x, int y);
 void hideCursor();

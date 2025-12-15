@@ -260,7 +260,7 @@ void Screen::loadItems() {//enter the items from the board to the vector
 	obstacles.clear();
 	doors.clear();
 	keys.clear();
-	//doorIDs.clear();
+	doorIDs.clear();
 	for (int y = 3; y < BOARD_DIMENSION::MAX_Y; y++) {
 		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
 			char c = getCharAt(Point(x, y));
@@ -280,12 +280,11 @@ void Screen::loadItems() {//enter the items from the board to the vector
 			}
 			else if (c == objSigns::KEY) {
 				keys[Point(x, y)] = Key(x, y);
-				//keys.push_back(Key(x, y));
 			}
 		}
-		linkDoorsToKeysAndSwitches();
-		loadSprings();
 	}
+	linkDoorsToKeysAndSwitches();
+	loadSprings();
 }
 
 void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number of switches and  is equal to the number of doors
