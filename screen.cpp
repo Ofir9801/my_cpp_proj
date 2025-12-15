@@ -255,12 +255,12 @@ void Screen::clearMessegeArea(int const counter)
 		showMessage(EMPTYLINE);
 }
 
-void Screen::loadItems() {//enter the items from the board to the vector
+void Screen::loadItems() {//enter the items from the board to the appropiete data structures
 	switches.clear();
 	obstacles.clear();
 	doors.clear();
-	keys.clear();
 	doorIDs.clear();
+	keys.clear();
 	for (int y = 3; y < BOARD_DIMENSION::MAX_Y; y++) {
 		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
 			char c = getCharAt(Point(x, y));
@@ -302,13 +302,6 @@ void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number 
 			++it;
 			currentIndex++;
 	}
-	
-	/*for (int i = 0; i < keys.size(); i++) {
-		if (i >= doorIdCopy.size())
-			break;
-		int currentDoorId = doorIdCopy[i];
-		//keys[i].setTargetDoorId(currentDoorId);
-	}*/
 	
 	std::shuffle(doorIdCopy.begin(), doorIdCopy.end(), g);
 	for (int i = 0; i < switches.size(); i++) {
@@ -362,23 +355,24 @@ bool Screen::SwitchState(int doorId) {
 void Screen::addKeyToInventory(Point position, char p){
 	auto it = keys.find(position);
 	if (it != keys.end()) {
-		it->second.setInUse(true, p);
+		it->second.setInUse(p);
 	}
-
-	/*for (auto& k : keys) {
-		if (k.getPosition() == position) {
-			k.setInUse(true, p);
-			break;
-		}
-	}*/
 }
 
 void Screen::RemoveKeyFromInventory(char p, Point newPos) {
-	for (auto& k : keys) {
-		if (k.second.getInUse() == true && k.second.getPlayerUse() == p) {
-			k.second.setInUse(false, ' ');
-			k.second.SetPosition(newPos);
-			break;
+	auto it = keys.begin();
+	while (it != keys.end())
+	{
+		if (it->second.getPlayerUse() == p) {
+			Key tempKey = it->second;
+			keys.erase(it);
+			tempKey.setInUse(' ');
+			tempKey.SetPosition(newPos);
+			keys[newPos] = tempKey;
+			return;
+		}
+		else {
+			++it;
 		}
 	}
 }
@@ -387,7 +381,6 @@ int Screen::GetDoorIdByKey(char p) {
 	for (auto& k : keys) {
 		if (k.second.getPlayerUse() == p) {
 			return k.second.getTargetDoorId();
-			break;
 		}
 	}
 	return -1;
@@ -401,12 +394,14 @@ bool Screen::handleRiddle(Point riddlePos, Player& p) {
 			drawMap(); //redraw the board after riddle engagement
 			if (solved) {
 				it->ChangeSolve(true);
-				showMessage("Correct! The path is clear. +100 points!");
+				string msg = "Correct! The path is clear. +"+std::to_string(SUCCESS_SCORE) +"points!";
+				showMessage(msg);
 				setChar(riddlePos, ' '); //remove riddle from the board
 				return true;
 			}
 			else {
-				showMessage("WRONG! You lost 50 points.");
+				string msg = "WRONG! You lost" + std::to_string(WRONG_ANSWER) + " points!";
+				showMessage(msg);
 				return false;
 			}
 			
@@ -486,16 +481,6 @@ void Screen::deleteKey(Point position){
 	if (it != keys.end()) {
 		keys.erase(it);
 	}
-	
-	/*bool flag = false;
-	std::vector<Key>::iterator it = keys.begin();
-	while (it != keys.end() && !flag) {
-		if (it->getPosition() == position){
-			it = keys.erase(it);
-			flag = true;
-		}
-		else { ++it; }
-	}*/
 }
 
 void Screen::deleteSpring(Point position)
@@ -529,9 +514,7 @@ void Screen::deleteDoor(Point position){
 	int door_id = position.getChar() - '0';
 	auto it = doors.find(door_id);
 	if (it != doors.end()) {
-		//it->second.setConnection(true);
-		if (it->second.getId() == getCurrentRoom() - 1) //explode winning door
-		{
+		if (it->second.getId() == getCurrentRoom() - 1){ //explode winning door
 			gameState = false;
 		}
 		doors.erase(it);

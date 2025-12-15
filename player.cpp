@@ -246,42 +246,52 @@ bool Player::atDoor(unsigned char nextTile, Point nextPos) {
 	
 }
 
-
 bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
-	if (board.isDoorOpen(doorId)) {
+	int score = board.getScore();
+	bool isOpenDoor = board.isDoorOpen(doorId);
+	if (isOpenDoor && score >= MIN_SCORE) { //check if door is open and player has enough score to finish
 		clearFromScreen();
 		finishedLevel = true;
 		return false;
 	}
-	else {
-			int keyDoorId = board.GetDoorIdByKey(this->getChar());
-			if(hasItem(objSigns::KEY) && keyDoorId == doorId){
-			removeItem();
-			board.showPlayerInfo(*this);
-			if (board.isWinningDoor(doorId)) {
-				if (board.getScore() < MIN_SCORE) {
-					string msg = "You need at least " + std::to_string(MIN_SCORE) + " points to finish the game!";
-					board.showMessage(msg);
-					return true;
-				}
-				board.openDoor(doorId);
-				clearFromScreen();
-				board.showMessage("Correct door! Unlocked. + 100 points!");
-				board.addScore(100);
-				finishedLevel = true;
-				return false;
-			}
-			else {
-				board.setChar(nextPos, 'X');
-				board.showMessage("Wrong door! It's a dead end. + 50 points! ");
-				board.addScore(50);
-				return true;
-			}
+	else if (isOpenDoor && score < MIN_SCORE) { //alert the player that he needs more score to finish
+		string msg = "You need at least " + std::to_string(MIN_SCORE) + " points to finish the game!, you need more " + std::to_string(MIN_SCORE - score) + " points";
+		board.showMessage(msg);
+		return true;
+	}
+
+	int keyDoorId = board.GetDoorIdByKey(this->getChar());
+	bool winDoorId = board.isWinningDoor(doorId);
+	
+	if (hasItem(objSigns::KEY) && keyDoorId == doorId) {
+		removeItem();
+		board.showPlayerInfo(*this);
+		board.openDoor(doorId);
+		if (winDoorId && score >= MIN_SCORE) {
+			clearFromScreen();
+			string msg = "Correct door!Unlocked. + " +std::to_string(SUCCESS_SCORE) + "points!";
+			board.showMessage(msg);
+			board.addScore(100);
+			finishedLevel = true;
+			return false;
 		}
-		else {
-			board.showMessage("try look for the right key to unlock this door");
+		else if (!winDoorId) {
+			board.setChar(nextPos, 'X');
+			string msg = "Wrong door! It's a dead end. + " + std::to_string(FAKE_DOOR_SCORE) + "points for trying";
+			board.showMessage(msg);
+			board.addScore(50);
 			return true;
 		}
+		
+		else{ // (score < MIN_SCORE)
+			string msg = "You need at least " + std::to_string(MIN_SCORE) + " points to finish the game!, you need more "+ std::to_string(MIN_SCORE-score) + " points";
+			board.showMessage(msg);
+			return true;
+		}
+	}
+	else {
+		board.showMessage("try look for the right key to unlock this door");
+		return true;
 	}
 }
 int Player::getLives() const { return board.getLives(); }

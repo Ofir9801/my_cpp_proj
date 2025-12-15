@@ -26,9 +26,7 @@ private:
 	std::vector<Obstacle> obstacles;
 	std::map<int,Door>doors;
 	std::vector<int>doorIDs; //keys to the doors map
-	//std::vector<Door> doors;
 	std::map<Point, Key> keys;
-	//std::vector<Key> keys;
 	std::vector<Riddle> riddles;
 	std::vector<Bomb> activeBombs;
 	bool colorToggle = false;
