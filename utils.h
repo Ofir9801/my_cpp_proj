@@ -9,8 +9,8 @@ enum INFO_SLOTS {
 	PLAYER1_INV_START_X = 10,
 	PLAYER2_SIGN_START_X = 74,
 	PLAYER2_INV_START_X = 74,
-	SCORE_START_X = 33,
-	LIVES_START_X = 49,
+	SCORE_START_X = 49,
+	LIVES_START_X = 33,
 	PLAYER_SIGN_Y = 0,
 	PLAYER_INV_Y = 1
 };
@@ -97,7 +97,7 @@ int constexpr PLAYER_1_START_X = 1;
 int constexpr PLAYER_1_START_Y = 4;
 int constexpr PLAYER_2_START_X = 75;
 int constexpr PLAYER_2_START_Y = 4;
-int constexpr MIN_SCORE = 200
+int constexpr MIN_SCORE = 200;
 
 void gotoxy(int x, int y);
 void hideCursor();
