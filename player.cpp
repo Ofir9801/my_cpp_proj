@@ -259,15 +259,22 @@ bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
 			removeItem();
 			board.showPlayerInfo(*this);
 			if (board.isWinningDoor(doorId)) {
+				Beep(700, 200);// for sound effect, from microsoft copilot
+				if (board.getScore() < 400) {
+					board.showMessage("correct door, but you need 400 points to continue!");
+					return true;
+				}
 				board.openDoor(doorId);
 				clearFromScreen();
-				board.showMessage("Correct door! Unlocked.");
+				board.showMessage("Correct door! Unlocked. + 100 points!");
+				board.addScore(100);
 				finishedLevel = true;
 				return false;
 			}
 			else {
 				board.setChar(nextPos, 'X');
-				board.showMessage("Wrong door! It's a dead end.");
+				board.showMessage("Wrong door! It's a dead end. + 50 points! ");
+				board.addScore(50);
 				return true;
 			}
 		}
@@ -277,3 +284,8 @@ bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
 		}
 	}
 }
+int Player::getLives() const { return board.getLives(); }
+int Player::getScore() const { return board.getScore(); }
+void Player::decreaseLife() { board.decreaseLife(); }
+void Player::increaseScore(int amount) { board.addScore(amount); }
+bool Player::isAlive() const { return board.getLives() > 0; }

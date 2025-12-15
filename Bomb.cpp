@@ -2,6 +2,7 @@
 #include "Screen.h"
 #include "Player.h"
 #include "Utils.h"
+#include <windows.h>
 #include <algorithm> // for std::max, std::abs
 
 void Bomb::explode(Screen& board, Player& p1, Player& p2) {
@@ -65,6 +66,7 @@ void Bomb::destroyCell(Screen& board, Player& p1, Player& p2, Point target) {
 }
 
 void Bomb::handlePlayerHit(Player& player) {
+	Beep(200, 150);// for sound effect, from microsoft copilot
 	Point newPos;
 	player.decreaseLife();
 	char c = player.getChar();

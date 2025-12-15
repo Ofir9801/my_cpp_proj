@@ -45,9 +45,9 @@ public:
 	bool hasFinished() const { return finishedLevel; }
 	bool atDoor(unsigned char nextTile, Point nextPos);
 	bool OpenDoorWithKey(int doorId, Point nextPos);
-	int getLives() const { return board.getLives(); }
-	int getScore() const { return board.getScore(); }
-	void decreaseLife() { board.decreaseLife(); }
-	void increaseScore(int amount) { board.addScore(amount); }
-	bool isAlive() const { return board.getLives() > 0; }
+	int getLives() const;
+	int getScore() const;
+	void decreaseLife();
+	void increaseScore(int amount);
+	bool isAlive() const;
 };

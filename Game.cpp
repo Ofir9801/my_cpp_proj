@@ -29,6 +29,7 @@ void Game::run() {
 		gotoxy(0, 0);
 		return;
 	}
+	board.resetStats();
 
 	char winningDoorId = char(board.getCurrentRoom() - 1 + '0');
 	board.drawMap();

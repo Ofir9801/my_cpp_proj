@@ -321,6 +321,7 @@ bool Screen::isDoorOpen(int door_id)
 			return d.getIsOpen();
 		}
 	}
+	return false;
 }
 void Screen::openDoor(int door_id)
 {
@@ -345,6 +346,7 @@ bool Screen::ConnectionStatus(int doorId) {
 			return d.getConnection();
 		}
 	}
+	return false;
 }
 
 bool Screen::SwitchState(int doorId) {
@@ -352,6 +354,7 @@ bool Screen::SwitchState(int doorId) {
 		if (s.getTargetDoorId() == doorId)
 			return s.getIsOn();
 	}
+	return false;
 }
 
 void Screen::addKeyToInventory(Point position, char p){
