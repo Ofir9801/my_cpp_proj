@@ -24,6 +24,7 @@ Screen::Screen() {
 }
 
 void Screen::loadMap(int roomNumber){
+	int lastRoom = currentRoom;
 	currentRoom = roomNumber;
 	if (savedRooms.find(roomNumber)!=savedRooms.end()) { //load saved state
 		for (int i = 0; i < MAX_Y; i++) {
@@ -42,7 +43,7 @@ void Screen::loadMap(int roomNumber){
 		for (int i = 0; i < MAX_Y; i++) {
 			board[i] = Rooms[roomNumber][i];
 		}
-		loadItems();
+		loadItems(lastRoom);
 	}
 	if (roomNumber == roomIndex::ROOM3)
 		isDarkRoom = true;
@@ -276,7 +277,7 @@ void Screen::clearMessegeArea(int const counter)
 		showMessage(EMPTYLINE);
 }
 
-void Screen::loadItems() {//enter the items from the board to the appropiete data structures
+void Screen::loadItems(int doorIdOpen) {//enter the items from the board to the appropiete data structures
 	switches.clear();
 	obstacles.clear();
 	doors.clear();
@@ -298,7 +299,12 @@ void Screen::loadItems() {//enter the items from the board to the appropiete dat
 			else if (isdigit((unsigned char)c)) {
 				int door_id = c - '0';
 				doors[door_id] = Door(x, y, c);
-				doorIDs.push_back(door_id);
+				if (doorIdOpen == door_id) {
+					doors[door_id].open();
+				}
+				else {
+					doorIDs.push_back(door_id);
+				}
 			}
 			else if (c == objSigns::KEY) {
 				keys[Point(x, y)] = Key(x, y);

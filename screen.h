@@ -69,7 +69,7 @@ public:
 	void clearMessegeArea(int const counter);
 	bool isOnOpenDoor(const Point& p) const { return getCharAt(p) == '{'; }
 	bool isRealDoor(int doorId) const { return doorId >= roomIndex::VICTORY && doorId <=roomIndex::VAULT; }
-	void loadItems();
+	void loadItems(int doorIdOpen);
 	void linkDoorsToKeysAndSwitches();
 	bool isDoorOpen(int door_id);
 	void openDoor(int door_id);
