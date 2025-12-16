@@ -151,7 +151,7 @@ void Game::showMenu(bool& started){
 				break;
 			case '2':
 				SetColorfullGame();
-				changeRoom(ROOM2);
+				changeRoom(ROOM1);
 				inMenu = false;
 				break;
 			case '8':
@@ -170,6 +170,10 @@ void Game::showMenu(bool& started){
 }
 
 void Game::changeRoom(size_t roomNumber){
+	int currentRoom = board.getCurrentRoom();
+	if (currentRoom >= roomIndex::ROOM1 && currentRoom <= roomIndex::VAULT){
+		board.saveRoom();
+	}
 	board.loadMap(roomNumber);
 	board.drawMap(roomNumber);
 	if (roomNumber != MENU && roomNumber != INSTRUCTIONS && roomNumber != VICTORY) {
@@ -178,7 +182,6 @@ void Game::changeRoom(size_t roomNumber){
 	}
 	if (roomNumber == roomIndex::ROOM3)
 		board.showMessage("it is very dark in here, you will need something to light it up");
-
 }
 
 void Game::updateSwitches() {

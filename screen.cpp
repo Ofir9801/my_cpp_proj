@@ -16,25 +16,40 @@ using std::cout;
 using std::endl;
 using std::string;
 
-Screen::Screen() 
-{
+Screen::Screen() {
 	initaializeRoomsArray();
 	for (int i = 0; i < MAX_Y; i++) {
 		board[i].resize(MAX_X, ' ');
 	}
 }
-void Screen::loadMap(int roomNumber)
-{
-	for (int i = 0; i < MAX_Y; i++) {
-		board[i] = Rooms[roomNumber][i];
-	}
+
+void Screen::loadMap(int roomNumber){
 	currentRoom = roomNumber;
+	if (savedRooms.find(roomNumber)!=savedRooms.end()) { //load saved state
+		for (int i = 0; i < MAX_Y; i++) {
+			board[i] = savedRooms[currentRoom].layout[i];
+		}
+		springs = savedRooms[currentRoom].springs;
+		switches = savedRooms[currentRoom].switches;
+		obstacles = savedRooms[currentRoom].obstacles;
+		doors = savedRooms[currentRoom].doors;
+		keys = savedRooms[currentRoom].keys;
+		activeBombs = savedRooms[currentRoom].activeBombs;
+		riddles = savedRooms[currentRoom].riddles;
+	}
+	else { //first time loading the room
+		
+		for (int i = 0; i < MAX_Y; i++) {
+			board[i] = Rooms[roomNumber][i];
+		}
+		loadItems();
+	}
 	if (roomNumber == roomIndex::ROOM3)
 		isDarkRoom = true;
 	else
 		isDarkRoom = false;
-	loadItems();
 }
+
 void Screen::drawMap() {
 	cls(); //clear the console
 	if (isDarkRoom) {
@@ -58,6 +73,7 @@ void Screen::drawMap() {
 		}
 	}
 }
+
 void Screen::drawMap(int roomNumber) {
 	cls(); //clear the console
 	if (roomNumber == VICTORY &&colorToggle) {
@@ -157,6 +173,9 @@ void Screen::initaializeRoomsArray() {
 	if (ReadRoomLayoutFromFile(Room3PathWay, roomIndex::ROOM3)) {
 		throw std::runtime_error("Something wrong with the file room3.txt");
 	}
+	if (ReadRoomLayoutFromFile(VaultPathWay, roomIndex::VAULT)) {
+		throw std::runtime_error("Something wrong with the file vault.txt");
+	}
 	if (ReadRoomLayoutFromFile(EndingScreenPathWay, roomIndex::VICTORY)){
 		throw std::runtime_error("Something wrong with the file endingscreen.txt"); 
 	}	
@@ -166,6 +185,7 @@ void Screen::initaializeRoomsArray() {
 	Rooms[ROOM1] = Room1;
 	Rooms[ROOM2] = Room2;
 	Rooms[ROOM3] = Room3;
+	Rooms[VAULT] = Vault;
 	Rooms[VICTORY] = EndingScreen;
 }
 
@@ -631,14 +651,29 @@ Riddle Screen::ReadRiddleFromFile(const string& filePath,const Point pos, int ri
 	return Riddle(pos, question, options, correctIndex);
 }
 
-bool Screen::allRiddlesSolved() const
-{
+bool Screen::allRiddlesSolved() const{
 	for (const auto& riddlePair : riddles) {
 		if (!riddlePair.second.isSolved()) {
 			return false;
 		}
 	}
 	return true;
+}
+
+void Screen::saveRoom()
+{
+	savedRooms[currentRoom].layout.clear();
+	for (int i = 0; i < MAX_Y; i++) {
+		savedRooms[currentRoom].layout.push_back(board[i]);
+	}
+	savedRooms[currentRoom].springs = springs;
+	savedRooms[currentRoom].switches = switches;
+	savedRooms[currentRoom].obstacles = obstacles;
+	savedRooms[currentRoom].doors = doors;
+	savedRooms[currentRoom].keys = keys;
+	savedRooms[currentRoom].activeBombs = activeBombs;
+	savedRooms[currentRoom].riddles = riddles;
+	savedRooms[currentRoom].visited = true;
 }
 
 

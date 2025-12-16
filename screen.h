@@ -18,6 +18,7 @@ private:
 	//Screen rectangle for 80x25 characters for the static objects
 	string board[MAX_Y];
 	string* Rooms[NUM_ROOMS];
+	
 	size_t currentRoom = 0;
 	std::vector<Spring> springs;
 	std::vector<Switch> switches;
@@ -32,6 +33,20 @@ private:
 	bool gameState = true;
 	int sharedLives = 4;
 	int sharedScore = 0;
+	
+	struct RoomState { //to save the state of each room
+		std::vector<string> layout;          
+		std::vector<Spring> springs;         
+		std::vector<Switch> switches;        
+		std::vector<Obstacle> obstacles;     
+		std::map<int, Door> doors;           
+		std::map<Point, Key> keys;           
+		std::vector<Bomb> activeBombs;       
+		std::map<Point, Riddle> riddles;     
+		bool visited = false;                
+	};
+	std::map <int,RoomState> savedRooms; //array to hold the state of each room (excluding menu ,instructions and victory)
+
 public:
 	friend class Game;
 	Screen();
@@ -87,4 +102,5 @@ public:
 	void loadRiddles();
 	Riddle ReadRiddleFromFile(const string& filePath,const Point pos, int riddleIndex, bool& error);
 	bool allRiddlesSolved() const;
+	void saveRoom();
 };

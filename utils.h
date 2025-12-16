@@ -73,6 +73,7 @@ const string keys2 = "ilkjou";
 inline string Room1[BOARD_DIMENSION::MAX_Y];
 inline string Room2[BOARD_DIMENSION::MAX_Y];
 inline string Room3[BOARD_DIMENSION::MAX_Y];
+inline string Vault[BOARD_DIMENSION::MAX_Y];
 inline string Menu[BOARD_DIMENSION::MAX_Y];
 inline string Instructions[BOARD_DIMENSION::MAX_Y];
 inline string EndingScreen[BOARD_DIMENSION::MAX_Y];
@@ -81,15 +82,17 @@ const string MenuPathWay = "Rooms/Menu.txt";
 const string Room1PathWay = "Rooms/Room1.txt";
 const string Room2PathWay = "Rooms/Room2.txt";
 const string Room3PathWay = "Rooms/Room3.txt";
+const string VaultPathWay = "Rooms/Vault.txt";
 const string EndingScreenPathWay = "Rooms/EndingScreen.txt";
 const string InstructionsPathWay = "Rooms/Instructions.txt";
 const string RiddlesRoom1PathWay = "Riddles/Riddles1.txt";
 const string RiddlesRoom2PathWay = "Riddles/Riddles2.txt";
 const string RiddlesRoom3PathWay = "Riddles/Riddles3.txt";
+const string RiddlesVaultPathWay = "Riddles/þRiddlesVault.txt";
 
 int constexpr INVENTORY_SIZE = 1; //Player can hold up to one item
 int constexpr NUM_KEYS = 6; //number of possible movement Keys
-int constexpr NUM_ROOMS = 6; //number of rooms in the Game
+int constexpr NUM_ROOMS = 7; //number of rooms in the Game
 int constexpr LIGHT_RADIUS_TORCH = 7;
 int constexpr LIGHT_RADIUS_DEFAULT = 2;
 int constexpr NUMS_OF_RIDDLES = 4;
