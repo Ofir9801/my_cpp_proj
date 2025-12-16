@@ -17,12 +17,13 @@ enum INFO_SLOTS {
 enum BOARD_DIMENSION{ MAX_X = 80, MAX_Y = 25 };
 enum MESSAGES_POS { MES_X = 0, MES_Y = 2 };
 enum roomIndex {
-	MENU = 0,
-	INSTRUCTIONS = 1,
-	ROOM1 = 2,
-	ROOM2 = 3,
-	ROOM3 = 4,
-	VICTORY = 5
+	VICTORY = 0,
+	ROOM1 = 1,
+	ROOM2 = 2,
+	ROOM3 = 3,
+	VAULT = 4,
+	MENU = 5,
+	INSTRUCTIONS = 6
 };
 enum Keyboard_bind {
 	UP,

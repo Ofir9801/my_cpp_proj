@@ -247,53 +247,60 @@ bool Player::atDoor(unsigned char nextTile, Point nextPos) {
 }
 
 bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
-	int score = board.getScore();
 	bool isOpenDoor = board.isDoorOpen(doorId);
-	if (isOpenDoor && score >= MIN_SCORE) { //check if door is open and player has enough score to finish
+	if (isOpenDoor) { //door is open
+		if (doorId == roomIndex::VAULT) { return OpenVaultRoom(); }
 		clearFromScreen();
 		finishedLevel = true;
+		roomOpen = doorId;
 		return false;
 	}
-	else if (isOpenDoor && score < MIN_SCORE) { //alert the player that he needs more score to finish
-		string msg = "You need at least " + std::to_string(MIN_SCORE) + " points to finish the game!, you need more " + std::to_string(MIN_SCORE - score) + " points";
-		board.showMessage(msg);
-		return true;
-	}
-
 	int keyDoorId = board.GetDoorIdByKey(this->getChar());
-	bool winDoorId = board.isWinningDoor(doorId);
-	
+	bool RealDoor = board.isRealDoor(doorId);
+
 	if (hasItem(objSigns::KEY) && keyDoorId == doorId) {
+		board.openDoor(doorId);
 		removeItem();
 		board.showPlayerInfo(*this);
-		board.openDoor(doorId);
-		if (winDoorId && score >= MIN_SCORE) {
+		if (doorId == roomIndex::VAULT) { return OpenVaultRoom(); }
+		if (RealDoor) {
 			clearFromScreen();
-			string msg = "Correct door!Unlocked. + " +std::to_string(SUCCESS_SCORE) + "points!";
+			string msg = "The Door Is Unlocked, you get " + std::to_string(SUCCESS_SCORE) + " points!";
 			board.showMessage(msg);
-			board.addScore(100);
+			board.addScore(SUCCESS_SCORE);
 			finishedLevel = true;
+			roomOpen = doorId;
 			return false;
 		}
-		else if (!winDoorId) {
+		else { //fake door
 			board.setChar(nextPos, 'X');
-			string msg = "Wrong door! It's a dead end. + " + std::to_string(FAKE_DOOR_SCORE) + "points for trying";
+			string msg = "It's a dead end, you get " + std::to_string(FAKE_DOOR_SCORE) + " points for trying";
 			board.showMessage(msg);
-			board.addScore(50);
-			return true;
-		}
-		
-		else{ // (score < MIN_SCORE)
-			string msg = "You need at least " + std::to_string(MIN_SCORE) + " points to finish the game!, you need more "+ std::to_string(MIN_SCORE-score) + " points";
-			board.showMessage(msg);
+			board.addScore(FAKE_DOOR_SCORE);
 			return true;
 		}
 	}
 	else {
-		board.showMessage("try look for the right key to unlock this door");
+		board.showMessage("Try to look for the right key to unlock this door");
 		return true;
 	}
 }
+
+bool Player::OpenVaultRoom() {
+	int score = board.getScore();
+	if (score >= MIN_SCORE) { //check if door is open and player has enough score to finish
+		clearFromScreen();
+		finishedLevel = true;
+		roomOpen = roomIndex::VICTORY;
+		return false;
+	}
+	else if (score < MIN_SCORE) { //alert the player that he needs more score to finish
+		string msg = "You need at least " + std::to_string(MIN_SCORE) + " points to enter the vault!, you need more " + std::to_string(MIN_SCORE - score) + " points";
+		board.showMessage(msg);
+		return true;
+	}
+}
+
 int Player::getLives() const { return board.getLives(); }
 int Player::getScore() const { return board.getScore(); }
 void Player::decreaseLife() { board.decreaseLife(); }

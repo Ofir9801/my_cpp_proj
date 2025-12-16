@@ -600,19 +600,25 @@ Riddle Screen::ReadRiddleFromFile(const string& filePath,const Point pos, int ri
 
 	if (!inFile.is_open()) {
 		error = true;
+		return Riddle();
 	}
 	string templine;
 	for (int i = 0; i < riddleIndex; i++) { //skip to the right riddle index
 		for (int j = 0; j < 6; j++) { //every riddle is represnt by 6 lines in riddle text file
 			if (!std::getline(inFile, templine)) {
-				templine = "";
+				error = true;
+				return Riddle();
 			}
 		}
 	}
 
 	for (int i = 0; i < 6; i++) {
 		if (!std::getline(inFile, templine)) {
-			templine = "";
+			error = true;
+			return Riddle();
+		}
+		if (!templine.empty() && templine.back() == '\r') {
+			templine.pop_back(); // Remove carriage return character if present
 		}
 		if (i == 0) { question = templine; } //first line is the question
 		else if (i == 1) { 

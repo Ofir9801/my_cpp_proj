@@ -26,7 +26,6 @@ private:
 	std::vector<int>doorIDs; //keys to the doors map
 	std::map<Point, Key> keys;
 	std::map<Point, Riddle> riddles;
-	//std::vector<Riddle> riddles;
 	std::vector<Bomb> activeBombs;
 	bool colorToggle = false;
 	bool isDarkRoom = false;
@@ -54,7 +53,7 @@ public:
 	void refreshSpringsDisplay(const Point& p1, const Point& p2) const;
 	void clearMessegeArea(int const counter);
 	bool isOnOpenDoor(const Point& p) const { return getCharAt(p) == '{'; }
-	bool isWinningDoor(int doorId) const { return doorId == currentRoom - 1; }
+	bool isRealDoor(int doorId) const { return doorId >= roomIndex::VICTORY && doorId <=roomIndex::VAULT; }
 	void loadItems();
 	void linkDoorsToKeysAndSwitches();
 	bool isDoorOpen(int door_id);

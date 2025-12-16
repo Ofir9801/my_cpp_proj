@@ -30,8 +30,6 @@ void Game::run() {
 		return;
 	}
 	board.resetStats();
-
-	char winningDoorId = char(board.getCurrentRoom() - 1 + '0');
 	board.drawMap();
 	player1.draw();
 	player2.draw();
@@ -41,6 +39,13 @@ void Game::run() {
 			board.showMessage("Welcome to the Adventure Game! only one door will lead you to the next room.");
 			Sleep(2000);
 			firstMessage = false;
+		}
+		if (board.currentRoom == roomIndex::VICTORY) {
+			board.showMessage("Press Any key to finish the game");
+			(void)_getch();
+			exitGame = false;
+			cls();
+			continue;
 		}
 		Point p1Prev = player1.getPosition();
 		Point p2Prev = player2.getPosition();
@@ -102,16 +107,29 @@ void Game::run() {
 		gamecycle++;
 
 		if (player1.hasFinished() && player2.hasFinished()) {
-			size_t index = board.getCurrentRoom();
-			if (index < VICTORY) {
-				changeRoom(++index);
-				winningDoorId = (char)('0' + (board.getCurrentRoom() - 1));
+			size_t player1Room = player1.getRoomOpen(); //the room number of the door opened by player 1
+			size_t player2Room = player2.getRoomOpen(); //the room number of the door opened by player 2
+			if (player1Room == player2Room) { //both players chose the same door
+				changeRoom(player1Room);
 			}
-			else {
-				board.showMessage("Press Any key to finish the game");
-				(void)_getch();
-				exitGame = false;
-				cls();
+			else{
+				string msg = "you chose different rooms! choose one room you willing to continue with between " + std::to_string(player1Room) + "/" + std::to_string(player2Room);
+				board.showMessage(msg);
+				while (true) {
+					if (_kbhit()) {
+						char key = (char)_getch();
+						if (std::isdigit((unsigned char)key)) {
+							size_t chosenRoom = key - '0';
+							if (chosenRoom == player1Room || chosenRoom == player2Room) {
+								changeRoom(chosenRoom);
+								break;
+							}
+							else {
+								board.showMessage("Invalid choice. Please choose again between " + std::to_string(player1Room) + "/" + std::to_string(player2Room));
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -151,7 +169,7 @@ void Game::showMenu(bool& started){
 	}
 }
 
-void Game::changeRoom(int roomNumber){
+void Game::changeRoom(size_t roomNumber){
 	board.loadMap(roomNumber);
 	board.drawMap(roomNumber);
 	if (roomNumber != MENU && roomNumber != INSTRUCTIONS && roomNumber != VICTORY) {
@@ -160,6 +178,7 @@ void Game::changeRoom(int roomNumber){
 	}
 	if (roomNumber == roomIndex::ROOM3)
 		board.showMessage("it is very dark in here, you will need something to light it up");
+
 }
 
 void Game::updateSwitches() {

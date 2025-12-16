@@ -1,0 +1,7 @@
+Which chess piece moves in an L shape?
+2
+Bishop
+Knights
+Rook
+Queen
+
