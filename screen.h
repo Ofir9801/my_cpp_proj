@@ -103,4 +103,5 @@ public:
 	Riddle ReadRiddleFromFile(const string& filePath,const Point pos, int riddleIndex, bool& error);
 	bool allRiddlesSolved() const;
 	void saveRoom();
+	void clearSavedRooms() {savedRooms.clear();}
 };

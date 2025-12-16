@@ -10,6 +10,11 @@ class Game{
 	Screen board;
 	Player player1;
 	Player player2;
+	void performRestart(int& gameCycle);
+	void PerformGoToMenu(bool& exitGame, int& gameCycle);
+	void handlePause(bool& exitGame, int& gameCycle);
+	void handleGameOver(bool& exitGame, int& gameCycle);
+	void handleLevelCompletion();
 
 public:
 	Game(); //default constructor to initialize the Game components	

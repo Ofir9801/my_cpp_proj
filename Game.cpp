@@ -5,11 +5,9 @@
 #include "Utils.h"
 #include "Player.h"
 #include "Screen.h"
-
 #include <random>
 #include <algorithm>
 #include <cctype> //  for tolower, isdigit
-
 
 Game::Game() :
 	player1(Point(PLAYER_1_START_X, PLAYER_1_START_Y, objSigns::PLAYER1), keys1, board),
@@ -19,34 +17,41 @@ void Game::run() {
 	hideCursor();
 	int gamecycle = 0;
 	bool started = true;
+	
 	showMenu(started);
-	bool firstMessage = true;
+	
 	if (!started) {
-		cls();
-		board.showMessage("Exiting game. Goodbye!");
-		Sleep(1000);
-		cls();
-		gotoxy(0, 0);
+		//cls();
+		//board.showMessage("Exiting game. Goodbye!");
+		//Sleep(1000);
+		//cls();
+		//gotoxy(0, 0);
 		return;
 	}
 	board.resetStats();
 	board.drawMap();
 	player1.draw();
 	player2.draw();
-	bool exitGame = started;
+
+	bool exitGame = true;
+	bool firstMessage = true;
+
 	while (exitGame) {
 		if (firstMessage) {
 			board.showMessage("Welcome to the Adventure Game! only one door will lead you to the next room.");
 			Sleep(2000);
 			firstMessage = false;
 		}
+
 		if (board.currentRoom == roomIndex::VICTORY) {
 			board.showMessage("Press Any key to finish the game");
 			(void)_getch();
-			exitGame = false;
-			cls();
+			showMenu(exitGame);
+			if (!exitGame) { return; }
+			performRestart(gamecycle);
 			continue;
 		}
+
 		Point p1Prev = player1.getPosition();
 		Point p2Prev = player2.getPosition();
 
@@ -70,68 +75,27 @@ void Game::run() {
 		Sleep(100);
 		
 		if (_kbhit()) {
-			int key = _getch();
-
-			if (key == ESC) {  //change to const ESC	
-				board.showMessage("Game Paused. Press ESC again to continue or H to exit.");
-				key = _getch();
-				if (std::tolower((unsigned char)key) == std::tolower('h')) {
-					cls();
-					board.showMessage("Exiting game. Goodbye!");
-					Sleep(1000);
-					cls();
-					exitGame = false;
-				}
-				else {
-					gotoxy(0, 24);
-					board.drawMap();
-				}
+			char key = _getch();
+			if (key == ESC) { 
+				handlePause(exitGame, gamecycle);
 			}
 			else if (isSpecialKey(key)) {
 				(void)_getch(); //ignore special keys like arrows
 			}
-
 			else {
 				player1.handleKeyPressed((char)key);
 				player2.handleKeyPressed((char)key);
 			}
 		}
+
 		if(isGameOver()) {
-			cls();
-			gotoxy(30, 10);
-			board.showMessage("Game Over! you lost!");
-			Sleep(2000);
-			exitGame = false;
+			handleGameOver(exitGame, gamecycle);
+			if (!exitGame) { return; }
 			continue;
 		}
+		
+		handleLevelCompletion();
 		gamecycle++;
-
-		if (player1.hasFinished() && player2.hasFinished()) {
-			size_t player1Room = player1.getRoomOpen(); //the room number of the door opened by player 1
-			size_t player2Room = player2.getRoomOpen(); //the room number of the door opened by player 2
-			if (player1Room == player2Room) { //both players chose the same door
-				changeRoom(player1Room);
-			}
-			else{
-				string msg = "you chose different rooms! choose one room you willing to continue with between " + std::to_string(player1Room) + "/" + std::to_string(player2Room);
-				board.showMessage(msg);
-				while (true) {
-					if (_kbhit()) {
-						char key = (char)_getch();
-						if (std::isdigit((unsigned char)key)) {
-							size_t chosenRoom = key - '0';
-							if (chosenRoom == player1Room || chosenRoom == player2Room) {
-								changeRoom(chosenRoom);
-								break;
-							}
-							else {
-								board.showMessage("Invalid choice. Please choose again between " + std::to_string(player1Room) + "/" + std::to_string(player2Room));
-							}
-						}
-					}
-				}
-			}
-		}
 	}
 	cls();
 }
@@ -196,4 +160,101 @@ void Game::SetColorfullGame() {
 	board.colorToggle = true;
 }
 
+void Game::performRestart(int& gameCycle)
+{
+	board.resetStats();
+	board.clearSavedRooms();
+	changeRoom(roomIndex::ROOM1);
+	gameCycle = 0;
+}
 
+void Game::PerformGoToMenu(bool& exitGame, int& gameCycle)
+{
+	board.clearSavedRooms();
+	board.resetStats();
+	bool gameActive = true;
+	showMenu(gameActive);
+	if (!gameActive) {
+		exitGame = false;
+	}
+	else {
+		gameCycle = 0;
+	}
+}
+
+void Game::handlePause(bool& exitGame, int& gameCycle)
+{
+	board.showMessage("PAUSED: ESC-Continue, H-Menu, R-Restart");
+
+	while (true) {
+		char choice = std::tolower(_getch());
+		if (choice == ESC) {
+			board.showMessage(EMPTYLINE);
+			board.drawMap();
+			break;
+		}
+		else if (choice == 'r') {
+			performRestart(gameCycle);
+			break;
+		}
+		else if (choice == 'h') {
+			PerformGoToMenu(exitGame, gameCycle);
+			board.colorToggle = false; //reset color mode when going to menu
+			break;
+		}
+	}
+}
+
+void Game::handleGameOver(bool& exitGame, int& gameCycle)
+{
+	cls();
+	gotoxy(30, 10);
+	board.showMessage("Game Over! you lost!");
+	Sleep(1000);
+	std::cout << "Press 'R' to Restart or 'H' to go to Menu";
+
+	while (true) {
+		if (_kbhit()) {
+			char choice = std::tolower(_getch());
+			if (choice == 'r') {
+				performRestart(gameCycle);
+				break;
+			}
+			else if (choice == 'h') {
+				PerformGoToMenu(exitGame, gameCycle);
+				break;
+			}
+			else if (choice == ESC) { // ESC -> Exit the game
+				exitGame = false;
+				break;
+			}
+		}
+	}
+}
+
+void Game::handleLevelCompletion() {
+	if (!player1.hasFinished() || !player2.hasFinished()) { return; }
+	size_t player1Room = player1.getRoomOpen(); //the room number of the door opened by player 1
+	size_t player2Room = player2.getRoomOpen(); //the room number of the door opened by player 2
+	if (player1Room == player2Room) { changeRoom(player1Room); }			//both players chose the same door
+	else {
+		string msg = "you chose different rooms! choose one room you willing to continue with between " + std::to_string(player1Room) + "/" + std::to_string(player2Room);
+		board.showMessage(msg);
+		while (true) {
+			if (_kbhit()) {
+				char key = (char)_getch();
+				if (std::isdigit((unsigned char)key)) {
+					size_t chosenRoom = key - '0';
+
+					if (chosenRoom == player1Room || chosenRoom == player2Room) {
+						changeRoom(chosenRoom);
+						break;
+					}
+					else {
+						board.showMessage("Invalid choice. Please choose again between " + std::to_string(player1Room) + "/" + std::to_string(player2Room));
+					}
+				}
+			}
+		}
+	}
+}
