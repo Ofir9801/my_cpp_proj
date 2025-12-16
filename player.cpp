@@ -235,6 +235,7 @@ void Player::reset(Point newPosition) {
 
 bool Player::atDoor(unsigned char nextTile, Point nextPos) {
 	int doorId = nextTile - '0';
+	if (doorId == 9) { doorId = 0; } //door id 0 is represented by char '9' on the board and that is the end screen
 	if (board.ConnectionStatus(doorId)){ // connected to a switch
 		if (board.SwitchState(doorId)) {return OpenDoorWithKey(doorId, nextPos);}//true = switch is on 
 		else { //switch is off
@@ -242,6 +243,7 @@ bool Player::atDoor(unsigned char nextTile, Point nextPos) {
 			return true;
 		}
 	}
+	else if (doorId == 0) { return OpenVictoryRoom(); }//In vault Room
 	else { return OpenDoorWithKey(doorId, nextPos);}//not connected to a switch
 	
 }
@@ -291,11 +293,28 @@ bool Player::OpenVaultRoom() {
 	if (score >= MIN_SCORE) { //check if door is open and player has enough score to finish
 		clearFromScreen();
 		finishedLevel = true;
-		roomOpen = roomIndex::VICTORY;
+		roomOpen = roomIndex::VAULT;
 		return false;
 	}
 	else if (score < MIN_SCORE) { //alert the player that he needs more score to finish
 		string msg = "You need at least " + std::to_string(MIN_SCORE) + " points to enter the vault!, you need more " + std::to_string(MIN_SCORE - score) + " points";
+		board.showMessage(msg);
+		return true;
+	}
+}
+
+bool Player::OpenVictoryRoom() {
+	if (board.allRiddlesSolved()) {
+		board.openDoor(roomIndex::VICTORY);
+		string msg = "Congratulations, you may proceed to the final screen";
+		board.showMessage(msg);
+		clearFromScreen();
+		finishedLevel = true;
+		roomOpen = roomIndex::VAULT;
+		return false;
+	}
+	else {
+		string msg = "You need to solve the riddle to proceed to the final screen";
 		board.showMessage(msg);
 		return true;
 	}

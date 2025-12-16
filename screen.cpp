@@ -631,5 +631,15 @@ Riddle Screen::ReadRiddleFromFile(const string& filePath,const Point pos, int ri
 	return Riddle(pos, question, options, correctIndex);
 }
 
+bool Screen::allRiddlesSolved() const
+{
+	for (const auto& riddlePair : riddles) {
+		if (!riddlePair.second.isSolved()) {
+			return false;
+		}
+	}
+	return true;
+}
+
 
 

@@ -86,4 +86,5 @@ public:
 	void resetStats() { sharedLives = 4; sharedScore = 0; }
 	void loadRiddles();
 	Riddle ReadRiddleFromFile(const string& filePath,const Point pos, int riddleIndex, bool& error);
+	bool allRiddlesSolved() const;
 };

@@ -54,4 +54,5 @@ public:
 	void setRoomOpen(size_t roomIndex) { roomOpen = roomIndex; };
 	size_t getRoomOpen() const { return roomOpen; }
 	bool OpenVaultRoom();
+	bool OpenVictoryRoom();
 };
