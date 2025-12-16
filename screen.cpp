@@ -25,6 +25,7 @@ Screen::Screen() {
 
 void Screen::loadMap(int roomNumber){
 	int lastRoom = currentRoom;
+	if (lastRoom > roomIndex::VAULT) { lastRoom = -1; }
 	currentRoom = roomNumber;
 	if (savedRooms.find(roomNumber)!=savedRooms.end()) { //load saved state
 		for (int i = 0; i < MAX_Y; i++) {
@@ -500,10 +501,8 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 bool Screen::isValid(const Point& p) const{
 	int x = p.getX();
 	int y = p.getY();
-	char c = board[y][x];
-	bool door = isdigit(c);
-	bool insideBoard = x > 0 && x < MAX_X - 1 && y > 3 && y < MAX_Y - 1;
-	return door ||insideBoard;
+	bool wall = x >= 0 && x < MAX_X - 1 && y >= 3 && y < MAX_Y - 1;
+	return wall;
 }
 
 void Screen::deleteKey(Point position){
@@ -543,8 +542,10 @@ void Screen::deleteDoor(Point position){
 	int door_id = position.getChar() - '0';
 	auto it = doors.find(door_id);
 	if (it != doors.end()) {
-		if (it->second.getId() == getCurrentRoom() - 1){ //explode winning door
+		if (isRealDoor(door_id)){ //explode winning door
 			gameState = false;
+			showMessage("you blew up a real door. you lost the game");
+			Sleep(2000);
 		}
 		doors.erase(it);
 	}
