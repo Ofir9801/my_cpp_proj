@@ -1,12 +1,9 @@
 ﻿#include "Riddle.h"
-#include "Screen.h"
-#include "Player.h"
 #include <iostream>
 #include <conio.h>
 #include "Utils.h"
-#include <fstream>
 
-bool Riddle::engage(Player& player) const {
+bool Riddle::engage(Player& player){
 	cls();
 	gotoxy(10, 10);
 	std::cout << "RIDDLE TIME!" << std::endl;
@@ -24,6 +21,7 @@ bool Riddle::engage(Player& player) const {
 				int choiceIndex = key - '1';
 				if (choiceIndex == correctIndex) {
 					player.increaseScore(100);
+					solved = true;
 					return true; 
 				}
 				else {

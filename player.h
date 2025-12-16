@@ -2,8 +2,8 @@
 #include "point.h"//using Point class for Player position
 #include <string>
 #include <iostream>
-class Screen;//forward declaration to avoid circular dependency
 
+class Screen;//forward declaration to avoid circular dependency
 
 class Player
 {

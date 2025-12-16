@@ -21,7 +21,5 @@ private:
 	bool isSpecialKey(int key) { return key == 0 || key == 224; } //when keyboard presses special keys like arrows
 	void SetColorfullGame();
 	bool isGameOver() { return board.getLives() <= 0 || !board.gameState; }
-	void LoadRiddles();
-	Riddle ReadRiddleFromFile(string FileName, int RiddleIndex, bool& error);
 };
 

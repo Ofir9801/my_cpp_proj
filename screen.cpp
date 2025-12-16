@@ -9,6 +9,7 @@
 #include <random>
 #include <string>
 #include <algorithm>
+#include <fstream>
 #include <cctype> //  for tolower, isdigit
 
 using std::cout;
@@ -261,6 +262,7 @@ void Screen::loadItems() {//enter the items from the board to the appropiete dat
 	doors.clear();
 	doorIDs.clear();
 	keys.clear();
+	riddles.clear();
 	for (int y = 3; y < BOARD_DIMENSION::MAX_Y; y++) {
 		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
 			char c = getCharAt(Point(x, y));
@@ -281,9 +283,13 @@ void Screen::loadItems() {//enter the items from the board to the appropiete dat
 			else if (c == objSigns::KEY) {
 				keys[Point(x, y)] = Key(x, y);
 			}
+			else if (c == objSigns::RIDDLE) {
+				riddles[Point(x, y)] = Riddle(Point(x, y,objSigns::RIDDLE));
+			}
 		}
 	}
 	linkDoorsToKeysAndSwitches();
+	loadRiddles();
 	loadSprings();
 }
 
@@ -313,7 +319,6 @@ void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number 
 	}
 }
 
-
 bool Screen::isDoorOpen(int door_id){
 	auto it = doors.find(door_id);
 	if (it != doors.end()) {
@@ -321,6 +326,7 @@ bool Screen::isDoorOpen(int door_id){
 	}
 	return false;
 }
+
 void Screen::openDoor(int door_id){
 	auto it = doors.find(door_id);
 	if (it != doors.end()) {
@@ -377,7 +383,7 @@ void Screen::RemoveKeyFromInventory(char p, Point newPos) {
 	}
 }
 
-int Screen::GetDoorIdByKey(char p) {
+int Screen::GetDoorIdByKey (char p) const{
 	for (auto& k : keys) {
 		if (k.second.getPlayerUse() == p) {
 			return k.second.getTargetDoorId();
@@ -387,29 +393,27 @@ int Screen::GetDoorIdByKey(char p) {
 }
 
 bool Screen::handleRiddle(Point riddlePos, Player& p) {
-	for (auto it = riddles.begin(); it != riddles.end(); ++it) {
-		if (it->isSolved()) { continue; }//continuing if solved
-		else{
-			bool solved = it->engage(p);
-			drawMap(); //redraw the board after riddle engagement
-			if (solved) {
-				it->ChangeSolve(true);
-				string msg = "Correct! The path is clear. +"+std::to_string(SUCCESS_SCORE) +"points!";
-				showMessage(msg);
-				setChar(riddlePos, ' '); //remove riddle from the board
-				return true;
-			}
-			else {
-				string msg = "WRONG! You lost" + std::to_string(WRONG_ANSWER) + " points!";
-				showMessage(msg);
-				return false;
-			}
-			
+	auto it = riddles.find(riddlePos);
+	if (it != riddles.end() && !it->second.isSolved()) {
+		bool solved = riddles[riddlePos].engage(p);
+		drawMap(); //redraw the map after riddle engagement
+		if (solved) {
+			string msg = "Correct! +" + std::to_string(SUCCESS_SCORE) + "points!";
+			showMessage(msg);
+			//setChar(riddlePos, ' '); //remove riddle from the board
+			return true;
+		}
+		else {
+			string msg = "WRONG! You lost" + std::to_string(WRONG_ANSWER) + " points!";
+			showMessage(msg);
+			return false;
 		}
 	}
-	this->showMessage("No more riddles left!");
-	setChar(riddlePos, ' '); //remove riddle from the board if no more riddles left
-	return true;
+	else if (it != riddles.end()) {
+		string msg = "You Already solved this riddle, the correct answer was " + std::to_string(it->second.getCorrectIndex()+1)+"." + it->second.getCorrectAnswer();
+		showMessage(msg);
+	}
+	return false;
 }
 
 void Screen::updateLighting(const Point& p1, const Point& p1Prev, const Player& player1, const Point& p2, const Point& p2Prev, const Player& player2)
@@ -483,8 +487,7 @@ void Screen::deleteKey(Point position){
 	}
 }
 
-void Screen::deleteSpring(Point position)
-{
+void Screen::deleteSpring(Point position){
 	for (size_t i = 0; i < springs.size(); ++i) {
 		if (springs[i].isPointOn(position)) {
 			int hitIndex = springs[i].getSegmentIndex(position);
@@ -521,8 +524,7 @@ void Screen::deleteDoor(Point position){
 	}
 }
 
-bool Screen::isBombAt(const Point& p) const
-{
+bool Screen::isBombAt(const Point& p) const{
 	for (const auto& bomb : activeBombs) {
 		if (bomb.getPosition() == p) {
 			return true;
@@ -558,3 +560,70 @@ void Screen::decreaseLife() {
 		cls();
 	}
 }
+
+void Screen::loadRiddles(){
+	auto it = riddles.begin();
+	int counter = 0;
+	
+	while (it != riddles.end())
+	{
+		bool error = false;
+		Riddle temp;
+		switch (currentRoom) {
+			case roomIndex::ROOM1:
+				temp = ReadRiddleFromFile(RiddlesRoom1PathWay,it->first, counter, error);
+			break;
+			case roomIndex::ROOM2:
+				temp = ReadRiddleFromFile(RiddlesRoom2PathWay, it->first, counter, error);
+				break;
+			case roomIndex::ROOM3:
+				temp = ReadRiddleFromFile(RiddlesRoom3PathWay, it->first, counter, error);
+				break;
+		}
+		
+		if (error) {
+			throw std::runtime_error("Something wrong with the file riddle.txt");
+		}
+		else {
+			it->second = std::move(temp);
+			++it;
+			counter++;
+		}
+	}
+}
+
+Riddle Screen::ReadRiddleFromFile(const string& filePath,const Point pos, int riddleIndex, bool& error){
+	std::ifstream inFile(filePath);
+	std::string question;
+	std::vector<std::string> options;
+	int correctIndex = 0;
+
+	if (!inFile.is_open()) {
+		error = true;
+	}
+	string templine;
+	for (int i = 0; i < riddleIndex; i++) { //skip to the right riddle index
+		for (int j = 0; j < 6; j++) { //every riddle is represnt by 6 lines in riddle text file
+			if (!std::getline(inFile, templine)) {
+				templine = "";
+			}
+		}
+	}
+
+	for (int i = 0; i < 6; i++) {
+		if (!std::getline(inFile, templine)) {
+			templine = "";
+		}
+		if (i == 0) { question = templine; } //first line is the question
+		else if (i == 1) { 
+			correctIndex = std::stoi(templine) - 1 ;//second line is the right answer index
+		}				 
+		else { options.push_back(templine); } // other 3 lines is wrong answers
+	}
+	inFile.close();
+
+	return Riddle(pos, question, options, correctIndex);
+}
+
+
+

@@ -1,6 +1,5 @@
 #pragma once
 #include "Point.h"
-#include "Player.h"
 #include "Spring.h"
 #include "Switch.h"
 #include "Obstacle.h"
@@ -9,7 +8,6 @@
 #include "Riddle.h"
 #include "Bomb.h"
 #include <vector>
-//#include <unordered_map>
 #include <map>
 
 class Player; //forward declaration to avoid circular dependency
@@ -27,7 +25,8 @@ private:
 	std::map<int,Door>doors;
 	std::vector<int>doorIDs; //keys to the doors map
 	std::map<Point, Key> keys;
-	std::vector<Riddle> riddles;
+	std::map<Point, Riddle> riddles;
+	//std::vector<Riddle> riddles;
 	std::vector<Bomb> activeBombs;
 	bool colorToggle = false;
 	bool isDarkRoom = false;
@@ -66,7 +65,7 @@ public:
 	bool IsColor() const { return colorToggle; }
 	void addKeyToInventory(Point position, char p);
 	void RemoveKeyFromInventory(char p, Point newPos);
-	int GetDoorIdByKey(char p);
+	int GetDoorIdByKey(char p) const;
 	void updateBombs(Player& p1, Player& p2);
 	bool handleRiddle(Point riddlePos, Player &player);
 	bool isDark() const { return isDarkRoom; }
@@ -86,4 +85,6 @@ public:
 	int getLives() const { return sharedLives; }
 	void decreaseLife();
 	void resetStats() { sharedLives = 4; sharedScore = 0; }
+	void loadRiddles();
+	Riddle ReadRiddleFromFile(const string& filePath,const Point pos, int riddleIndex, bool& error);
 };

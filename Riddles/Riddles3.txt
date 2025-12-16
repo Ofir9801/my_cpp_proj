@@ -1,0 +1,16 @@
+Which chess piece moves in an L shape?
+Knights
+Bishop
+Rook
+Queen
+What is the sum for angles in a pentagon?
+540
+360
+900
+720
+What is the mass of the sun?
+2*10^30
+5*10^25
+3*10^20
+10^20
+
