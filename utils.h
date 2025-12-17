@@ -91,8 +91,7 @@ const string RiddlesRoom2PathWay = "Riddles/Riddles2.txt";
 const string RiddlesRoom3PathWay = "Riddles/Riddles3.txt";
 const string RiddlesVaultPathWay = "Riddles/þRiddlesVault.txt";
 
-
-int constexpr INVENTORY_SIZE = 1; //Player can hold up to one item
+int constexpr INVENTORY_SIZE = 2; //Player can hold up to one item
 int constexpr NUM_KEYS = 6; //number of possible movement Keys
 int constexpr NUM_ROOMS = 7; //number of rooms in the Game
 int constexpr LIGHT_RADIUS_TORCH = 7;
@@ -109,6 +108,7 @@ int constexpr FAKE_DOOR_SCORE = 50;
 int constexpr WRONG_ANSWER = 50;
 int constexpr SUCCESS_SCORE = 100;
 int constexpr LEGEND_SIZE = 3;
+int constexpr TIMER_MESSAGE = 15;
 
 
 //add score points to fake door and winning door

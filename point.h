@@ -24,5 +24,5 @@ public:
 	void setDirection(Keyboard_bind dir, bool state = true, int speed = 1 );
 	Keyboard_bind getDirectionEnum() const;
 	bool operator== (const Point& otherPos) const;
-	bool operator < (const Point& other) const;
+	bool operator < (const Point& other) const; //for using Point as a key in map
 };

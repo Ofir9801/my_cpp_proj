@@ -2,6 +2,7 @@
 #include "Screen.h"
 #include "Spring.h"
 #include <cctype>
+#include <conio.h>
 #include <windows.h>
 
 void Player::draw()
@@ -36,9 +37,19 @@ void Player::handleKeyPressed(char key_pressed) {
 bool Player::addToInventory(char item, Point pos)
 {
 	bool added = false;
-	for (int i = 0; i < INVENTORY_SIZE && !added ; ++i) {
-		if (inventory[i] == ' ') {
-			inventory[i] = item; //add item to inventory
+	if (ExtraInventory) {
+		for (int i = 0; i < INVENTORY_SIZE && !added; ++i) {
+			if (inventory[i] == ' ') {
+				inventory[i] = item; //add item to inventory
+				added = true;
+				if (item == objSigns::KEY)
+					board.addKeyToInventory(pos, this->getChar());
+			}
+		}
+	}
+	else {
+		if (inventory[0] == ' ') {
+			inventory[0] = item; //add item to inventory
 			added = true;
 			if (item == objSigns::KEY)
 				board.addKeyToInventory(pos, this->getChar());
@@ -51,15 +62,56 @@ bool Player::addToInventory(char item, Point pos)
 	return true;
 }
 
-void Player::removeItem()
-{
-	if (inventory[0] == objSigns::KEY){board.RemoveKeyFromInventory(this->getChar(), position);}
-	inventory[0] = ' '; 
-}
+//void Player::removeItem()
+//{
+//	if (ExtraInventory) {
+//
+//	}
+//	if (inventory[0] == objSigns::KEY){board.RemoveKeyFromInventory(this->getChar(), position);}
+//	inventory[0] = ' '; 
+//}
 
 void Player::dispose()
 {
-	if (inventory[0] != ' ') { //fix this function
+	if (ExtraInventory) { //player has two inventory slots
+		if(inventory[0] != ' ' && inventory[1] != ' ') //two slots are full
+		{ //let the player choose which item to dispose
+			board.showMessage("Press 1 to dispose first item, 2 to dispose second item.");
+			char choice = _getch();
+			while (true) {
+				if (choice == '1' || choice == '2') {
+					int index = choice - '1';
+					char c = inventory[index];
+					board.setChar(position, c);
+					if (c == objSigns::KEY) {board.RemoveKeyFromInventory(this->getChar(), position);}
+					else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
+					position.draw(board.IsColor() ? getColorForChar(position.getChar()) : WHITE);
+					inventory[index] = ' ';
+					return;
+				}
+				else {
+					board.showMessage("Invalid choice. Press 1 or 2.");
+					choice = _getch();
+				}
+			}
+		}
+		else if (inventory[0] != ' ' || inventory[1] != ' ') { //only one slot is full
+			int index = (inventory[0] != ' ') ? 0 : 1;
+			char c = inventory[index];
+			board.setChar(position, c);
+			if (c == objSigns::KEY) {board.RemoveKeyFromInventory(this->getChar(), position);}
+			else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
+			position.draw(board.IsColor() ? getColorForChar(position.getChar()) : WHITE);
+			inventory[index] = ' ';
+			return;
+		}
+		else {
+			board.showMessage("No item to dispose.");
+			return;
+		}
+	}
+
+	if (inventory[0] != ' ') { //player has one inventory slot
 		char c = inventory[0];
 		board.setChar(position, c);
 		if (c == objSigns::KEY) {board.RemoveKeyFromInventory(this->getChar(), position);}
@@ -262,7 +314,7 @@ bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
 
 	if (hasItem(objSigns::KEY) && keyDoorId == doorId) {
 		board.openDoor(doorId);
-		removeItem();
+		board.RemoveKeyFromInventory(this->getChar(), position);
 		board.showPlayerInfo(*this);
 		if (doorId == roomIndex::VAULT) { return OpenVaultRoom(); }
 		if (RealDoor) {

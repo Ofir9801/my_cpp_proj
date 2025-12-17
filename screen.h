@@ -32,7 +32,8 @@ private:
 	bool gameState = true;
 	int sharedLives = 4;
 	int sharedScore = 0;
-	
+	int MessageTimer = 0;
+
 	struct RoomState { //to save the state of each room
 		std::vector<string> layout;          
 		std::vector<Spring> springs;         
@@ -49,23 +50,23 @@ private:
 public:
 	friend class Game;
 	Screen();
-	void loadMap(int roomNumber); //function to load the board from a string array
+	void loadMap(int roomNumber); 
 	void drawMap(); 
-	void drawMap(int roomNumber); //function to draw the board to the console
-	//function to get the character at a specific position
+	void drawMap(int roomNumber); 
 	bool isWall(const Point& p) const;
 	size_t getCurrentRoom() const { return currentRoom; }
 	void showPlayerInfo(const Player& p);
+	string BuildInventory(const Player& p);
 	void initaializeRoomsArray();
 	void showMessage(string msg);
 	char getCharAt(const Point& p) const {return board[p.getY()][p.getX()];}
-	void setChar(const Point& p, char c);//function to set a character on Screen at Point p, like picking up a key
+	void setChar(const Point& p, char c);
 	void showKeyBinds()const;
 	bool tryPushObstacle(const Point& obstaclePos, Keyboard_bind direction, int force);
 	void loadSprings();
 	Spring* getSpringAt(const Point& p);
 	void refreshSpringsDisplay(const Point& p1, const Point& p2) const;
-	void clearMessegeArea(int const counter);
+	void clearMessegeArea();
 	bool isOnOpenDoor(const Point& p) const { return getCharAt(p) == '{'; }
 	bool isRealDoor(int doorId) const { return doorId >= roomIndex::VICTORY && doorId <=roomIndex::VAULT; }
 	void loadItems(int doorIdOpen);

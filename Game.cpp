@@ -60,7 +60,7 @@ void Game::run() {
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
 		board.refreshSpringsDisplay(player1.getPosition(), player2.getPosition());
-		board.clearMessegeArea(gamecycle);
+		board.clearMessegeArea();
 
 		player1.move();
 		player2.move();
@@ -232,6 +232,16 @@ void Game::handleGameOver(bool& exitGame, int& gameCycle)
 }
 
 void Game::handleLevelCompletion() {
+	if (!messageShown &&board.getCurrentRoom() == roomIndex::ROOM2)
+	{
+		if (board.allRiddlesSolved()){
+			board.showMessage("All riddles in this room have been solved. you both get extra inventory space!");
+			player1.setExtraInventory(true);
+			player2.setExtraInventory(true);
+			messageShown = true;
+		}
+	}
+
 	if (!player1.hasFinished() || !player2.hasFinished()) { return; }
 	size_t player1Room = player1.getRoomOpen(); //the room number of the door opened by player 1
 	size_t player2Room = player2.getRoomOpen(); //the room number of the door opened by player 2

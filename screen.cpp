@@ -102,28 +102,43 @@ bool Screen::isWall(const Point& p) const{
 	return c == '-' || c == '|' || c == 'X';
 }
 
+string Screen::BuildInventory(const Player & p) {
+	string inventory = p.getInventory();
+	string result = "|";
+	for (size_t i = 0; i < inventory.size(); i++) {
+			result += inventory[i];
+			result += "|";
+	}
+	if (!p.isExtraInventory()) {
+		result.resize(3);
+	}
+	return result;
+}
+
 void Screen::showPlayerInfo(const Player& p) {
 	char playerChar = p.getChar();
+	string inventory = BuildInventory(p);
 
 	switch (playerChar) {
 	case objSigns::PLAYER1:
 		gotoxy(PLAYER1_SIGN_START_X, PLAYER_SIGN_Y); //print player char
-		cout << playerChar << std::flush;
+		cout << playerChar;
 		gotoxy(PLAYER1_INV_START_X, PLAYER_INV_Y); //print inventory
-		cout << p.getInventory() << std::flush;
+		cout << inventory;
 		break;
 	case objSigns::PLAYER2:
 		gotoxy(PLAYER2_SIGN_START_X, PLAYER_SIGN_Y); //print player char
-		cout << playerChar << std::flush;
+		cout << playerChar;
 		gotoxy(PLAYER2_INV_START_X, PLAYER_INV_Y);//print inventory
-		cout << p.getInventory() << std::flush;
+		cout << inventory ;
 		break;
 	}
 	gotoxy(SCORE_START_X, PLAYER_SIGN_Y); //print score
-	cout << p.getLives() << std::flush;
+	cout << p.getLives();
 	gotoxy(LIVES_START_X, PLAYER_SIGN_Y); //print lives
-	cout << p.getScore() << std::flush;
+	cout << p.getScore();
 }
+
 void Screen::setChar(const Point& p, char c) {
 	if (p.getX() < 0 || p.getX() >= MAX_X || p.getY() < 0 || p.getY() >= MAX_Y)
 		return;
@@ -154,9 +169,9 @@ void Screen::showKeyBinds() const
 }
 void Screen::showMessage(string msg){
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
-	std::cout << EMPTYLINE << std::flush;//clear the line before
-	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
-	std::cout << msg << std::flush;
+	string extraSpace(MAX_X - msg.length(), ' ');
+	std::cout << msg <<extraSpace <<std::flush;
+	MessageTimer = TIMER_MESSAGE;
 }
 
 void Screen::initaializeRoomsArray() {
@@ -272,10 +287,14 @@ void Screen::refreshSpringsDisplay(const Point& p1, const Point& p2) const {
 	}
 }
 
-void Screen::clearMessegeArea(int const counter)
-{
-	if (counter % 40 == 0) // clear message area every 40 cycles
-		showMessage(EMPTYLINE);
+void Screen::clearMessegeArea(){
+	if (MessageTimer > 0) {
+		MessageTimer--;
+		if (MessageTimer == 0) {
+			gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
+			std::cout << EMPTYLINE<<std::flush;
+		}
+	}
 }
 
 void Screen::loadItems(int doorIdOpen) {//enter the items from the board to the appropiete data structures
@@ -425,13 +444,13 @@ bool Screen::handleRiddle(Point riddlePos, Player& p) {
 		bool solved = riddles[riddlePos].engage(p);
 		drawMap(); //redraw the map after riddle engagement
 		if (solved) {
-			string msg = "Correct! +" + std::to_string(SUCCESS_SCORE) + "points!";
+			string msg = "Correct! + " + std::to_string(SUCCESS_SCORE) + " points!";
 			showMessage(msg);
 			//setChar(riddlePos, ' '); //remove riddle from the board
 			return true;
 		}
 		else {
-			string msg = "WRONG! You lost" + std::to_string(WRONG_ANSWER) + " points!";
+			string msg = "WRONG! You lost " + std::to_string(WRONG_ANSWER) + " points!";
 			showMessage(msg);
 			return false;
 		}

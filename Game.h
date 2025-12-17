@@ -10,6 +10,7 @@ class Game{
 	Screen board;
 	Player player1;
 	Player player2;
+	bool messageShown = false;
 	void performRestart(int& gameCycle);
 	void PerformGoToMenu(bool& exitGame, int& gameCycle);
 	void handlePause(bool& exitGame, int& gameCycle);
