@@ -1,16 +1,16 @@
-﻿#include "Screen.h"
-#include <iostream>
-#include <windows.h>
-#include "Utils.h"
+﻿#include "Bomb.h"
 #include "Player.h"
-#include "Spring.h"
 #include "Riddle.h"
-#include "Bomb.h"
+#include "Screen.h"
+#include "Spring.h"
+#include "Utils.h"
+#include <algorithm>
+#include <cctype> //  for tolower, isdigit
+#include <fstream>
+#include <iostream>
 #include <random>
 #include <string>
-#include <algorithm>
-#include <fstream>
-#include <cctype> //  for tolower, isdigit
+#include <windows.h>
 
 using std::cout;
 using std::endl;
