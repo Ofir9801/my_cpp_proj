@@ -254,7 +254,7 @@ void Screen::loadSprings() {
 		}
 	}
 }
-Spring* Screen::getSpringAt(const Point& p) {
+Spring* Screen::getSpringAt(const Point& p){
 	for (auto& s : springs) {
 		if (s.isPlayerOn(p)) {
 			return &s;
@@ -346,7 +346,7 @@ void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number 
 	}
 }
 
-bool Screen::isDoorOpen(int door_id){
+bool Screen::isDoorOpen(int door_id) const{
 	auto it = doors.find(door_id);
 	if (it != doors.end()) {
 		return it->second.getIsOpen();
@@ -369,7 +369,7 @@ void Screen::setconnection(int door_id) {
 	}
 }
 
-bool Screen::ConnectionStatus(int door_id) {
+bool Screen::getConnectionStatus(int door_id) const{
 	auto it = doors.find(door_id);
 	if (it != doors.end()) {
 		return it->second.getConnection();
@@ -377,7 +377,7 @@ bool Screen::ConnectionStatus(int door_id) {
 	return false;
 }
 
-bool Screen::SwitchState(int doorId) {
+bool Screen::SwitchState(int doorId) const{
 	for (auto& s : switches) {
 		if (s.getTargetDoorId() == doorId)
 			return s.getIsOn();
@@ -457,7 +457,7 @@ void Screen::updateLighting(const Point& p1, const Point& p1Prev, const Player& 
 
 }
 
-bool Screen::Distance(int x, int y, const Point& p, int radius) {
+bool Screen::Distance(int x, int y, const Point& p, int radius) const {
 	int dx = x - p.getX(); //calculate the the distance between two points by x
 	int dy = y - p.getY(); //calculate the the distance between two points by y
 	return (dx * dx + dy * dy) <= (radius * radius); //true if the given point is in player's light radius

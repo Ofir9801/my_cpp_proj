@@ -23,8 +23,8 @@ public:
 	void changeRoom(size_t roomNumber);
 private:
 	void updateSwitches();
-	bool isSpecialKey(int key) { return key == 0 || key == 224; } //when keyboard presses special keys like arrows
+	bool isSpecialKey(int key) const{ return key == 0 || key == 224; } //when keyboard presses special keys like arrows
 	void SetColorfullGame();
-	bool isGameOver() { return board.getLives() <= 0 || !board.gameState; }
+	bool isGameOver() const{ return board.getLives() <= 0 || !board.gameState; }
 };
 

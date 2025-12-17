@@ -18,7 +18,6 @@ private:
 	//Screen rectangle for 80x25 characters for the static objects
 	string board[MAX_Y];
 	string* Rooms[NUM_ROOMS];
-	
 	size_t currentRoom = 0;
 	std::vector<Spring> springs;
 	std::vector<Switch> switches;
@@ -71,11 +70,11 @@ public:
 	bool isRealDoor(int doorId) const { return doorId >= roomIndex::VICTORY && doorId <=roomIndex::VAULT; }
 	void loadItems(int doorIdOpen);
 	void linkDoorsToKeysAndSwitches();
-	bool isDoorOpen(int door_id);
+	bool isDoorOpen(int door_id) const;
 	void openDoor(int door_id);
 	void setconnection(int door_id);
-	bool ConnectionStatus(int door_id);
-	bool SwitchState(int doorId);
+	bool getConnectionStatus(int door_id) const;
+	bool SwitchState(int doorId) const;
 	bool IsColor() const { return colorToggle; }
 	void addKeyToInventory(Point position, char p);
 	void RemoveKeyFromInventory(char p, Point newPos);
@@ -85,7 +84,7 @@ public:
 	bool isDark() const { return isDarkRoom; }
 	void updateLighting(const Point& p1, const Point& p1Prev, const Player& player1,
 						const Point& p2, const Point& p2Prev, const Player& player2);
-	bool Distance(int x, int y, const Point& p, int r);
+	bool Distance(int x, int y, const Point& p, int r) const;
 	void ProcessLightning(int cx, int cy, int radius, bool erase, const Point& p1, const Point& p2, const int r1, const int r2);
 	bool isValid(const Point& p) const;
 	void addActiveBomb(const Point& p) { activeBombs.push_back(Bomb(p)); }

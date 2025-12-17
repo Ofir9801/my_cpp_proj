@@ -21,8 +21,7 @@ class Player
 	int color = CYAN;
 
 public:
-	Player(const Point& point, const string(&keys), Screen& theScreen) :board(theScreen), position(point), p_keys(keys)
-	{
+	Player(const Point& point, const string(&keys), Screen& theScreen) :board(theScreen), position(point), p_keys(keys){
 		inventory[0] = ' '; //empty inventory
 		inventory[INVENTORY_SIZE] = '\0'; //null-terminate the inventory string
 	}

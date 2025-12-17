@@ -160,8 +160,7 @@ void Game::SetColorfullGame() {
 	board.colorToggle = true;
 }
 
-void Game::performRestart(int& gameCycle)
-{
+void Game::performRestart(int& gameCycle){
 	board.resetStats();
 	board.clearSavedRooms();
 	changeRoom(roomIndex::ROOM1);

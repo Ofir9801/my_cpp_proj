@@ -86,7 +86,7 @@ void Bomb::handlePlayerHit(Player& player) {
 			break;
 	}
 }
-bool Bomb::isShielded(Screen& board, Point bombPos, Point targetPos) {//bonus - handling walls. prototype so far
+bool Bomb::isShielded(Screen& board, Point bombPos, Point targetPos) const{//bonus - handling walls. prototype so far
 	if (bombPos == targetPos) return false;
 	int dx = targetPos.getX() - bombPos.getX();
 	int dy = targetPos.getY() - bombPos.getY();

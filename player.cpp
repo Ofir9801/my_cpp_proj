@@ -233,10 +233,10 @@ void Player::reset(Point newPosition) {
 	draw();
 }
 
-bool Player::atDoor(unsigned char nextTile, Point nextPos) {
+bool Player::atDoor(unsigned char nextTile, Point nextPos){
 	int doorId = nextTile - '0';
 	if (doorId == 9) { doorId = 0; } //door id 0 is represented by char '9' on the board and that is the end screen
-	if (board.ConnectionStatus(doorId)){ // connected to a switch
+	if (board.getConnectionStatus(doorId)){ // connected to a switch
 		if (board.SwitchState(doorId)) {return OpenDoorWithKey(doorId, nextPos);}//true = switch is on 
 		else { //switch is off
 			board.showMessage("The door is locked. Find the switch to open it.");
