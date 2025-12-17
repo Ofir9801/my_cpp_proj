@@ -67,7 +67,7 @@ bool ReadRoomLayoutFromFile(string FileName, int roomIndex) {
 		error = true;
 	}
 	string templine;
-	for (int i = 0; i < BOARD_DIMENSION::MAX_Y; i++) {
+	for (int i = 0; i < BOARD_DIMENSION::MAX_Y; ++i) {
 		if (!std::getline(inFile, templine)) {
 			templine = "";
 		}
@@ -80,6 +80,53 @@ bool ReadRoomLayoutFromFile(string FileName, int roomIndex) {
 			Instructions[i] = templine;
 			break;
 		case roomIndex::ROOM1:
+			if (i == 0) {error = HandleLegendLine(templine, roomIndex, i);}
+			else {Room1[i] = templine;}
+			break;
+		case roomIndex::ROOM2:
+			if (i == 0) { error = HandleLegendLine(templine, roomIndex, i); }
+			else {Room2[i] = templine;}
+			break;
+		case roomIndex::ROOM3:
+			if (i == 0) { error = HandleLegendLine(templine, roomIndex, i); }
+			else {Room3[i] = templine;}
+			break;
+		case roomIndex::VAULT:
+			if (i == 0) { error = HandleLegendLine(templine, roomIndex, i); }
+			else {Vault[i] = templine;}
+			break;		
+		case roomIndex::VICTORY:
+			EndingScreen[i] = templine;
+			break;
+		}
+	}
+	inFile.close();
+	return error;
+}
+
+bool HandleLegendLine(string& line, int roomIndex, int& loopIndex) {
+	if (!line.empty() && line[0] == 'L')
+	{
+		ReadLegendFromFile(roomIndex);
+		loopIndex = 2; //skip next two lines since they are part of the legend
+		return false;
+	}
+	return true;
+}
+
+void ReadLegendFromFile(int roomIndex) {
+	std::ifstream inFile(LegendPathWay);
+	if (!inFile.is_open()) {
+		throw std::runtime_error("Something wrong with the file Legend.txt");
+	}
+	string templine;
+	for (int i = 0; i < LEGEND_SIZE;++i) {
+		if (!std::getline(inFile, templine)) {
+			templine = "";
+		}
+		templine.resize(BOARD_DIMENSION::MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
+		switch (roomIndex) {
+		case roomIndex::ROOM1:
 			Room1[i] = templine;
 			break;
 		case roomIndex::ROOM2:
@@ -88,12 +135,10 @@ bool ReadRoomLayoutFromFile(string FileName, int roomIndex) {
 		case roomIndex::ROOM3:
 			Room3[i] = templine;
 			break;
-		case roomIndex::VICTORY:
-			EndingScreen[i] = templine;
+		case roomIndex::VAULT:
+			Vault[i] = templine;
 			break;
-
 		}
 	}
 	inFile.close();
-	return error;
 }

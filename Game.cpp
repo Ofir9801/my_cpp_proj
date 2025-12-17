@@ -198,8 +198,8 @@ void Game::handlePause(bool& exitGame, int& gameCycle)
 			break;
 		}
 		else if (choice == 'h') {
-			PerformGoToMenu(exitGame, gameCycle);
 			board.colorToggle = false; //reset color mode when going to menu
+			PerformGoToMenu(exitGame, gameCycle);
 			break;
 		}
 	}

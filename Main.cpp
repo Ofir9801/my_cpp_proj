@@ -3,7 +3,6 @@
 #include <conio.h>
 #include "Utils.h"
 #include "Player.h"
-#include <windows.h>
 
 
 int main() {

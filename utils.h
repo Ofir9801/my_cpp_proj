@@ -83,12 +83,14 @@ const string Room1PathWay = "Rooms/Room1.txt";
 const string Room2PathWay = "Rooms/Room2.txt";
 const string Room3PathWay = "Rooms/Room3.txt";
 const string VaultPathWay = "Rooms/Vault.txt";
+const string LegendPathWay = "Rooms/Legend.txt";
 const string EndingScreenPathWay = "Rooms/EndingScreen.txt";
 const string InstructionsPathWay = "Rooms/Instructions.txt";
 const string RiddlesRoom1PathWay = "Riddles/Riddles1.txt";
 const string RiddlesRoom2PathWay = "Riddles/Riddles2.txt";
 const string RiddlesRoom3PathWay = "Riddles/Riddles3.txt";
 const string RiddlesVaultPathWay = "Riddles/þRiddlesVault.txt";
+
 
 int constexpr INVENTORY_SIZE = 1; //Player can hold up to one item
 int constexpr NUM_KEYS = 6; //number of possible movement Keys
@@ -106,6 +108,7 @@ int constexpr MIN_SCORE = 300;
 int constexpr FAKE_DOOR_SCORE = 50;
 int constexpr WRONG_ANSWER = 50;
 int constexpr SUCCESS_SCORE = 100;
+int constexpr LEGEND_SIZE = 3;
 
 
 //add score points to fake door and winning door
@@ -116,4 +119,6 @@ void cls();
 void SetTextColor(int color);
 int getColorForChar(char c);
 bool ReadRoomLayoutFromFile(string FileName, int roomIndex);
+bool HandleLegendLine(string& line, int roomIndex, int& loopIndex);
+void ReadLegendFromFile(int roomIndex);
 
