@@ -2,6 +2,8 @@
 #include <iostream>
 #include <conio.h>
 #include "Utils.h"
+#include <algorithm>
+
 
 bool Riddle::engage(Player& player){
 	cls();
@@ -31,4 +33,26 @@ bool Riddle::engage(Player& player){
 			}
 		}
 	}
+}
+
+bool Riddle::engageVaultRiddle() {
+	cls();
+	gotoxy(10, 10);
+	std::cout << "RIDDLE TIME!" << std::endl;
+	std::cout << "----------------" << std::endl;
+	std::cout << question << std::endl;
+	std::cout << "----------------" << std::endl;
+	std::cout << "Enter the numbers sorted by room number" << std::endl;
+
+	string answer;
+	bool validInput = false;
+	while (!validInput) {
+		std::cin >> answer;
+		validInput = !answer.empty() && std::all_of(answer.begin(), answer.end(), ::isdigit);
+	}
+	if (answer == correctAnswer) {
+		solved = true;
+		return true;
+	}
+	return false;
 }

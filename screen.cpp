@@ -446,7 +446,6 @@ bool Screen::handleRiddle(Point riddlePos, Player& p) {
 		if (solved) {
 			string msg = "Correct! + " + std::to_string(SUCCESS_SCORE) + " points!";
 			showMessage(msg);
-			//setChar(riddlePos, ' '); //remove riddle from the board
 			return true;
 		}
 		else {
@@ -457,6 +456,30 @@ bool Screen::handleRiddle(Point riddlePos, Player& p) {
 	}
 	else if (it != riddles.end()) {
 		string msg = "You Already solved this riddle, the correct answer was " + std::to_string(it->second.getCorrectIndex()+1)+"." + it->second.getCorrectAnswer();
+		showMessage(msg);
+	}
+	return false;
+}
+
+bool Screen::handleVaultRiddle(Point riddlePos) {
+	auto it = riddles.find(riddlePos);
+	if (it != riddles.end() && !it->second.isSolved()) {
+		bool solved = riddles[riddlePos].engageVaultRiddle();
+		drawMap(); //redraw the map after riddle engagement
+		if (solved) {
+			string msg = "Congratulations! You solved the last challenge. Proceed to the final door";
+			setChar(riddlePos, objSigns::EMPTY);
+			showMessage(msg);
+			return true;
+		}
+		else {
+			string msg = "WRONG! Check your answers and come back again";
+			showMessage(msg);
+			return false;
+		}
+	}
+	else if (it != riddles.end()) {
+		string msg = "You Already solved this riddle, proceed to the final door";
 		showMessage(msg);
 	}
 	return false;
@@ -625,6 +648,9 @@ void Screen::loadRiddles(){
 			case roomIndex::ROOM3:
 				temp = ReadRiddleFromFile(RiddlesRoom3PathWay, it->first, counter, error);
 				break;
+			case roomIndex::VAULT:
+				temp = ReadVaultRiddleFromFile(RiddlesVaultPathWay, it->first, error);
+				break;
 		}
 		
 		if (error) {
@@ -684,6 +710,39 @@ bool Screen::allRiddlesSolved() const{
 		}
 	}
 	return true;
+}
+Riddle Screen::ReadVaultRiddleFromFile(const string& filePath, const Point pos, bool& error) {
+	std::ifstream inFile(filePath);
+	if (!inFile.is_open()) {
+		std::cout << "DEBUG: Failed to open: [" << filePath << "]" << std::endl;
+		// Check if the file even exists according to the OS
+		std::ifstream test(filePath.c_str());
+		if (!test) perror("System Error Message");
+	}
+	std::string question;
+	std::string correctAnswer;
+	
+	if (!inFile.is_open()) {
+		error = true;
+		return Riddle();
+	}
+	string templine;
+
+	for (int i = 0; i < 2; i++) {
+		if (!std::getline(inFile, templine)) {
+			error = true;
+			return Riddle();
+		}
+		if (!templine.empty() && templine.back() == '\r') {
+			templine.pop_back(); // Remove carriage return character if present
+		}
+		if (i == 0) { question = templine; } //first line is the question
+		else{ //i==1
+			correctAnswer = templine ;//second line is the answer
+		}
+	}
+	inFile.close();
+	return Riddle(pos, question, correctAnswer);
 }
 
 void Screen::saveRoom()

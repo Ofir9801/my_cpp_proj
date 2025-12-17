@@ -46,9 +46,7 @@ void Game::run() {
 		if (board.currentRoom == roomIndex::VICTORY) {
 			board.showMessage("Press Any key to finish the game");
 			(void)_getch();
-			showMenu(exitGame);
-			if (!exitGame) { return; }
-			performRestart(gamecycle);
+			exitGame = false;
 			continue;
 		}
 
@@ -115,7 +113,7 @@ void Game::showMenu(bool& started){
 				break;
 			case '2':
 				SetColorfullGame();
-				changeRoom(ROOM1);
+				changeRoom(VAULT);
 				inMenu = false;
 				break;
 			case '8':

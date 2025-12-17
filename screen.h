@@ -104,4 +104,6 @@ public:
 	bool allRiddlesSolved() const;
 	void saveRoom();
 	void clearSavedRooms() {savedRooms.clear();}
+	bool handleVaultRiddle(Point riddlePos);
+	Riddle ReadVaultRiddleFromFile(const string& filePath, const Point pos, bool& error);
 };

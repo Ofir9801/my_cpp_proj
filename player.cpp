@@ -244,12 +244,8 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 	}
 	if(nextTile == objSigns::RIDDLE){
 		this->position.setDirection(Keyboard_bind::STAY); //try to make it stay when hit a riddle to avoid touching it several times in a row
-		if (board.handleRiddle(nextPos, *this)){
-			return false;
-		}
-		else {
-			return true;
-		}
+		if (board.getCurrentRoom() == roomIndex::VAULT) { return !board.handleVaultRiddle(nextPos); }
+		return !board.handleRiddle(nextPos, *this);
 	}
 	if(nextTile == objSigns::BOMB){
 		if (addToInventory(objSigns::BOMB, nextPos)) {
@@ -348,21 +344,20 @@ bool Player::OpenVaultRoom() {
 		roomOpen = roomIndex::VAULT;
 		return false;
 	}
-	else if (score < MIN_SCORE) { //alert the player that he needs more score to finish
+		//alert the player that he needs more score to finish
 		string msg = "You need at least " + std::to_string(MIN_SCORE) + " points to enter the vault!, you need more " + std::to_string(MIN_SCORE - score) + " points";
 		board.showMessage(msg);
 		return true;
-	}
 }
 
 bool Player::OpenVictoryRoom() {
 	if (board.allRiddlesSolved()) {
 		board.openDoor(roomIndex::VICTORY);
-		string msg = "Congratulations, you may proceed to the final screen";
-		board.showMessage(msg);
+		//string msg = "Congratulations, you may proceed to the final screen";
+		//board.showMessage(msg);
 		clearFromScreen();
 		finishedLevel = true;
-		roomOpen = roomIndex::VAULT;
+		roomOpen = roomIndex::VICTORY;
 		return false;
 	}
 	else {

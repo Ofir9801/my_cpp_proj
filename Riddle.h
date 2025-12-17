@@ -15,7 +15,8 @@ class Riddle
 	bool solved = false;
 public:
 	Riddle() :position(Point()), question(" "), correctIndex(-1) {}  //default constructor for empty door for map
-	Riddle(Point pos) :position(pos), question(" "), correctIndex(-1) {} //default constructor for empty door for map
+	Riddle(Point pos) :position(pos), question(" "), correctIndex(-1) {}
+	Riddle(Point pos,string question, string correctAnswer) :position(pos), question(question), correctAnswer(correctAnswer), correctIndex(-1) {}
 	Riddle(Point pos, std::string q, const std::vector<std::string>& allOptions, int correctIndex) :
 		position(pos), question(q), options(allOptions), correctIndex(correctIndex) {
 		if (options.size() > 0 && correctIndex < options.size()) { correctAnswer = options[correctIndex]; }
@@ -24,8 +25,5 @@ public:
 	std::string getCorrectAnswer() const { return correctAnswer; };
 	int getCorrectIndex() const { return correctIndex; };
 	bool engage(Player& player);
+	bool engageVaultRiddle();
 };
-
-
-
-//void ChangeSolve(bool b) { solved = b; }

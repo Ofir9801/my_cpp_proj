@@ -89,7 +89,8 @@ const string InstructionsPathWay = "Rooms/Instructions.txt";
 const string RiddlesRoom1PathWay = "Riddles/Riddles1.txt";
 const string RiddlesRoom2PathWay = "Riddles/Riddles2.txt";
 const string RiddlesRoom3PathWay = "Riddles/Riddles3.txt";
-const string RiddlesVaultPathWay = "Riddles/þRiddlesVault.txt";
+const string RiddlesRoomVaultPathWay = "Riddles/RiddlesVault.txt";
+const string RiddlesVaultPathWay = "Riddles/RiddleVault.txt";
 
 int constexpr INVENTORY_SIZE = 2; //Player can hold up to one item
 int constexpr NUM_KEYS = 6; //number of possible movement Keys
