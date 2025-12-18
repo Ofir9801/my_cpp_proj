@@ -113,7 +113,7 @@ void Game::showMenu(bool& started){
 				break;
 			case '2':
 				SetColorfullGame();
-				changeRoom(VAULT);
+				changeRoom(ROOM1);
 				inMenu = false;
 				break;
 			case '8':
