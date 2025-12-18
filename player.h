@@ -22,7 +22,7 @@ class Player
 	int color = CYAN;
 
 public:
-	Player(const Point& point, const string(&keys), Screen& theScreen) :board(theScreen), position(point), p_keys(keys){
+	Player(const Point& point, const string(&keys), Screen& theScreen) :board(theScreen), position(point), p_keys(keys) {
 		inventory[0] = ' '; //empty inventory
 		inventory[1] = ' '; //empty inventory
 		inventory[2] = '\0'; //null terminator
@@ -34,7 +34,8 @@ public:
 	char getChar() const { return position.getChar(); }
 	const char* getInventory() const { return inventory; }
 	bool hasItem(char item) const { return inventory[0] == item || inventory[1] == item; }
-	//void removeItem();
+	void resetInventory(){ inventory[0] = ' '; inventory[1] = ' '; inventory[2] = '\0';
+	}
 	void dispose();
 	void clearFromScreen();
 	void reset(Point newPosition);

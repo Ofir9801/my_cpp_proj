@@ -20,14 +20,7 @@ void Game::run() {
 	
 	showMenu(started);
 	
-	if (!started) {
-		//cls();
-		//board.showMessage("Exiting game. Goodbye!");
-		//Sleep(1000);
-		//cls();
-		//gotoxy(0, 0);
-		return;
-	}
+	if (!started) {	return;	}
 	board.resetStats();
 	board.drawMap();
 	player1.draw();
@@ -38,7 +31,7 @@ void Game::run() {
 
 	while (exitGame) {
 		if (firstMessage) {
-			board.showMessage("Welcome to the Adventure Game! only one door will lead you to the next room.");
+			board.showMessage("Welcome to the Adventure Game! some doors will lead you to other rooms.");
 			Sleep(2000);
 			firstMessage = false;
 		}
@@ -161,6 +154,9 @@ void Game::SetColorfullGame() {
 void Game::performRestart(int& gameCycle){
 	board.resetStats();
 	board.clearSavedRooms();
+	board.currentRoom = roomIndex::MENU;
+	player1.resetInventory();
+	player2.resetInventory();
 	changeRoom(roomIndex::ROOM1);
 	gameCycle = 0;
 }
@@ -208,7 +204,7 @@ void Game::handleGameOver(bool& exitGame, int& gameCycle)
 	gotoxy(30, 10);
 	board.showMessage("Game Over! you lost!");
 	Sleep(1000);
-	std::cout << "Press 'R' to Restart or 'H' to go to Menu";
+	std::cout << "Press 'R' to Restart or 'H' to go to Main Menu";
 
 	while (true) {
 		if (_kbhit()) {

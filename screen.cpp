@@ -344,7 +344,7 @@ void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number 
 
 	std::random_device rd;  //use gemini to get known of the shuffle algorithm and how to integrate it with the code
 	std::mt19937 g(rd());	//the prompt is "give me idea to connect between doors id to switches and keys in randomize pattern in complexicity lower than o(n^2)
-
+	//logic: Use std::shuffle to randomize connections between doors, keys, and switches.
 	int currentIndex = 0;
 	std::shuffle(doorIdCopy.begin(), doorIdCopy.end(), g);
 	auto it = keys.begin();
@@ -454,7 +454,7 @@ bool Screen::handleRiddle(Point riddlePos, Player& p) {
 			return false;
 		}
 	}
-	else if (it != riddles.end()) {
+	else if (it != riddles.end()) {//stating the correct answer for vault purposes
 		string msg = "You Already solved this riddle, the correct answer was " + std::to_string(it->second.getCorrectIndex()+1)+"." + it->second.getCorrectAnswer();
 		showMessage(msg);
 	}

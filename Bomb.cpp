@@ -13,6 +13,9 @@ void Bomb::explode(Screen& board, Player& p1, Player& p2) {
 	int by = position.getY(); // bomb y
 	for (int y = by-BOMB_RADIUS; y <= by + BOMB_RADIUS; y++) {
 		for (int x = bx - BOMB_RADIUS; x <= bx + BOMB_RADIUS; x++) {
+			if (x == 0 || x == MAX_X - 1 || y == 3 || y == MAX_Y - 1) {//if the explosion occurs on the game borders - skip
+				continue;
+			}
 			if (board.Distance(x, y, position, BOMB_RADIUS)){
 				Point target(x, y);
 				if (!board.isValid(target)) continue; //none board tiles
