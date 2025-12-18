@@ -1,5 +1,5 @@
-in this exercise we enable color mode. we keep the original option(black and white) as key bind 1 at the menu and for color mode you need to press 2 in the menu.
-we did only text color and not background color for better visualization.
+In this exercise we enable color mode. we keep the original option(black and white) as key bind 1 at the menu and for color mode you need to press 2 in the menu.
+We did only text color and not background color for better visualization.
 the color theme is:
 players - cyan
 keys - yellow
@@ -9,5 +9,8 @@ switch: on - green, off - red
 doors - dark grey
 
 
-we change the switch that every time the player is hover above the switch it change his state in opposite to the possibility that when the switch turn on by the player it stay on the whole time.
-we did that every game isnt similar to previous one by randomize the keys and switches that in every game they linked to different door. 
+-We changed the switch so that every time the player is hovering above the switch it change his state in opposite to the possibility that when the switch turn on by the player it stay on the whole time.
+-We did that every game isnt similar to previous one by randomize the keys and switches that in every game they linked to different door. 
+-We made it possible to move back and forth from rooms. now there is no 'actual' room order, but the dark room is number 3 because it's the most difficult one.
+-Walls shield players and objects. in room 1 you must explode a wall to answer a riddle and gain score, but the riddle is adjacent to a wall, but will not explode.
+-We made it possible to acquire a second inventory slot for both players after answering every riddle.
