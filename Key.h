@@ -5,7 +5,6 @@ class Screen;//forward declaration to avoid circular dependency
 class Key {
     Point position;
     int targetDoorId = -1;
-    bool inUse = false;
     char playerUse = ' ' ; //the id of the player who use the key,' ' = not in use
 
 public:
@@ -17,15 +16,12 @@ public:
 
     void setTargetDoorId(int doorId) { targetDoorId = doorId; }
     int getTargetDoorId() const { return targetDoorId; }
-    
-    void setInUse(bool use, char id) { inUse = use; playerUse = id; }
-    bool getInUse() const { return inUse; }
+    void setInUse(char id) {playerUse = id; }
+    char getInUse() const { return playerUse; }
     char getPlayerUse() const { return playerUse; }
     Point getPosition() const { return position; }
     void SetPosition(Point newPos){
         position.setX(newPos.getX());
         position.setY(newPos.getY());
     }
-   
-
 };

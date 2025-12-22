@@ -98,6 +98,12 @@ int constexpr PLAYER_1_START_Y = 4;
 int constexpr PLAYER_2_START_X = 75;
 int constexpr PLAYER_2_START_Y = 4;
 int constexpr MIN_SCORE = 300;
+int constexpr FAKE_DOOR_SCORE = 50;
+int constexpr WRONG_ANSWER = 50;
+int constexpr SUCCESS_SCORE = 100;
+
+
+//add score points to fake door and winning door
 
 void gotoxy(int x, int y);
 void hideCursor();
