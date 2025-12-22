@@ -215,7 +215,7 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 	if (nextTile == objSigns::OBSTACLE) {
 		Keyboard_bind pushDir = (springCyclesLeft > 0) ? springDir.getDirectionEnum() : position.getDirectionEnum();
 
-		if (board.tryPushObstacle(nextPos, pushDir, force)) {
+		if (board.moveObstacleGroup(nextPos, pushDir, force)) {
 			return false;
 		}
 		return true;

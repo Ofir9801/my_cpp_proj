@@ -168,20 +168,51 @@ void Screen::initaializeRoomsArray() {
 	Rooms[VICTORY] = EndingScreen;
 }
 
-bool Screen::tryPushObstacle(const Point& obstaclePos, Keyboard_bind direction, int force) {
-	int chainLength = 0;
-	Point scanner = obstaclePos;
-	while (getCharAt(scanner) == '*') {
-		chainLength++;
-		scanner.setDirection(direction);
-		scanner.move();
-		if (scanner.getX() < 0 || scanner.getX() >= MAX_X || scanner.getY() < 0 || scanner.getY() >= MAX_Y) break;
+void Screen::collectGroup(Point p, std::vector<Point>& group) {
+	for (const auto& existing : group) {//if its already collected, no need to add again
+		if (existing == p) return;
 	}
-	if (force < chainLength) return false; // Not enough force to push the entire chain
-	char charBehind = getCharAt(scanner);
-	if (charBehind != ' ') return false;
-	setChar(obstaclePos, ' '); // Clear the first obstacle position
-	setChar(scanner, '*'); // Set the last position to an obstacle
+	group.push_back(p);
+
+	int dx[] = { 0, 0, 1, -1 };//checking all 4 directions - no diagonals
+	int dy[] = { 1, -1, 0, 0 };
+		for (int i = 0; i < 4; i++) {
+		Point neighbor(p.getX() + dx[i], p.getY() + dy[i]);
+		if (isValid(neighbor) && getCharAt(neighbor) == objSigns::OBSTACLE) {//if the neighbor is an obstacle, collect it too
+			collectGroup(neighbor, group);
+		}
+	}
+}
+bool Screen::moveObstacleGroup(Point startPos, Keyboard_bind dir, int force) {
+	std::vector<Point> group;
+	collectGroup(startPos, group);
+	if (force < group.size()) return false;//checking if pushable
+	int dx = 0, dy = 0;//checking direction
+	switch (dir) {
+	case UP:    dy = -1; break;
+	case DOWN:  dy = 1;  break;
+	case LEFT:  dx = -1; break;
+	case RIGHT: dx = 1;  break;
+	default: return false;
+	}
+	for (const auto& p : group) {
+		Point target(p.getX() + dx, p.getY() + dy);
+		char targetChar = getCharAt(target);
+		if (targetChar != ' ' && targetChar != objSigns::OBSTACLE) {
+			return false;
+		}
+	}
+	for (const auto& p : group) setChar(p, ' ');
+	for (const auto& p : group) {
+		Point newPos(p.getX() + dx, p.getY() + dy);
+		setChar(newPos, objSigns::OBSTACLE);
+		for (auto& obs : obstacles) {
+			if (obs.getPosition() == p) {
+				obs.setPosition(newPos);
+				break;
+			}
+		}
+	}
 	return true;
 }
 
