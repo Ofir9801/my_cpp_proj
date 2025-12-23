@@ -58,11 +58,11 @@ void Spring::draw(const Point& playerPos,const Screen& board, bool active)const 
         else
             currentSegment.setY(startPos.getY() + i);
         if (!active) {
-            currentSegment.draw(objSigns::SPRING,board.IsColor() ? getColorForChar(objSigns::SPRING) : WHITE);
+            currentSegment.draw(objSigns::SPRING,board.IsColor() ? getColorForChar(objSigns::SPRING) : (int)Color::WHITE);
             continue;
         }
         if (currentSegment != playerPos) {
-            currentSegment.draw(objSigns::SPRING, board.IsColor() ? getColorForChar(playerPos.getChar()) : WHITE );
+            currentSegment.draw(objSigns::SPRING, board.IsColor() ? getColorForChar(playerPos.getChar()) : (int)Color::WHITE );
         }
     }
 }

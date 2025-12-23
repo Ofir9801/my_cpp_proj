@@ -4,7 +4,7 @@
 
 using std::string;
 
-enum INFO_SLOTS {
+enum class INFO_SLOTS {
 	PLAYER1_SIGN_START_X = 10,
 	PLAYER1_INV_START_X = 10,
 	PLAYER2_SIGN_START_X = 74,
@@ -16,7 +16,7 @@ enum INFO_SLOTS {
 };
 enum BOARD_DIMENSION{ MAX_X = 80, MAX_Y = 25 };
 enum MESSAGES_POS { MES_X = 0, MES_Y = 2 };
-enum roomIndex {
+enum class roomIndex {
 	MENU = 0,
 	INSTRUCTIONS = 1,
 	ROOM1 = 2,
@@ -24,7 +24,7 @@ enum roomIndex {
 	ROOM3 = 4,
 	VICTORY = 5
 };
-enum Keyboard_bind {
+enum class Keyboard_bind {
 	UP,
 	RIGHT,
 	DOWN,
@@ -45,7 +45,7 @@ enum objSigns {
 	SWITCH_ON = '/',
 	BOMB = '@'
 };
-enum Color {
+enum class Color {
 	BLACK = 0,
 	BLUE = 1,
 	GREEN = 2,
@@ -101,6 +101,7 @@ int constexpr MIN_SCORE = 300;
 int constexpr FAKE_DOOR_SCORE = 50;
 int constexpr WRONG_ANSWER = 50;
 int constexpr SUCCESS_SCORE = 100;
+int constexpr STARTING_LIVES = 4;
 
 
 //add score points to fake door and winning door

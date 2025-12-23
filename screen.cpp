@@ -28,7 +28,7 @@ void Screen::loadMap(int roomNumber)
 		board[i] = Rooms[roomNumber][i];
 	}
 	currentRoom = roomNumber;
-	if (roomNumber == roomIndex::ROOM3)
+	if (roomNumber == (int)roomIndex::ROOM3)
 		isDarkRoom = true;
 	else
 		isDarkRoom = false;
@@ -49,7 +49,7 @@ void Screen::drawMap() {
 					SetTextColor(color);
 					cout << c;
 				}
-				SetTextColor(WHITE); //reset to default color
+				SetTextColor((int)Color::WHITE); //reset to default color
 			}
 			else {
 				cout << board[i];
@@ -59,16 +59,16 @@ void Screen::drawMap() {
 }
 void Screen::drawMap(int roomNumber) {
 	cls(); //clear the console
-	if (roomNumber == VICTORY &&colorToggle) {
+	if (roomNumber == (int)roomIndex::VICTORY &&colorToggle) {
 		for (int i = 0; i < MAX_Y; i++) {
 			gotoxy(0, i);
 			if (i > 2) {
 				for (int j = 0; j < MAX_X; j++) {
 					char c = board[i][j];
-					SetTextColor(BROWN);
+					SetTextColor((int)Color::BROWN);
 					cout << c;
 				}
-				SetTextColor(WHITE); //reset to default color
+				SetTextColor((int)Color::WHITE); //reset to default color
 			}
 			else {
 				cout << board[i];
@@ -88,21 +88,21 @@ void Screen::showPlayerInfo(const Player& p) {
 
 	switch (playerChar) {
 	case objSigns::PLAYER1:
-		gotoxy(PLAYER1_SIGN_START_X, PLAYER_SIGN_Y); //print player char
+		gotoxy((int)INFO_SLOTS::PLAYER1_SIGN_START_X, (int)INFO_SLOTS::PLAYER_SIGN_Y); //print player char
 		cout << playerChar << std::flush;
-		gotoxy(PLAYER1_INV_START_X, PLAYER_INV_Y); //print inventory
+		gotoxy((int)INFO_SLOTS::PLAYER1_INV_START_X, (int)INFO_SLOTS::PLAYER_INV_Y); //print inventory
 		cout << p.getInventory() << std::flush;
 		break;
 	case objSigns::PLAYER2:
-		gotoxy(PLAYER2_SIGN_START_X, PLAYER_SIGN_Y); //print player char
+		gotoxy((int)INFO_SLOTS::PLAYER2_SIGN_START_X, (int)INFO_SLOTS::PLAYER_SIGN_Y); //print player char
 		cout << playerChar << std::flush;
-		gotoxy(PLAYER2_INV_START_X, PLAYER_INV_Y);//print inventory
+		gotoxy((int)INFO_SLOTS::PLAYER2_INV_START_X, (int)INFO_SLOTS::PLAYER_INV_Y);//print inventory
 		cout << p.getInventory() << std::flush;
 		break;
 	}
-	gotoxy(SCORE_START_X, PLAYER_SIGN_Y); //print score
+	gotoxy((int)INFO_SLOTS::SCORE_START_X, (int)INFO_SLOTS::PLAYER_SIGN_Y); //print score
 	cout << p.getLives() << std::flush;
-	gotoxy(LIVES_START_X, PLAYER_SIGN_Y); //print lives
+	gotoxy((int)INFO_SLOTS::LIVES_START_X, (int)INFO_SLOTS::PLAYER_SIGN_Y); //print lives
 	cout << p.getScore() << std::flush;
 }
 void Screen::setChar(const Point& p, char c) {
@@ -113,7 +113,7 @@ void Screen::setChar(const Point& p, char c) {
 	if (colorToggle) {
 		SetTextColor(getColorForChar(c));
 		cout << c;
-		SetTextColor(WHITE); //reset to default color
+		SetTextColor((int)Color::WHITE); //reset to default color
 		return;
 	}
 	else
@@ -141,31 +141,31 @@ void Screen::showMessage(string msg){
 }
 
 void Screen::initaializeRoomsArray() {
-	if (ReadRoomLayoutFromFile(MenuPathWay, roomIndex::MENU)){
+	if (ReadRoomLayoutFromFile(MenuPathWay, (int)roomIndex::MENU)){
 		throw std::runtime_error("Something wrong with the file menu.txt");
 	}
-	if (ReadRoomLayoutFromFile(InstructionsPathWay, roomIndex::INSTRUCTIONS)) { 
+	if (ReadRoomLayoutFromFile(InstructionsPathWay, (int)roomIndex::INSTRUCTIONS)) { 
 		throw std::runtime_error("Something wrong with the file instructiopn.txt"); 
 	}
-	if (ReadRoomLayoutFromFile(Room1PathWay, roomIndex::ROOM1)){
+	if (ReadRoomLayoutFromFile(Room1PathWay, (int)roomIndex::ROOM1)){
 		throw std::runtime_error("Something wrong with the file room1.txt"); 
 	}
-	if (ReadRoomLayoutFromFile(Room2PathWay, roomIndex::ROOM2)){ 
+	if (ReadRoomLayoutFromFile(Room2PathWay, (int)roomIndex::ROOM2)){ 
 		throw std::runtime_error("Something wrong with the file room2.txt"); 
 	}
-	if (ReadRoomLayoutFromFile(Room3PathWay, roomIndex::ROOM3)) {
+	if (ReadRoomLayoutFromFile(Room3PathWay, (int)roomIndex::ROOM3)) {
 		throw std::runtime_error("Something wrong with the file room3.txt");
 	}
-	if (ReadRoomLayoutFromFile(EndingScreenPathWay, roomIndex::VICTORY)){
+	if (ReadRoomLayoutFromFile(EndingScreenPathWay, (int)roomIndex::VICTORY)){
 		throw std::runtime_error("Something wrong with the file endingscreen.txt"); 
 	}	
 	
-	Rooms[MENU] = Menu;
-	Rooms[INSTRUCTIONS] = Instructions;
-	Rooms[ROOM1] = Room1;
-	Rooms[ROOM2] = Room2;
-	Rooms[ROOM3] = Room3;
-	Rooms[VICTORY] = EndingScreen;
+	Rooms[(int)roomIndex::MENU] = Menu;
+	Rooms[(int)roomIndex::INSTRUCTIONS] = Instructions;
+	Rooms[(int)roomIndex::ROOM1] = Room1;
+	Rooms[(int)roomIndex::ROOM2] = Room2;
+	Rooms[(int)roomIndex::ROOM3] = Room3;
+	Rooms[(int)roomIndex::VICTORY] = EndingScreen;
 }
 Obstacle* Screen::getObstacleAt(const Point& p) {
 	for (auto& obs : obstacles) {
@@ -446,7 +446,7 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 					if (colorToggle) {
 						SetTextColor(getColorForChar(c));
 						std::cout << c;
-						SetTextColor(WHITE);
+						SetTextColor((int)Color::WHITE);
 					}
 					else {
 						std::cout << c;

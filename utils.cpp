@@ -36,28 +36,28 @@ void SetTextColor(int color)
 int getColorForChar(char c)
 {
 	if (c == objSigns::PLAYER1 || c == objSigns::PLAYER2)
-		return CYAN;
+		return (int)Color::CYAN;
 	else if (c == objSigns::KEY)
-		return YELLOW;
+		return (int)Color::YELLOW;
 	else if (c == objSigns::OBSTACLE)
-		return BROWN;
+		return (int)Color::BROWN;
 	else if (c == objSigns::SPRING)
-		return MAGENTA;
+		return (int)Color::MAGENTA;
 	else if (c == objSigns::SWITCH_ON)
-		return GREEN;
+		return (int)Color::GREEN;
 	else if (c == objSigns::SWITCH_OFF)
-		return RED;
+		return (int)Color::RED;
 	else if (c == objSigns::BOMB)
-		return LIGHTRED;
+		return (int)Color::LIGHTRED;
 	else if (c == objSigns::RIDDLE)
-		return LIGHTGREEN;
+		return (int)Color::LIGHTGREEN;
 	else if (c == objSigns::TORCH)
-		return YELLOW;
+		return (int)Color::YELLOW;
 	else if (isdigit((unsigned char)c))
-		return DARKGREY;
+		return (int)Color::DARKGREY;
 	
 	else
-		return WHITE;
+		return (int)Color::WHITE;
 }
 
 bool ReadRoomLayoutFromFile(string FileName, int roomIndex) {
@@ -73,22 +73,22 @@ bool ReadRoomLayoutFromFile(string FileName, int roomIndex) {
 		}
 		templine.resize(BOARD_DIMENSION::MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
 		switch (roomIndex) {
-		case roomIndex::MENU:
+		case (int)roomIndex::MENU:
 			Menu[i] = templine;
 			break;
-		case roomIndex::INSTRUCTIONS:
+		case (int)roomIndex::INSTRUCTIONS:
 			Instructions[i] = templine;
 			break;
-		case roomIndex::ROOM1:
+		case (int)roomIndex::ROOM1:
 			Room1[i] = templine;
 			break;
-		case roomIndex::ROOM2:
+		case (int)roomIndex::ROOM2:
 			Room2[i] = templine;
 			break;
-		case roomIndex::ROOM3:
+		case (int)roomIndex::ROOM3:
 			Room3[i] = templine;
 			break;
-		case roomIndex::VICTORY:
+		case (int)roomIndex::VICTORY:
 			EndingScreen[i] = templine;
 			break;
 

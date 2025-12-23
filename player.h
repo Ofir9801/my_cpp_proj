@@ -17,7 +17,7 @@ class Player
 	bool state = true; //Player state - can move or not
 	bool finishedLevel = false;
 	bool handleSpecialObjects(char nextTile, Point nextPos, int force);
-	int color = CYAN;
+	int color = (int)Color::CYAN;
 
 public:
 	Player(const Point& point, const string(&keys), Screen& theScreen) :board(theScreen), position(point), p_keys(keys)

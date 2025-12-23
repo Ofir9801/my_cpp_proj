@@ -6,7 +6,7 @@ void Point::draw(char c, int color)
 	gotoxy(x, y);
 	SetTextColor(color);
 	std::cout << c;
-	SetTextColor(WHITE); //reset to default color
+	SetTextColor((int)Color::WHITE); //reset to default color
 }
 
 void Point::move() {

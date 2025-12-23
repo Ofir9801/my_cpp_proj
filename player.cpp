@@ -11,7 +11,7 @@ void Player::draw()
 			char c = position.getChar();
 			position.draw(c, color);
 		}
-		else { position.draw(WHITE); }
+		else { position.draw((int)Color::WHITE); }
 	}
 }
 
@@ -64,7 +64,7 @@ void Player::dispose()
 		board.setChar(position, c);
 		if (c == objSigns::KEY) {board.RemoveKeyFromInventory(this->getChar(), position);}
 		else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
-		position.draw(board.IsColor() ? getColorForChar(position.getChar()) : WHITE);
+		position.draw(board.IsColor() ? getColorForChar(position.getChar()) : (int)Color::WHITE);
 		inventory[0] = ' ';
 	}
 	else {
@@ -143,7 +143,7 @@ bool Player::takeStep() {
 			}
 		}
 		position = nextCandidate;
-		position.draw(board.IsColor() ? getColorForChar(position.getChar()) : WHITE);
+		position.draw(board.IsColor() ? getColorForChar(position.getChar()) : (int)Color::WHITE);
 		return false; // can continue
 	}
 }
@@ -214,8 +214,8 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 		
 	if (nextTile == objSigns::OBSTACLE) {
 		Keyboard_bind pushDir = (springCyclesLeft > 0) ? springDir.getDirectionEnum() : position.getDirectionEnum();
-
-		if (board.moveObstacleGroup(nextPos, pushDir, force)) {
+		Obstacle* obs = board.getObstacleAt(nextPos);
+		if (obs && obs->push(force, pushDir)) {
 			return false;
 		}
 		return true;

@@ -29,11 +29,11 @@ bool Obstacle::push(int force, Keyboard_bind dir) {
     collectGroup(this->position, group);
     if (force < group.size()) return false; // checking if weight allows push
     int dx = 0, dy = 0;
-	switch (dir) {//determine direction of movement
-    case UP:    dy = -1; break;
-    case DOWN:  dy = 1;  break;
-    case LEFT:  dx = -1; break;
-    case RIGHT: dx = 1;  break;
+    switch (dir) {//determine direction of movement
+    case Keyboard_bind::UP:    dy = -1; break;
+    case Keyboard_bind::DOWN:  dy = 1;  break;
+    case Keyboard_bind::LEFT:  dx = -1; break;
+    case Keyboard_bind::RIGHT: dx = 1;  break;
     default: return false;
     }
     for (const auto* obs : group) {
@@ -64,3 +64,4 @@ bool Obstacle::push(int force, Keyboard_bind dir) {
         board->setChar(newPos, objSigns::OBSTACLE);
     }
     return true;
+}

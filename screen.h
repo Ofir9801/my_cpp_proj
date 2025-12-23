@@ -31,7 +31,7 @@ private:
 	bool colorToggle = false;
 	bool isDarkRoom = false;
 	bool gameState = true;
-	int sharedLives = 4;
+	int sharedLives = STARTING_LIVES;
 	int sharedScore = 0;
 public:
 	friend class Game;
