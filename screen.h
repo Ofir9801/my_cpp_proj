@@ -9,7 +9,6 @@
 #include "Riddle.h"
 #include "Bomb.h"
 #include <vector>
-//#include <unordered_map>
 #include <map>
 
 class Player; //forward declaration to avoid circular dependency
@@ -34,7 +33,6 @@ private:
 	bool gameState = true;
 	int sharedLives = 4;
 	int sharedScore = 0;
-    void collectGroup(Point p, std::vector<Point>& group);// recursive function to gather connected obstacles
 public:
 	friend class Game;
 	//gamecycle and initialization
@@ -91,7 +89,7 @@ public:
     void updateBombs(Player& p1, Player& p2);
     void addActiveBomb(const Point& p) { activeBombs.push_back(Bomb(p)); }
     bool isBombAt(const Point& p) const;
-    bool moveObstacleGroup(Point startPos, Keyboard_bind dir, int force);
+	Obstacle* getObstacleAt(const Point& p);
     // game logic: Springs & Riddles
     Spring* getSpringAt(const Point& p);
     void deleteSpring(Point position);

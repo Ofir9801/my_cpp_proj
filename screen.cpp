@@ -167,55 +167,14 @@ void Screen::initaializeRoomsArray() {
 	Rooms[ROOM3] = Room3;
 	Rooms[VICTORY] = EndingScreen;
 }
-
-void Screen::collectGroup(Point p, std::vector<Point>& group) {
-	for (const auto& existing : group) {//if its already collected, no need to add again
-		if (existing == p) return;
-	}
-	group.push_back(p);
-
-	int dx[] = { 0, 0, 1, -1 };//checking all 4 directions - no diagonals
-	int dy[] = { 1, -1, 0, 0 };
-		for (int i = 0; i < 4; i++) {
-		Point neighbor(p.getX() + dx[i], p.getY() + dy[i]);
-		if (isValid(neighbor) && getCharAt(neighbor) == objSigns::OBSTACLE) {//if the neighbor is an obstacle, collect it too
-			collectGroup(neighbor, group);
+Obstacle* Screen::getObstacleAt(const Point& p) {
+	for (auto& obs : obstacles) {
+		if (obs.getPosition() == p) {
+			return &obs;
 		}
 	}
+	return nullptr;
 }
-bool Screen::moveObstacleGroup(Point startPos, Keyboard_bind dir, int force) {
-	std::vector<Point> group;
-	collectGroup(startPos, group);
-	if (force < group.size()) return false;//checking if pushable
-	int dx = 0, dy = 0;//checking direction
-	switch (dir) {
-	case UP:    dy = -1; break;
-	case DOWN:  dy = 1;  break;
-	case LEFT:  dx = -1; break;
-	case RIGHT: dx = 1;  break;
-	default: return false;
-	}
-	for (const auto& p : group) {
-		Point target(p.getX() + dx, p.getY() + dy);
-		char targetChar = getCharAt(target);
-		if (targetChar != ' ' && targetChar != objSigns::OBSTACLE) {
-			return false;
-		}
-	}
-	for (const auto& p : group) setChar(p, ' ');
-	for (const auto& p : group) {
-		Point newPos(p.getX() + dx, p.getY() + dy);
-		setChar(newPos, objSigns::OBSTACLE);
-		for (auto& obs : obstacles) {
-			if (obs.getPosition() == p) {
-				obs.setPosition(newPos);
-				break;
-			}
-		}
-	}
-	return true;
-}
-
 void Screen::loadSprings() {
 	springs.clear();
 	bool processed[BOARD_DIMENSION::MAX_Y][BOARD_DIMENSION::MAX_X] = { false };
