@@ -122,6 +122,8 @@ void cls();
 void SetTextColor(Color color);
 Color getColorForChar(char c);
 bool ReadRoomLayoutFromFile(string FileName, roomIndex room);
+bool HandleLegendLine(string& line, roomIndex room, int& loopIndex);
+void ReadLegendFromFile(roomIndex room);
 
 inline bool operator==(char c, objSigns sign) { //overload operator == for enum class objsign
 	return c == static_cast<char>(sign);

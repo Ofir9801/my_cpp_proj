@@ -25,5 +25,5 @@ public:
 	Keyboard_bind getDirectionEnum() const;
 	bool operator== (const Point& otherPos) const;
 	bool operator < (const Point& other) const; //for using Point as a key in map
-	bool InBounds(int max_x = MAX_X, int max_y = MAX_Y, int min_x = 0, int min_y = 0) const;
+	bool InBounds(int max_x = MAX_X, int max_y = MAX_Y, int min_x = 0, int min_y = 0)const;
 };

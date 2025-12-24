@@ -74,7 +74,7 @@ bool Point::operator<(const Point& other) const
 	return x < other.x;
 }
 
-bool Point::InBounds(int max_x = MAX_X, int max_y = MAX_Y, int min_x = 0, int min_y = 0)const {
+bool Point::InBounds(int max_x, int max_y, int min_x ,int min_y)const {
 	bool inside_X = x >= min_x && x < max_x;
 	bool inside_Y = y >= min_y && y < max_y;
 

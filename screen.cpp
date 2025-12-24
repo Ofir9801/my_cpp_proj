@@ -533,18 +533,9 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 	}
 }
 
-bool Screen::isValid(const Point& p) const{
-	int x = p.getX();
-	int y = p.getY();
-  
-  //work on it!
-	bool wall = x >= 0 && x < MAX_X - 1 && y >= 3 && y < MAX_Y - 1;
-	return wall;
-	char c = board[y][x];
-	bool door = isdigit(c);
-
+bool Screen::isValid(const Point& p) const{ 
 	bool insideBoard = p.InBounds(MAX_X - 1, MAX_Y - 1, 1, 4);
-	return door ||insideBoard;
+	return insideBoard;
 }
 
 void Screen::deleteKey(Point position){
