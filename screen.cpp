@@ -102,7 +102,7 @@ bool Screen::isWall(const Point& p) const{
 	return c == '-' || c == '|' || c == 'X';
 }
 
-string Screen::BuildInventory(const Player & p) {
+string Screen::CreateInventoryDisplay(const Player & p) {
 	string inventory = p.getInventory();
 	string result = "|";
 	for (size_t i = 0; i < inventory.size(); i++) {
@@ -117,7 +117,7 @@ string Screen::BuildInventory(const Player & p) {
 
 void Screen::showPlayerInfo(const Player& p) {
 	char playerChar = p.getChar();
-	string inventory = BuildInventory(p);
+	string inventory = CreateInventoryDisplay(p);
 
 	switch (playerChar) {
 	case (char)objSigns::PLAYER1:
@@ -199,38 +199,15 @@ void Screen::initaializeRoomsArray() {
 	if (ReadRoomLayoutFromFile(EndingScreenPathWay, roomIndex::VICTORY)){
 		throw std::runtime_error("Something wrong with the file endingscreen.txt"); 
 	}	
-	//work on it!
-	Rooms[MENU] = Menu;
-	Rooms[INSTRUCTIONS] = Instructions;
-	Rooms[ROOM1] = Room1;
-	Rooms[ROOM2] = Room2;
-	Rooms[ROOM3] = Room3;
-	Rooms[VAULT] = Vault;
-	Rooms[VICTORY] = EndingScreen;
-}
-
-bool Screen::tryPushObstacle(const Point& obstaclePos, Keyboard_bind direction, int force) {
-	int chainLength = 0;
-	Point scanner = obstaclePos;
-	while (getCharAt(scanner) == '*') {
-		chainLength++;
-		scanner.setDirection(direction);
-		scanner.move();
-		if (scanner.getX() < 0 || scanner.getX() >= MAX_X || scanner.getY() < 0 || scanner.getY() >= MAX_Y) break;
-	}
-	if (force < chainLength) return false; // Not enough force to push the entire chain
-	char charBehind = getCharAt(scanner);
-	if (charBehind != ' ') return false;
-	setChar(obstaclePos, ' '); // Clear the first obstacle position
-	setChar(scanner, '*'); // Set the last position to an obstacle
-	return true;
 	Rooms[(int)roomIndex::MENU] = Menu;
 	Rooms[(int)roomIndex::INSTRUCTIONS] = Instructions;
 	Rooms[(int)roomIndex::ROOM1] = Room1;
 	Rooms[(int)roomIndex::ROOM2] = Room2;
 	Rooms[(int)roomIndex::ROOM3] = Room3;
+	Rooms[(int)roomIndex::VAULT] = Vault;
 	Rooms[(int)roomIndex::VICTORY] = EndingScreen;
 }
+
 Obstacle* Screen::getObstacleAt(const Point& p) {
 	for (auto& obs : obstacles) {
 		if (obs.getPosition() == p) {
@@ -320,8 +297,8 @@ void Screen::loadItems(int doorIdOpen) {//enter the items from the board to the 
 	doorIDs.clear();
 	keys.clear();
 	riddles.clear();
-	for (int y = 3; y < BOARD_DIMENSION::MAX_Y; y++) {
-		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
+	for (int y = 3; y < MAX_Y; y++) {
+		for (int x = 0; x < MAX_X; x++) {
 			char c = getCharAt(Point(x, y));
 			if (c == (char)objSigns::SWITCH_OFF) {
 				switches.push_back(Switch(x, y, this, false));
@@ -346,7 +323,7 @@ void Screen::loadItems(int doorIdOpen) {//enter the items from the board to the 
 				keys[Point(x, y)] = Key(x, y);
 			}
 			else if (c == objSigns::RIDDLE) {
-				riddles[Point(x, y)] = Riddle(Point(x, y,objSigns::RIDDLE));
+				riddles[Point(x, y)] = Riddle(Point(x, y,(char)objSigns::RIDDLE));
 			}
 		}
 	}
@@ -484,7 +461,7 @@ bool Screen::handleVaultRiddle(Point riddlePos) {
 		drawMap(); //redraw the map after riddle engagement
 		if (solved) {
 			string msg = "Congratulations! You solved the last challenge. Proceed to the final door";
-			setChar(riddlePos, objSigns::EMPTY);
+			setChar(riddlePos, (char)objSigns::EMPTY);
 			showMessage(msg);
 			return true;
 		}
@@ -661,7 +638,7 @@ void Screen::loadRiddles(){
 	{
 		bool error = false;
 		Riddle temp;
-		switch (currentRoom) {
+		switch ((roomIndex)currentRoom) {
 			case roomIndex::ROOM1:
 				temp = ReadRiddleFromFile(RiddlesRoom1PathWay,it->first, counter, error);
 			break;

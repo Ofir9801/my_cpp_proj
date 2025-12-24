@@ -15,7 +15,6 @@ using std::string;
 
 class Screen {
 private:
-	//Screen rectangle for 80x25 characters for the static objects
 	string board[MAX_Y];
 	string* Rooms[NUM_ROOMS];
 	size_t currentRoom = 0;
@@ -49,71 +48,17 @@ private:
 
 public:
 	friend class Game;
-	Screen();
-  //work on it!
-	void loadMap(int roomNumber); 
-	void drawMap(); 
-	void drawMap(int roomNumber); 
-	bool isWall(const Point& p) const;
-	size_t getCurrentRoom() const { return currentRoom; }
-	void showPlayerInfo(const Player& p);
-	string BuildInventory(const Player& p);
-	void initaializeRoomsArray();
-	void showMessage(string msg);
-	char getCharAt(const Point& p) const {return board[p.getY()][p.getX()];}
-	void setChar(const Point& p, char c);
-	void showKeyBinds()const;
-	bool tryPushObstacle(const Point& obstaclePos, Keyboard_bind direction, int force);
-	void loadSprings();
-	Spring* getSpringAt(const Point& p);
-	void refreshSpringsDisplay(const Point& p1, const Point& p2) const;
-	void clearMessegeArea();
-	bool isOnOpenDoor(const Point& p) const { return getCharAt(p) == '{'; }
-	bool isRealDoor(int doorId) const { return doorId >= roomIndex::VICTORY && doorId <=roomIndex::VAULT; }
-	void loadItems(int doorIdOpen);
-	void linkDoorsToKeysAndSwitches();
-	bool isDoorOpen(int door_id) const;
-	void openDoor(int door_id);
-	void setconnection(int door_id);
-	bool getConnectionStatus(int door_id) const;
-	bool SwitchState(int doorId) const;
-	bool IsColor() const { return colorToggle; }
-	void addKeyToInventory(Point position, char p);
-	void RemoveKeyFromInventory(char p, Point newPos);
-	int GetDoorIdByKey(char p) const;
-	void updateBombs(Player& p1, Player& p2);
-	bool handleRiddle(Point riddlePos, Player &player);
-	bool isDark() const { return isDarkRoom; }
-	void updateLighting(const Point& p1, const Point& p1Prev, const Player& player1,
-						const Point& p2, const Point& p2Prev, const Player& player2);
-	bool Distance(int x, int y, const Point& p, int r) const;
-	void ProcessLightning(int cx, int cy, int radius, bool erase, const Point& p1, const Point& p2, const int r1, const int r2);
-	bool isValid(const Point& p) const;
-	void addActiveBomb(const Point& p) { activeBombs.push_back(Bomb(p)); }
-	void deleteKey(Point position);
-	void deleteSpring(Point position);
-	void deleteSwitch(Point position);
-	void deleteDoor(Point position);
-	bool isBombAt(const Point& p)const;
-	void addScore(int amount) { sharedScore += amount; }
-	int getScore() const { return sharedScore; }
-	int getLives() const { return sharedLives; }
-	void decreaseLife();
-	void resetStats() { sharedLives = 4; sharedScore = 0; }
-	void loadRiddles();
-	Riddle ReadRiddleFromFile(const string& filePath,const Point pos, int riddleIndex, bool& error);
-	bool allRiddlesSolved() const;
-	void saveRoom();
-	void clearSavedRooms() {savedRooms.clear();}
-	bool handleVaultRiddle(Point riddlePos);
-	Riddle ReadVaultRiddleFromFile(const string& filePath, const Point pos, bool& error);
+	
 	//gamecycle and initialization
     Screen();
     void initaializeRoomsArray();
     void linkDoorsToKeysAndSwitches();
     void loadMap(int roomNumber); // Loads board from string array
-    void loadItems();
+	void loadItems(int doorIdOpen);
     void loadSprings();
+	void loadRiddles();
+	void saveRoom();
+	void clearSavedRooms() { savedRooms.clear(); }
     // display
     void drawMap();
     void drawMap(int roomNumber);
@@ -122,48 +67,60 @@ public:
     bool IsColor() const { return colorToggle; }
     // UI
     void showPlayerInfo(const Player& p);
+	string CreateInventoryDisplay(const Player& p);
     void showMessage(string msg);
-    void clearMessegeArea(int const counter);
+    void clearMessegeArea();
 	// general board functions
     char getCharAt(const Point& p) const { return board[p.getY()][p.getX()]; }
     void setChar(const Point& p, char c);
     bool isWall(const Point& p) const;
     bool isValid(const Point& p) const;
     size_t getCurrentRoom() const { return currentRoom; }
+
     // lighting system
     bool isDark() const { return isDarkRoom; }
     void updateLighting(const Point& p1, const Point& p1Prev, const Player& player1,
-        const Point& p2, const Point& p2Prev, const Player& player2);
+						const Point& p2, const Point& p2Prev, const Player& player2);
     void ProcessLightning(int cx, int cy, int radius, bool erase, const Point& p1, const Point& p2, const int r1, const int r2);
-    bool Distance(int x, int y, const Point& p, int r);
+	bool Distance(int x, int y, const Point& p, int r) const;
+
     // game state (score & lives)
     void addScore(int amount) { sharedScore += amount; }
     int getScore() const { return sharedScore; }
     int getLives() const { return sharedLives; }
     void decreaseLife();
     void resetStats() { sharedLives = 4; sharedScore = 0; }
+
     // game logic: Doors & Switches
-    bool isDoorOpen(int door_id);
+	bool isDoorOpen(int door_id) const;
     void openDoor(int door_id);
     bool isOnOpenDoor(const Point& p) const { return getCharAt(p) == '{'; }
     bool isWinningDoor(int doorId) const { return doorId == currentRoom - 1; }
     void setconnection(int door_id);
-    bool ConnectionStatus(int door_id);
-    bool SwitchState(int doorId);
-    int GetDoorIdByKey(char p);
+	bool getConnectionStatus(int door_id) const;
+	bool isRealDoor(int doorId) const { return doorId >= roomIndex::VICTORY && doorId <= roomIndex::VAULT; }
+	bool SwitchState(int doorId) const;
+	int GetDoorIdByKey(char p) const;
     void deleteDoor(Point position);
     void deleteSwitch(Point position);
+
     // game logic: Keys & Inventory
     void addKeyToInventory(Point position, char p);
     void RemoveKeyFromInventory(char p, Point newPos);
     void deleteKey(Point position);
+
     // game logic: Bombs & Obstacles
     void updateBombs(Player& p1, Player& p2);
     void addActiveBomb(const Point& p) { activeBombs.push_back(Bomb(p)); }
     bool isBombAt(const Point& p) const;
 	Obstacle* getObstacleAt(const Point& p);
+
     // game logic: Springs & Riddles
     Spring* getSpringAt(const Point& p);
     void deleteSpring(Point position);
     bool handleRiddle(Point riddlePos, Player& player);
+	Riddle ReadRiddleFromFile(const string& filePath, const Point pos, int riddleIndex, bool& error);
+	Riddle ReadVaultRiddleFromFile(const string& filePath, const Point pos, bool& error);
+	bool allRiddlesSolved() const;
+	bool handleVaultRiddle(Point riddlePos);
 };

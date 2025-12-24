@@ -40,7 +40,7 @@ bool Player::addToInventory(objSigns item, Point pos)
 	if (ExtraInventory) {
 		for (int i = 0; i < INVENTORY_SIZE && !added; ++i) {
 			if (inventory[i] == ' ') {
-				inventory[i] = item; //add item to inventory
+				inventory[i] = (char)item; //add item to inventory
 				added = true;
 				if (item == objSigns::KEY)
 					board.addKeyToInventory(pos, this->getChar());
@@ -49,7 +49,7 @@ bool Player::addToInventory(objSigns item, Point pos)
 	}
 	else {
 		if (inventory[0] == ' ') {
-			inventory[0] = item; //add item to inventory
+			inventory[0] = (char)item; //add item to inventory
 			added = true;
 			if (item == objSigns::KEY)
 				board.addKeyToInventory(pos, this->getChar());
@@ -61,15 +61,6 @@ bool Player::addToInventory(objSigns item, Point pos)
 	}
 	return true;
 }
-
-//void Player::removeItem()
-//{
-//	if (ExtraInventory) {
-//
-//	}
-//	if (inventory[0] == objSigns::KEY){board.RemoveKeyFromInventory(this->getChar(), position);}
-//	inventory[0] = ' '; 
-//}
 
 void Player::dispose()
 {
@@ -85,7 +76,7 @@ void Player::dispose()
 					board.setChar(position, c);
 					if (c == objSigns::KEY) {board.RemoveKeyFromInventory(this->getChar(), position);}
 					else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
-					position.draw(board.IsColor() ? getColorForChar(position.getChar()) : WHITE);
+					position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
 					inventory[index] = ' ';
 					return;
 				}
@@ -101,7 +92,7 @@ void Player::dispose()
 			board.setChar(position, c);
 			if (c == objSigns::KEY) {board.RemoveKeyFromInventory(this->getChar(), position);}
 			else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
-			position.draw(board.IsColor() ? getColorForChar(position.getChar()) : WHITE);
+			position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
 			inventory[index] = ' ';
 			return;
 		}
@@ -341,7 +332,7 @@ bool Player::OpenVaultRoom() {
 	if (score >= MIN_SCORE) { //check if door is open and player has enough score to finish
 		clearFromScreen();
 		finishedLevel = true;
-		roomOpen = roomIndex::VAULT;
+		roomOpen = (int)roomIndex::VAULT;
 		return false;
 	}
 		//alert the player that he needs more score to finish
@@ -352,12 +343,12 @@ bool Player::OpenVaultRoom() {
 
 bool Player::OpenVictoryRoom() {
 	if (board.allRiddlesSolved()) {
-		board.openDoor(roomIndex::VICTORY);
+		board.openDoor((int)roomIndex::VICTORY);
 		//string msg = "Congratulations, you may proceed to the final screen";
 		//board.showMessage(msg);
 		clearFromScreen();
 		finishedLevel = true;
-		roomOpen = roomIndex::VICTORY;
+		roomOpen = (int)roomIndex::VICTORY;
 		return false;
 	}
 	else {

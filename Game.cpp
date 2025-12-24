@@ -74,8 +74,8 @@ void Game::run() {
 				(void)_getch(); //ignore special keys like arrows
 			}
 			else {
-				player1.handleKeyPressed((char)key);
-				player2.handleKeyPressed((char)key);
+				player1.handleKeyPressed(key);
+				player2.handleKeyPressed(key);
 			}
 		}
 
@@ -90,7 +90,6 @@ void Game::run() {
 	}
 	cls();
 }
-
 
 void Game::showMenu(bool& started){
 	changeRoom(roomIndex::MENU);
@@ -124,11 +123,13 @@ void Game::showMenu(bool& started){
 	}
 }
 
-void Game::changeRoom(size_t roomNumber){
+void Game::changeRoom(roomIndex room){
+
 	int currentRoom = board.getCurrentRoom();
 	if (currentRoom >= roomIndex::ROOM1 && currentRoom <= roomIndex::VAULT){
 		board.saveRoom();
 	}
+	int roomNumber = (int)room;
 	board.loadMap(roomNumber);
 	board.drawMap(roomNumber);
 	if (room != roomIndex::MENU && room != roomIndex::INSTRUCTIONS && room != roomIndex::VICTORY) {
@@ -154,7 +155,7 @@ void Game::SetColorfullGame() {
 void Game::performRestart(int& gameCycle){
 	board.resetStats();
 	board.clearSavedRooms();
-	board.currentRoom = roomIndex::MENU;
+	board.currentRoom = (size_t)roomIndex::MENU;
 	player1.resetInventory();
 	player2.resetInventory();
 	changeRoom(roomIndex::ROOM1);
@@ -238,11 +239,11 @@ void Game::handleLevelCompletion() {
   //check here!
 
 	if (!player1.hasFinished() || !player2.hasFinished()) { return; }
-	size_t player1Room = player1.getRoomOpen(); //the room number of the door opened by player 1
-	size_t player2Room = player2.getRoomOpen(); //the room number of the door opened by player 2
+	roomIndex player1Room = player1.getRoomOpen(); //the room number of the door opened by player 1
+	roomIndex player2Room = player2.getRoomOpen(); //the room number of the door opened by player 2
 	if (player1Room == player2Room) { changeRoom(player1Room); }			//both players chose the same door
 	else {
-		string msg = "you chose different rooms! choose one room you willing to continue with between " + std::to_string(player1Room) + "/" + std::to_string(player2Room);
+		string msg = "you chose different rooms! choose one room you willing to continue with between " + std::to_string((int)player1Room) + "/" + std::to_string((int)player2Room);
 		board.showMessage(msg);
 		while (true) {
 			if (_kbhit()) {
@@ -251,11 +252,11 @@ void Game::handleLevelCompletion() {
 					size_t chosenRoom = key - '0';
 
 					if (chosenRoom == player1Room || chosenRoom == player2Room) {
-						changeRoom(chosenRoom);
+						changeRoom((roomIndex)chosenRoom);
 						break;
 					}
 					else {
-						board.showMessage("Invalid choice. Please choose again between " + std::to_string(player1Room) + "/" + std::to_string(player2Room));
+						board.showMessage("Invalid choice. Please choose again between " + std::to_string((int)player1Room) + "/" + std::to_string((int)player2Room));
 					}
 				}
 			}

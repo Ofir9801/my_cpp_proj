@@ -77,7 +77,7 @@ Color getColorForChar(char c)
 		return Color::WHITE;
 }
 
-bool ReadRoomLayoutFromFile(string FileName, roomIndex roomIndex) {
+bool ReadRoomLayoutFromFile(string FileName, roomIndex room) {
 	std::ifstream inFile(FileName);
 	bool error = false;
 	if (!inFile.is_open()) {
@@ -89,7 +89,7 @@ bool ReadRoomLayoutFromFile(string FileName, roomIndex roomIndex) {
 			templine = "";
 		}
 		templine.resize(MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
-		switch (roomIndex) {
+		switch (room) {
 		case roomIndex::MENU:
 			Menu[i] = templine;
 			break;
@@ -97,19 +97,19 @@ bool ReadRoomLayoutFromFile(string FileName, roomIndex roomIndex) {
 			Instructions[i] = templine;
 			break;
 		case roomIndex::ROOM1:
-			if (i == 0) {error = HandleLegendLine(templine, roomIndex, i);}
+			if (i == 0) {error = HandleLegendLine(templine, room, i);}
 			else {Room1[i] = templine;}
 			break;
 		case roomIndex::ROOM2:
-			if (i == 0) { error = HandleLegendLine(templine, roomIndex, i); }
+			if (i == 0) { error = HandleLegendLine(templine, room, i); }
 			else {Room2[i] = templine;}
 			break;
 		case roomIndex::ROOM3:
-			if (i == 0) { error = HandleLegendLine(templine, roomIndex, i); }
+			if (i == 0) { error = HandleLegendLine(templine, room, i); }
 			else {Room3[i] = templine;}
 			break;
 		case roomIndex::VAULT:
-			if (i == 0) { error = HandleLegendLine(templine, roomIndex, i); }
+			if (i == 0) { error = HandleLegendLine(templine, room, i); }
 			else {Vault[i] = templine;}
 			break;		
 		case roomIndex::VICTORY:
@@ -121,17 +121,17 @@ bool ReadRoomLayoutFromFile(string FileName, roomIndex roomIndex) {
 	return error;
 }
 
-bool HandleLegendLine(string& line, int roomIndex, int& loopIndex) {
+bool HandleLegendLine(string& line, roomIndex room, int& loopIndex) {
 	if (!line.empty() && line[0] == 'L')
 	{
-		ReadLegendFromFile(roomIndex);
+		ReadLegendFromFile(room);
 		loopIndex = 2; //skip next two lines since they are part of the legend
 		return false;
 	}
 	return true;
 }
 
-void ReadLegendFromFile(int roomIndex) {
+void ReadLegendFromFile(roomIndex room) {
 	std::ifstream inFile(LegendPathWay);
 	if (!inFile.is_open()) {
 		throw std::runtime_error("Something wrong with the file Legend.txt");
@@ -141,8 +141,8 @@ void ReadLegendFromFile(int roomIndex) {
 		if (!std::getline(inFile, templine)) {
 			templine = "";
 		}
-		templine.resize(BOARD_DIMENSION::MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
-		switch (roomIndex) {
+		templine.resize(MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
+		switch (room) {
 		case roomIndex::ROOM1:
 			Room1[i] = templine;
 			break;
