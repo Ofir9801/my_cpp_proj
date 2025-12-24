@@ -10,8 +10,8 @@
 #include <cctype> //  for tolower, isdigit
 
 Game::Game() :
-	player1(Point(PLAYER_1_START_X, PLAYER_1_START_Y, objSigns::PLAYER1), keys1, board),
-	player2(Point(PLAYER_2_START_X, PLAYER_2_START_Y, objSigns::PLAYER2), keys2, board) {}
+	player1(Point(PLAYER_1_START_X, PLAYER_1_START_Y, (char) objSigns::PLAYER1), keys1, board),
+	player2(Point(PLAYER_2_START_X, PLAYER_2_START_Y, (char) objSigns::PLAYER2), keys2, board) {}
 
 void Game::run() {
 	hideCursor();
@@ -93,7 +93,7 @@ void Game::run() {
 
 
 void Game::showMenu(bool& started){
-	changeRoom(MENU);
+	changeRoom(roomIndex::MENU);
 	bool inMenu = true;
 	char a;
 	while (inMenu) {
@@ -101,19 +101,19 @@ void Game::showMenu(bool& started){
 			char key = (char)_getch();
 			switch (key) {
 			case '1':
-				changeRoom(ROOM1);
+				changeRoom(roomIndex::ROOM1);
 				inMenu = false;
 				break;
 			case '2':
 				SetColorfullGame();
-				changeRoom(ROOM1);
+				changeRoom(roomIndex::ROOM2);
 				inMenu = false;
 				break;
 			case '8':
-				changeRoom(INSTRUCTIONS);
+				changeRoom(roomIndex::INSTRUCTIONS);
 				board.showKeyBinds();
 				a = (char)_getch();
-				changeRoom(MENU);
+				changeRoom(roomIndex::MENU);
 				break;
 			case '9':
 				started = false;
@@ -131,11 +131,11 @@ void Game::changeRoom(size_t roomNumber){
 	}
 	board.loadMap(roomNumber);
 	board.drawMap(roomNumber);
-	if (roomNumber != MENU && roomNumber != INSTRUCTIONS && roomNumber != VICTORY) {
-	player1.reset(Point(1, 4, objSigns::PLAYER1));
-	player2.reset(Point(75, 4, objSigns::PLAYER2));
+	if (room != roomIndex::MENU && room != roomIndex::INSTRUCTIONS && room != roomIndex::VICTORY) {
+	player1.reset(Point(1, 4, (char)objSigns::PLAYER1));
+	player2.reset(Point(75, 4, (char)objSigns::PLAYER2));
 	}
-	if (roomNumber == roomIndex::ROOM3)
+	if (room == roomIndex::ROOM3)
 		board.showMessage("it is very dark in here, you will need something to light it up");
 }
 
@@ -235,6 +235,7 @@ void Game::handleLevelCompletion() {
 			messageShown = true;
 		}
 	}
+  //check here!
 
 	if (!player1.hasFinished() || !player2.hasFinished()) { return; }
 	size_t player1Room = player1.getRoomOpen(); //the room number of the door opened by player 1

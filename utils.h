@@ -4,7 +4,7 @@
 
 using std::string;
 
-enum INFO_SLOTS {
+enum class INFO_SLOTS {
 	PLAYER1_SIGN_START_X = 10,
 	PLAYER1_INV_START_X = 10,
 	PLAYER2_SIGN_START_X = 74,
@@ -14,18 +14,19 @@ enum INFO_SLOTS {
 	PLAYER_SIGN_Y = 0,
 	PLAYER_INV_Y = 1
 };
-enum BOARD_DIMENSION{ MAX_X = 80, MAX_Y = 25 };
-enum MESSAGES_POS { MES_X = 0, MES_Y = 2 };
-enum roomIndex {
-	VICTORY = 0,
-	ROOM1 = 1,
-	ROOM2 = 2,
-	ROOM3 = 3,
-	VAULT = 4,
-	MENU = 5,
-	INSTRUCTIONS = 6
+enum class MESSAGES_POS {
+	MES_X = 0,
+	MES_Y = 2 
 };
-enum Keyboard_bind {
+enum class roomIndex {
+	MENU = 0,
+	INSTRUCTIONS = 1,
+	ROOM1 = 2,
+	ROOM2 = 3,
+	ROOM3 = 4,
+	VICTORY = 5
+};
+enum class Keyboard_bind {
 	UP,
 	RIGHT,
 	DOWN,
@@ -33,7 +34,7 @@ enum Keyboard_bind {
 	STAY,
 	DISPOSE
 };
-enum objSigns {
+enum class objSigns {
 	PLAYER1 = '$',
 	PLAYER2 = '&',
 	KEY = 'K',
@@ -46,7 +47,7 @@ enum objSigns {
 	SWITCH_ON = '/',
 	BOMB = '@'
 };
-enum Color {
+enum class Color {
 	BLACK = 0,
 	BLUE = 1,
 	GREEN = 2,
@@ -65,61 +66,61 @@ enum Color {
 	WHITE = 15
 };
 
-const char ESC = 27;
-const string EMPTYLINE = "                                                                                ";
-const string keys1 = "wdsaeq";
-const string keys2 = "ilkjou";
+inline constexpr char ESC = 27;
+inline const string EMPTYLINE = "                                                                                ";
+inline const string keys1 = "wdsaeq";
+inline const string keys2 = "ilkjou";
+inline constexpr int MAX_X = 80;
+inline constexpr int MAX_Y = 25;
 
-inline string Room1[BOARD_DIMENSION::MAX_Y];
-inline string Room2[BOARD_DIMENSION::MAX_Y];
-inline string Room3[BOARD_DIMENSION::MAX_Y];
-inline string Vault[BOARD_DIMENSION::MAX_Y];
-inline string Menu[BOARD_DIMENSION::MAX_Y];
-inline string Instructions[BOARD_DIMENSION::MAX_Y];
-inline string EndingScreen[BOARD_DIMENSION::MAX_Y];
+inline string Room1[MAX_Y];
+inline string Room2[MAX_Y];
+inline string Room3[MAX_Y];
+inline string Menu[MAX_Y];
+inline string Instructions[MAX_Y];
+inline string EndingScreen[MAX_Y];
 
-const string MenuPathWay = "Rooms/Menu.txt";
-const string Room1PathWay = "Rooms/Room1.txt";
-const string Room2PathWay = "Rooms/Room2.txt";
-const string Room3PathWay = "Rooms/Room3.txt";
-const string VaultPathWay = "Rooms/Vault.txt";
-const string LegendPathWay = "Rooms/Legend.txt";
-const string EndingScreenPathWay = "Rooms/EndingScreen.txt";
-const string InstructionsPathWay = "Rooms/Instructions.txt";
-const string RiddlesRoom1PathWay = "Riddles/Riddles1.txt";
-const string RiddlesRoom2PathWay = "Riddles/Riddles2.txt";
-const string RiddlesRoom3PathWay = "Riddles/Riddles3.txt";
-const string RiddlesRoomVaultPathWay = "Riddles/RiddlesVault.txt";
-const string RiddlesVaultPathWay = "Riddles/RiddleVault.txt";
+inline const string MenuPathWay = "Rooms/Menu.txt";
+inline const string Room1PathWay = "Rooms/Room1.txt";
+inline const string Room2PathWay = "Rooms/Room2.txt";
+inline const string Room3PathWay = "Rooms/Room3.txt";
+inline const string EndingScreenPathWay = "Rooms/EndingScreen.txt";
+inline const string InstructionsPathWay = "Rooms/Instructions.txt";
+inline const string RiddlePathWay = "Riddle.txt";
 
-int constexpr INVENTORY_SIZE = 2; //Player can hold up to one item
-int constexpr NUM_KEYS = 6; //number of possible movement Keys
-int constexpr NUM_ROOMS = 7; //number of rooms in the Game
-int constexpr LIGHT_RADIUS_TORCH = 7;
-int constexpr LIGHT_RADIUS_DEFAULT = 2;
-int constexpr NUMS_OF_RIDDLES = 4;
-int constexpr EXPLODE_BOMB_TIME = 15;
-int constexpr BOMB_RADIUS = 3;
-int constexpr PLAYER_1_START_X = 1;
-int constexpr PLAYER_1_START_Y = 4;
-int constexpr PLAYER_2_START_X = 75;
-int constexpr PLAYER_2_START_Y = 4;
-int constexpr MIN_SCORE = 300;
-int constexpr FAKE_DOOR_SCORE = 50;
-int constexpr WRONG_ANSWER = 50;
-int constexpr SUCCESS_SCORE = 100;
-int constexpr LEGEND_SIZE = 3;
-int constexpr TIMER_MESSAGE = 15;
+inline constexpr int INVENTORY_SIZE = 1; //Player can hold up to one item
+inline constexpr int NUM_KEYS = 6; //number of possible movement Keys
+inline constexpr int NUM_ROOMS = 6; //number of rooms in the Game
+inline constexpr int LIGHT_RADIUS_TORCH = 7;
+inline constexpr int LIGHT_RADIUS_DEFAULT = 2;
+inline constexpr int NUMS_OF_RIDDLES = 4;
+inline constexpr int EXPLODE_BOMB_TIME = 15;
+inline constexpr int BOMB_RADIUS = 3;
+inline constexpr int PLAYER_1_START_X = 1;
+inline constexpr int PLAYER_1_START_Y = 4;
+inline constexpr int PLAYER_2_START_X = 75;
+inline constexpr int PLAYER_2_START_Y = 4;
+inline constexpr int MIN_SCORE = 300;
+inline constexpr int FAKE_DOOR_SCORE = 50;
+inline constexpr int WRONG_ANSWER = 50;
+inline constexpr int SUCCESS_SCORE = 100;
+inline constexpr int STARTING_LIVES = 4;
 
 
 //add score points to fake door and winning door
 
 void gotoxy(int x, int y);
+void gotoxy(INFO_SLOTS x, INFO_SLOTS y);
+void gotoxy(MESSAGES_POS x, MESSAGES_POS y);
 void hideCursor();
 void cls();
-void SetTextColor(int color);
-int getColorForChar(char c);
-bool ReadRoomLayoutFromFile(string FileName, int roomIndex);
-bool HandleLegendLine(string& line, int roomIndex, int& loopIndex);
-void ReadLegendFromFile(int roomIndex);
+void SetTextColor(Color color);
+Color getColorForChar(char c);
+bool ReadRoomLayoutFromFile(string FileName, roomIndex roomIndex);
 
+inline bool operator==(char c, objSigns sign) { //overload operator == for enum class objsign
+	return c == static_cast<char>(sign);
+}
+inline bool operator==(int n, roomIndex index) { //overload operator 
+	return n == static_cast<int>(index);
+}

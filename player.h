@@ -19,7 +19,7 @@ class Player
 	bool finishedLevel = false;
 	size_t roomOpen = 0; //to track which room's door the player open
 	bool handleSpecialObjects(char nextTile, Point nextPos, int force);
-	int color = CYAN;
+	Color color = Color::CYAN;
 
 public:
 	Player(const Point& point, const string(&keys), Screen& theScreen) :board(theScreen), position(point), p_keys(keys) {
@@ -36,6 +36,11 @@ public:
 	bool hasItem(char item) const { return inventory[0] == item || inventory[1] == item; }
 	void resetInventory(){ inventory[0] = ' '; inventory[1] = ' '; inventory[2] = '\0';
 	}
+	bool addToInventory(objSigns item,Point pos);
+	char getChar() const { return position.getChar(); } 
+	const char* getInventory() const { return inventory; }
+	bool hasItem(objSigns item) const { return inventory[0] == item; }
+	void removeItem();
 	void dispose();
 	void clearFromScreen();
 	void reset(Point newPosition);

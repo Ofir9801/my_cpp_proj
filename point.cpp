@@ -1,12 +1,12 @@
 #include "Point.h"
 #include "Screen.h"
 
-void Point::draw(char c, int color)
+void Point::draw(char c, Color color)
 {
 	gotoxy(x, y);
 	SetTextColor(color);
 	std::cout << c;
-	SetTextColor(WHITE); //reset to default color
+	SetTextColor(Color::WHITE); //reset to default color
 }
 
 void Point::move() {
@@ -72,4 +72,11 @@ bool Point::operator<(const Point& other) const
 {
 	if (y != other.y) return y < other.y;
 	return x < other.x;
+}
+
+bool Point::InBounds(int max_x = MAX_X, int max_y = MAX_Y, int min_x = 0, int min_y = 0)const {
+	bool inside_X = x >= min_x && x < max_x;
+	bool inside_Y = y >= min_y && y < max_y;
+
+	return inside_X && inside_Y;
 }

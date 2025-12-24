@@ -63,11 +63,11 @@ void Screen::drawMap() {
 			if (i > 2 && colorToggle) {
 				for (int j = 0; j < MAX_X; j++) {
 					char c = board[i][j];
-					int color = getColorForChar(c);
+					Color color = getColorForChar(c);
 					SetTextColor(color);
 					cout << c;
 				}
-				SetTextColor(WHITE); //reset to default color
+				SetTextColor(Color::WHITE); //reset to default color
 			}
 			else {
 				cout << board[i];
@@ -77,17 +77,17 @@ void Screen::drawMap() {
 }
 
 void Screen::drawMap(int roomNumber) {
-	cls(); //clear the console
-	if (roomNumber == VICTORY &&colorToggle) {
+	cls();
+	if (roomNumber == roomIndex::VICTORY &&colorToggle) {
 		for (int i = 0; i < MAX_Y; i++) {
 			gotoxy(0, i);
 			if (i > 2) {
 				for (int j = 0; j < MAX_X; j++) {
 					char c = board[i][j];
-					SetTextColor(BROWN);
+					SetTextColor(Color::BROWN);
 					cout << c;
 				}
-				SetTextColor(WHITE); //reset to default color
+				SetTextColor(Color::WHITE); //reset to default color
 			}
 			else {
 				cout << board[i];
@@ -120,34 +120,34 @@ void Screen::showPlayerInfo(const Player& p) {
 	string inventory = BuildInventory(p);
 
 	switch (playerChar) {
-	case objSigns::PLAYER1:
-		gotoxy(PLAYER1_SIGN_START_X, PLAYER_SIGN_Y); //print player char
-		cout << playerChar;
-		gotoxy(PLAYER1_INV_START_X, PLAYER_INV_Y); //print inventory
-		cout << inventory;
+	case (char)objSigns::PLAYER1:
+		gotoxy(INFO_SLOTS::PLAYER1_SIGN_START_X, INFO_SLOTS::PLAYER_SIGN_Y); //print player char
+		cout << playerChar << std::flush;
+		gotoxy(INFO_SLOTS::PLAYER1_INV_START_X, INFO_SLOTS::PLAYER_INV_Y); //print inventory
+		cout << p.getInventory() << std::flush;
 		break;
-	case objSigns::PLAYER2:
-		gotoxy(PLAYER2_SIGN_START_X, PLAYER_SIGN_Y); //print player char
-		cout << playerChar;
-		gotoxy(PLAYER2_INV_START_X, PLAYER_INV_Y);//print inventory
-		cout << inventory ;
+	case (char)objSigns::PLAYER2:
+		gotoxy(INFO_SLOTS::PLAYER2_SIGN_START_X, INFO_SLOTS::PLAYER_SIGN_Y); //print player char
+		cout << playerChar << std::flush;
+		gotoxy(INFO_SLOTS::PLAYER2_INV_START_X, INFO_SLOTS::PLAYER_INV_Y);//print inventory
+		cout << p.getInventory() << std::flush;
 		break;
 	}
-	gotoxy(SCORE_START_X, PLAYER_SIGN_Y); //print score
-	cout << p.getLives();
-	gotoxy(LIVES_START_X, PLAYER_SIGN_Y); //print lives
-	cout << p.getScore();
+	gotoxy(INFO_SLOTS::SCORE_START_X, INFO_SLOTS::PLAYER_SIGN_Y); //print score
+	cout << p.getLives() << std::flush;
+	gotoxy(INFO_SLOTS::LIVES_START_X, INFO_SLOTS::PLAYER_SIGN_Y); //print lives
+	cout << p.getScore() << std::flush;
 }
 
 void Screen::setChar(const Point& p, char c) {
-	if (p.getX() < 0 || p.getX() >= MAX_X || p.getY() < 0 || p.getY() >= MAX_Y)
+	if (!p.InBounds())
 		return;
 	board[p.getY()][p.getX()] = c;
 	gotoxy(p.getX(), p.getY());
 	if (colorToggle) {
 		SetTextColor(getColorForChar(c));
 		cout << c;
-		SetTextColor(WHITE); //reset to default color
+		SetTextColor(Color::WHITE); //reset to default color
 		return;
 	}
 	else
@@ -167,11 +167,14 @@ void Screen::showKeyBinds() const
 		cout << (unsigned char)toupper(keys2[i]); //print uppercase
 	}
 }
-void Screen::showMessage(string msg){
+void Screen::showMessage(string msg){ //work on it!
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
 	string extraSpace(MAX_X - msg.length(), ' ');
 	std::cout << msg <<extraSpace <<std::flush;
 	MessageTimer = TIMER_MESSAGE;
+	std::cout << EMPTYLINE << std::flush;//clear the line before printing the requested message
+	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
+	std::cout << msg << std::flush;
 }
 
 void Screen::initaializeRoomsArray() {
@@ -196,7 +199,7 @@ void Screen::initaializeRoomsArray() {
 	if (ReadRoomLayoutFromFile(EndingScreenPathWay, roomIndex::VICTORY)){
 		throw std::runtime_error("Something wrong with the file endingscreen.txt"); 
 	}	
-	
+	//work on it!
 	Rooms[MENU] = Menu;
 	Rooms[INSTRUCTIONS] = Instructions;
 	Rooms[ROOM1] = Room1;
@@ -221,13 +224,26 @@ bool Screen::tryPushObstacle(const Point& obstaclePos, Keyboard_bind direction, 
 	setChar(obstaclePos, ' '); // Clear the first obstacle position
 	setChar(scanner, '*'); // Set the last position to an obstacle
 	return true;
+	Rooms[(int)roomIndex::MENU] = Menu;
+	Rooms[(int)roomIndex::INSTRUCTIONS] = Instructions;
+	Rooms[(int)roomIndex::ROOM1] = Room1;
+	Rooms[(int)roomIndex::ROOM2] = Room2;
+	Rooms[(int)roomIndex::ROOM3] = Room3;
+	Rooms[(int)roomIndex::VICTORY] = EndingScreen;
 }
-
+Obstacle* Screen::getObstacleAt(const Point& p) {
+	for (auto& obs : obstacles) {
+		if (obs.getPosition() == p) {
+			return &obs;
+		}
+	}
+	return nullptr;
+}
 void Screen::loadSprings() {
 	springs.clear();
-	bool processed[BOARD_DIMENSION::MAX_Y][BOARD_DIMENSION::MAX_X] = { false };
-	for (int y = 0; y < BOARD_DIMENSION::MAX_Y; y++) {
-		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
+	bool processed[MAX_Y][MAX_X] = {false };
+	for (int y = 0; y < MAX_Y; y++) {
+		for (int x = 0; x < MAX_X; x++) {
 			Point p(x, y);
 			if (getCharAt(p) == objSigns::SPRING && !processed[y][x]) {
 				bool isHorizontal = (x + 1 < MAX_X && getCharAt(Point(x + 1, y)) == objSigns::SPRING);
@@ -307,7 +323,7 @@ void Screen::loadItems(int doorIdOpen) {//enter the items from the board to the 
 	for (int y = 3; y < BOARD_DIMENSION::MAX_Y; y++) {
 		for (int x = 0; x < BOARD_DIMENSION::MAX_X; x++) {
 			char c = getCharAt(Point(x, y));
-			if (c == objSigns::SWITCH_OFF) {
+			if (c == (char)objSigns::SWITCH_OFF) {
 				switches.push_back(Switch(x, y, this, false));
 			}
 			else if (c == objSigns::SWITCH_ON) {
@@ -529,7 +545,7 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 					if (colorToggle) {
 						SetTextColor(getColorForChar(c));
 						std::cout << c;
-						SetTextColor(WHITE);
+						SetTextColor(Color::WHITE);
 					}
 					else {
 						std::cout << c;
@@ -543,8 +559,15 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 bool Screen::isValid(const Point& p) const{
 	int x = p.getX();
 	int y = p.getY();
+  
+  //work on it!
 	bool wall = x >= 0 && x < MAX_X - 1 && y >= 3 && y < MAX_Y - 1;
 	return wall;
+	char c = board[y][x];
+	bool door = isdigit(c);
+
+	bool insideBoard = p.InBounds(MAX_X - 1, MAX_Y - 1, 1, 4);
+	return door ||insideBoard;
 }
 
 void Screen::deleteKey(Point position){

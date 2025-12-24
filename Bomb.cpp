@@ -75,16 +75,16 @@ void Bomb::handlePlayerHit(Player& player) {
 	player.clearFromScreen();
 	Sleep(300);
 	switch (c) {
-		case objSigns::PLAYER1:
+		case (char)objSigns::PLAYER1:
 			newPos.setX(PLAYER_1_START_X);
 			newPos.setY(PLAYER_1_START_Y);
-			newPos.setChar(objSigns::PLAYER1);
+			newPos.setChar((char)objSigns::PLAYER1);
 			player.reset(newPos);
 			break;
-		case objSigns::PLAYER2:
+		case (char)objSigns::PLAYER2:
 			newPos.setX(PLAYER_2_START_X);
 			newPos.setY(PLAYER_2_START_Y);
-			newPos.setChar(objSigns::PLAYER2);
+			newPos.setChar((char) objSigns::PLAYER2);
 			player.reset(newPos);
 			break;
 	}
