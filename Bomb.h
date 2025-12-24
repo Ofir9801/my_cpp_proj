@@ -19,8 +19,8 @@ public:
 	bool shouldExplode() const { return active && timer <= 0; }
 	Point getPosition() const { return position; }
 	void explode(Screen& board,Player& p1, Player& p2);
-	bool isShielded(Screen& board, Point bombPos, Point targetPos);
-	int getTimer() { return timer; }
+	bool isShielded (Screen& board, Point bombPos, Point targetPos) const;
+	int getTimer() const{ return timer; }
 };
 
 

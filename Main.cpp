@@ -1,10 +1,9 @@
-#include <iostream>
+﻿#include <iostream>
 #include "Game.h"
 #include <conio.h>
 #include "Utils.h"
 #include "Player.h"
-#include <windows.h>
-
+#include <exception>
 
 int main() {
 	try {
@@ -12,7 +11,7 @@ int main() {
 		Game Game;
 		Game.run();
 	}
-	catch (const std::runtime_error& e) {
+	catch (const std::exception& e) {//catching any standard exceptions
 		std::cout << "Exception caught: " << e.what() << std::endl;
 	}
 }

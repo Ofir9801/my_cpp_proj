@@ -5,11 +5,9 @@
 #include "Utils.h"
 #include "Player.h"
 #include "Screen.h"
-#include <fstream>
 #include <random>
 #include <algorithm>
 #include <cctype> //  for tolower, isdigit
-
 
 Game::Game() :
 	player1(Point(PLAYER_1_START_X, PLAYER_1_START_Y, (char) objSigns::PLAYER1), keys1, board),
@@ -19,39 +17,41 @@ void Game::run() {
 	hideCursor();
 	int gamecycle = 0;
 	bool started = true;
+	
 	showMenu(started);
-	bool firstMessage = true;
-	if (!started) {
-		cls();
-		board.showMessage("Exiting game. Goodbye!");
-		Sleep(1000);
-		cls();
-		gotoxy(0, 0);
-		return;
-	}
+	
+	if (!started) {	return;	}
 	board.resetStats();
-
-	char winningDoorId = char(board.getCurrentRoom() - 1 + '0');
 	board.drawMap();
 	player1.draw();
 	player2.draw();
-	bool exitGame = started;
+
+	bool exitGame = true;
+	bool firstMessage = true;
+
 	while (exitGame) {
 		if (firstMessage) {
-			board.showMessage("Welcome to the Adventure Game! only one door will lead you to the next room.");
+			board.showMessage("Welcome to the Adventure Game! some doors will lead you to other rooms.");
 			Sleep(2000);
 			firstMessage = false;
 		}
+
+		if (board.currentRoom == roomIndex::VICTORY) {
+			board.showMessage("Press Any key to finish the game");
+			(void)_getch();
+			exitGame = false;
+			continue;
+		}
+
 		Point p1Prev = player1.getPosition();
 		Point p2Prev = player2.getPosition();
 
 		updateSwitches();
-		LoadRiddles();
 		board.updateBombs(player1, player2);
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
 		board.refreshSpringsDisplay(player1.getPosition(), player2.getPosition());
-		board.clearMessegeArea(gamecycle);
+		board.clearMessegeArea();
 
 		player1.move();
 		player2.move();
@@ -66,55 +66,27 @@ void Game::run() {
 		Sleep(100);
 		
 		if (_kbhit()) {
-			int key = _getch();
-
-			if (key == ESC) {  //change to const ESC	
-				board.showMessage("Game Paused. Press ESC again to continue or H to exit.");
-				key = _getch();
-				if (std::tolower((unsigned char)key) == std::tolower('h')) {
-					cls();
-					board.showMessage("Exiting game. Goodbye!");
-					Sleep(1000);
-					cls();
-					exitGame = false;
-				}
-				else {
-					gotoxy(0, 24);
-					board.drawMap();
-				}
+			char key = _getch();
+			if (key == ESC) { 
+				handlePause(exitGame, gamecycle);
 			}
 			else if (isSpecialKey(key)) {
 				(void)_getch(); //ignore special keys like arrows
 			}
-
 			else {
 				player1.handleKeyPressed((char)key);
 				player2.handleKeyPressed((char)key);
 			}
 		}
+
 		if(isGameOver()) {
-			cls();
-			gotoxy(30, 10);
-			board.showMessage("Game Over! you lost!");
-			Sleep(2000);
-			exitGame = false;
+			handleGameOver(exitGame, gamecycle);
+			if (!exitGame) { return; }
 			continue;
 		}
+		
+		handleLevelCompletion();
 		gamecycle++;
-
-		if (player1.hasFinished() && player2.hasFinished()) {
-			size_t index = board.getCurrentRoom();
-			if (index < (int)roomIndex::VICTORY) {
-				changeRoom((roomIndex)++index);
-				winningDoorId = (char)('0' + (board.getCurrentRoom() - 1));
-			}
-			else {
-				board.showMessage("Press Any key to finish the game");
-				(void)_getch();
-				exitGame = false;
-				cls();
-			}
-		}
 	}
 	cls();
 }
@@ -152,9 +124,11 @@ void Game::showMenu(bool& started){
 	}
 }
 
-void Game::changeRoom(roomIndex room)
-{
-	int roomNumber = (int)room;
+void Game::changeRoom(size_t roomNumber){
+	int currentRoom = board.getCurrentRoom();
+	if (currentRoom >= roomIndex::ROOM1 && currentRoom <= roomIndex::VAULT){
+		board.saveRoom();
+	}
 	board.loadMap(roomNumber);
 	board.drawMap(roomNumber);
 	if (room != roomIndex::MENU && room != roomIndex::INSTRUCTIONS && room != roomIndex::VICTORY) {
@@ -177,63 +151,114 @@ void Game::SetColorfullGame() {
 	board.colorToggle = true;
 }
 
-void Game::LoadRiddles()
-{
-	for (int i = 0; i < NUMS_OF_RIDDLES; i++) {
-		bool error = false;
-		Riddle temp = ReadRiddleFromFile(RiddlePathWay, i, error);
-		if (error) {
-			throw std::runtime_error("Something wrong with the file riddle.txt");
-		}
-		else {
-			board.riddles.push_back(temp);
-		}
-		
-	}
-	
+void Game::performRestart(int& gameCycle){
+	board.resetStats();
+	board.clearSavedRooms();
+	board.currentRoom = roomIndex::MENU;
+	player1.resetInventory();
+	player2.resetInventory();
+	changeRoom(roomIndex::ROOM1);
+	gameCycle = 0;
 }
-Riddle Game::ReadRiddleFromFile(string FileName, int RiddleIndex, bool& error) {
-	std::ifstream inFile(FileName);
-	std::string question;
-	std::string correctAnswer;
-	std::vector<std::string> options;
-	int correctIndex;
 
-	if (!inFile.is_open()) {
-		error = true;
+void Game::PerformGoToMenu(bool& exitGame, int& gameCycle)
+{
+	board.clearSavedRooms();
+	board.resetStats();
+	bool gameActive = true;
+	showMenu(gameActive);
+	if (!gameActive) {
+		exitGame = false;
 	}
-	string templine;
-	for (int i = 0; i < RiddleIndex; i++) { //skip to the right riddle index
-		for (int j = 0; j < 5; j++) { //every riddle is represnt by 5 lines in riddle.txt
-			if (!std::getline(inFile, templine)) {
-				templine = "";
+	else {
+		gameCycle = 0;
+	}
+}
+
+void Game::handlePause(bool& exitGame, int& gameCycle)
+{
+	board.showMessage("PAUSED: ESC-Continue, H-Menu, R-Restart");
+
+	while (true) {
+		char choice = std::tolower(_getch());
+		if (choice == ESC) {
+			board.showMessage(EMPTYLINE);
+			board.drawMap();
+			break;
+		}
+		else if (choice == 'r') {
+			performRestart(gameCycle);
+			break;
+		}
+		else if (choice == 'h') {
+			board.colorToggle = false; //reset color mode when going to menu
+			PerformGoToMenu(exitGame, gameCycle);
+			break;
+		}
+	}
+}
+
+void Game::handleGameOver(bool& exitGame, int& gameCycle)
+{
+	cls();
+	gotoxy(30, 10);
+	board.showMessage("Game Over! you lost!");
+	Sleep(1000);
+	std::cout << "Press 'R' to Restart or 'H' to go to Main Menu";
+
+	while (true) {
+		if (_kbhit()) {
+			char choice = std::tolower(_getch());
+			if (choice == 'r') {
+				performRestart(gameCycle);
+				break;
+			}
+			else if (choice == 'h') {
+				PerformGoToMenu(exitGame, gameCycle);
+				break;
+			}
+			else if (choice == ESC) { // ESC -> Exit the game
+				exitGame = false;
+				break;
 			}
 		}
 	}
+}
 
-	for (int i = 0; i < 5; i++) {
-		if (!std::getline(inFile, templine)) {
-			templine = "";
+void Game::handleLevelCompletion() {
+	if (!messageShown &&board.getCurrentRoom() == roomIndex::ROOM2)
+	{
+		if (board.allRiddlesSolved()){
+			board.showMessage("All riddles in this room have been solved. you both get extra inventory space!");
+			player1.setExtraInventory(true);
+			player2.setExtraInventory(true);
+			messageShown = true;
 		}
-		if (i == 0) { question = templine; } //first line is the question
-		else if (i == 1) { //second line is the right answers
-			correctAnswer = templine;
-			options.push_back(correctAnswer);
+	}
+  //check here!
+
+	if (!player1.hasFinished() || !player2.hasFinished()) { return; }
+	size_t player1Room = player1.getRoomOpen(); //the room number of the door opened by player 1
+	size_t player2Room = player2.getRoomOpen(); //the room number of the door opened by player 2
+	if (player1Room == player2Room) { changeRoom(player1Room); }			//both players chose the same door
+	else {
+		string msg = "you chose different rooms! choose one room you willing to continue with between " + std::to_string(player1Room) + "/" + std::to_string(player2Room);
+		board.showMessage(msg);
+		while (true) {
+			if (_kbhit()) {
+				char key = (char)_getch();
+				if (std::isdigit((unsigned char)key)) {
+					size_t chosenRoom = key - '0';
+
+					if (chosenRoom == player1Room || chosenRoom == player2Room) {
+						changeRoom(chosenRoom);
+						break;
+					}
+					else {
+						board.showMessage("Invalid choice. Please choose again between " + std::to_string(player1Room) + "/" + std::to_string(player2Room));
+					}
+				}
+			}
 		}
-		else { options.push_back(templine); } // other 3 lines is wrong answers
 	}
-
-	inFile.close();
-
-	//randomize the possible answers
-	std::random_device rd;
-	std::mt19937 g(rd());
-
-	std::shuffle(options.begin(), options.end(), g);
-	for (int i = 0; i < options.size(); i++) {
-		if (options[i] == correctAnswer)
-			correctIndex = i;
-	}
-
-	return Riddle(question, options, correctIndex);
 }

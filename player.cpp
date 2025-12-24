@@ -2,6 +2,7 @@
 #include "Screen.h"
 #include "Spring.h"
 #include <cctype>
+#include <conio.h>
 #include <windows.h>
 
 void Player::draw()
@@ -36,9 +37,19 @@ void Player::handleKeyPressed(char key_pressed) {
 bool Player::addToInventory(objSigns item, Point pos)
 {
 	bool added = false;
-	for (int i = 0; i < INVENTORY_SIZE && !added ; ++i) {
-		if (inventory[i] == ' ') {
-			inventory[i] = (char)item; //add item to inventory
+	if (ExtraInventory) {
+		for (int i = 0; i < INVENTORY_SIZE && !added; ++i) {
+			if (inventory[i] == ' ') {
+				inventory[i] = item; //add item to inventory
+				added = true;
+				if (item == objSigns::KEY)
+					board.addKeyToInventory(pos, this->getChar());
+			}
+		}
+	}
+	else {
+		if (inventory[0] == ' ') {
+			inventory[0] = item; //add item to inventory
 			added = true;
 			if (item == objSigns::KEY)
 				board.addKeyToInventory(pos, this->getChar());
@@ -51,15 +62,56 @@ bool Player::addToInventory(objSigns item, Point pos)
 	return true;
 }
 
-void Player::removeItem()
-{
-	if (inventory[0] == objSigns::KEY){board.RemoveKeyFromInventory(this->getChar(), position);}
-	inventory[0] = ' '; 
-}
+//void Player::removeItem()
+//{
+//	if (ExtraInventory) {
+//
+//	}
+//	if (inventory[0] == objSigns::KEY){board.RemoveKeyFromInventory(this->getChar(), position);}
+//	inventory[0] = ' '; 
+//}
 
 void Player::dispose()
 {
-	if (inventory[0] != ' ') { //fix this function
+	if (ExtraInventory) { //player has two inventory slots
+		if(inventory[0] != ' ' && inventory[1] != ' ') //two slots are full
+		{ //let the player choose which item to dispose
+			board.showMessage("Press 1 to dispose first item, 2 to dispose second item.");
+			char choice = _getch();
+			while (true) {
+				if (choice == '1' || choice == '2') {
+					int index = choice - '1';
+					char c = inventory[index];
+					board.setChar(position, c);
+					if (c == objSigns::KEY) {board.RemoveKeyFromInventory(this->getChar(), position);}
+					else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
+					position.draw(board.IsColor() ? getColorForChar(position.getChar()) : WHITE);
+					inventory[index] = ' ';
+					return;
+				}
+				else {
+					board.showMessage("Invalid choice. Press 1 or 2.");
+					choice = _getch();
+				}
+			}
+		}
+		else if (inventory[0] != ' ' || inventory[1] != ' ') { //only one slot is full
+			int index = (inventory[0] != ' ') ? 0 : 1;
+			char c = inventory[index];
+			board.setChar(position, c);
+			if (c == objSigns::KEY) {board.RemoveKeyFromInventory(this->getChar(), position);}
+			else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
+			position.draw(board.IsColor() ? getColorForChar(position.getChar()) : WHITE);
+			inventory[index] = ' ';
+			return;
+		}
+		else {
+			board.showMessage("No item to dispose.");
+			return;
+		}
+	}
+
+	if (inventory[0] != ' ') { //player has one inventory slot
 		char c = inventory[0];
 		board.setChar(position, c);
 		if (c == objSigns::KEY) {board.RemoveKeyFromInventory(this->getChar(), position);}
@@ -192,12 +244,8 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 	}
 	if(nextTile == objSigns::RIDDLE){
 		this->position.setDirection(Keyboard_bind::STAY); //try to make it stay when hit a riddle to avoid touching it several times in a row
-		if (board.handleRiddle(nextPos, *this)){
-			return false;
-		}
-		else {
-			return true;
-		}
+		if (board.getCurrentRoom() == roomIndex::VAULT) { return !board.handleVaultRiddle(nextPos); }
+		return !board.handleRiddle(nextPos, *this);
 	}
 	if(nextTile == objSigns::BOMB){
 		if (addToInventory(objSigns::BOMB, nextPos)) {
@@ -233,69 +281,95 @@ void Player::reset(Point newPosition) {
 	draw();
 }
 
-bool Player::atDoor(unsigned char nextTile, Point nextPos) {
+bool Player::atDoor(unsigned char nextTile, Point nextPos){
 	int doorId = nextTile - '0';
-	if (board.ConnectionStatus(doorId)){ // connected to a switch
+	if (doorId == 9) { doorId = 0; } //door id 0 is represented by char '9' on the board and that is the end screen
+	if (board.getConnectionStatus(doorId)){ // connected to a switch
 		if (board.SwitchState(doorId)) {return OpenDoorWithKey(doorId, nextPos);}//true = switch is on 
 		else { //switch is off
 			board.showMessage("The door is locked. Find the switch to open it.");
 			return true;
 		}
 	}
+	else if (doorId == 0) { return OpenVictoryRoom(); }//In vault Room
 	else { return OpenDoorWithKey(doorId, nextPos);}//not connected to a switch
 	
 }
 
 bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
-	int score = board.getScore();
 	bool isOpenDoor = board.isDoorOpen(doorId);
-	if (isOpenDoor && score >= MIN_SCORE) { //check if door is open and player has enough score to finish
+	if (isOpenDoor) { //door is open
+		if (doorId == roomIndex::VAULT) { return OpenVaultRoom(); }
 		clearFromScreen();
 		finishedLevel = true;
+		roomOpen = doorId;
 		return false;
 	}
-	else if (isOpenDoor && score < MIN_SCORE) { //alert the player that he needs more score to finish
-		string msg = "You need at least " + std::to_string(MIN_SCORE) + " points to finish the game!, you need more " + std::to_string(MIN_SCORE - score) + " points";
-		board.showMessage(msg);
-		return true;
-	}
-
 	int keyDoorId = board.GetDoorIdByKey(this->getChar());
-	bool winDoorId = board.isWinningDoor(doorId);
-	
+	bool RealDoor = board.isRealDoor(doorId);
+
 	if (hasItem(objSigns::KEY) && keyDoorId == doorId) {
-		removeItem();
-		board.showPlayerInfo(*this);
 		board.openDoor(doorId);
-		if (winDoorId && score >= MIN_SCORE) {
+		board.RemoveKeyFromInventory(this->getChar(), position);
+		board.showPlayerInfo(*this);
+		if (doorId == roomIndex::VAULT) { return OpenVaultRoom(); }
+		if (RealDoor) {
 			clearFromScreen();
-			string msg = "Correct door!Unlocked. + " +std::to_string(SUCCESS_SCORE) + "points!";
+			string msg = "The Door Is Unlocked, you get " + std::to_string(SUCCESS_SCORE) + " points!";
 			board.showMessage(msg);
-			board.addScore(100);
+			board.addScore(SUCCESS_SCORE);
 			finishedLevel = true;
+			roomOpen = doorId;
 			return false;
 		}
-		else if (!winDoorId) {
+		else { //fake door
 			board.setChar(nextPos, 'X');
-			string msg = "Wrong door! It's a dead end. + " + std::to_string(FAKE_DOOR_SCORE) + "points for trying";
+			string msg = "It's a dead end, you get " + std::to_string(FAKE_DOOR_SCORE) + " points for trying";
 			board.showMessage(msg);
-			board.addScore(50);
-			return true;
-		}
-		
-		else{ // (score < MIN_SCORE)
-			string msg = "You need at least " + std::to_string(MIN_SCORE) + " points to finish the game!, you need more "+ std::to_string(MIN_SCORE-score) + " points";
-			board.showMessage(msg);
+			board.addScore(FAKE_DOOR_SCORE);
 			return true;
 		}
 	}
 	else {
-		board.showMessage("try look for the right key to unlock this door");
+		board.showMessage("Try to look for the right key to unlock this door");
 		return true;
 	}
 }
+
+bool Player::OpenVaultRoom() {
+	int score = board.getScore();
+	if (score >= MIN_SCORE) { //check if door is open and player has enough score to finish
+		clearFromScreen();
+		finishedLevel = true;
+		roomOpen = roomIndex::VAULT;
+		return false;
+	}
+		//alert the player that he needs more score to finish
+		string msg = "You need at least " + std::to_string(MIN_SCORE) + " points to enter the vault!, you need more " + std::to_string(MIN_SCORE - score) + " points";
+		board.showMessage(msg);
+		return true;
+}
+
+bool Player::OpenVictoryRoom() {
+	if (board.allRiddlesSolved()) {
+		board.openDoor(roomIndex::VICTORY);
+		//string msg = "Congratulations, you may proceed to the final screen";
+		//board.showMessage(msg);
+		clearFromScreen();
+		finishedLevel = true;
+		roomOpen = roomIndex::VICTORY;
+		return false;
+	}
+	else {
+		string msg = "You need to solve the riddle to proceed to the final screen";
+		board.showMessage(msg);
+		return true;
+	}
+}
+
 int Player::getLives() const { return board.getLives(); }
 int Player::getScore() const { return board.getScore(); }
 void Player::decreaseLife() { board.decreaseLife(); }
 void Player::increaseScore(int amount) { board.addScore(amount); }
 bool Player::isAlive() const { return board.getLives() > 0; }
+

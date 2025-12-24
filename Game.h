@@ -10,6 +10,12 @@ class Game{
 	Screen board;
 	Player player1;
 	Player player2;
+	bool messageShown = false;
+	void performRestart(int& gameCycle);
+	void PerformGoToMenu(bool& exitGame, int& gameCycle);
+	void handlePause(bool& exitGame, int& gameCycle);
+	void handleGameOver(bool& exitGame, int& gameCycle);
+	void handleLevelCompletion();
 
 public:
 	Game(); //default constructor to initialize the Game components	
@@ -18,10 +24,8 @@ public:
 	void changeRoom(roomIndex room);
 private:
 	void updateSwitches();
-	bool isSpecialKey(int key) { return key == 0 || key == 224; } //when keyboard presses special keys like arrows
+	bool isSpecialKey(int key) const{ return key == 0 || key == 224; } //when keyboard presses special keys like arrows
 	void SetColorfullGame();
-	bool isGameOver() { return board.getLives() <= 0 || !board.gameState; }
-	void LoadRiddles();
-	Riddle ReadRiddleFromFile(string FileName, int RiddleIndex, bool& error);
+	bool isGameOver() const{ return board.getLives() <= 0 || !board.gameState; }
 };
 
