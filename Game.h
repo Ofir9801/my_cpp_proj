@@ -15,7 +15,7 @@ public:
 	Game(); //default constructor to initialize the Game components	
 	void run(); //function to run the main Game loop
 	void showMenu(bool &started);//function to show the Game menu
-	void changeRoom(int roomNumber);
+	void changeRoom(roomIndex room);
 private:
 	void updateSwitches();
 	bool isSpecialKey(int key) { return key == 0 || key == 224; } //when keyboard presses special keys like arrows

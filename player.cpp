@@ -11,7 +11,7 @@ void Player::draw()
 			char c = position.getChar();
 			position.draw(c, color);
 		}
-		else { position.draw((int)Color::WHITE); }
+		else { position.draw(Color::WHITE); }
 	}
 }
 
@@ -33,12 +33,12 @@ void Player::handleKeyPressed(char key_pressed) {
 	}
 }
 
-bool Player::addToInventory(char item, Point pos)
+bool Player::addToInventory(objSigns item, Point pos)
 {
 	bool added = false;
 	for (int i = 0; i < INVENTORY_SIZE && !added ; ++i) {
 		if (inventory[i] == ' ') {
-			inventory[i] = item; //add item to inventory
+			inventory[i] = (char)item; //add item to inventory
 			added = true;
 			if (item == objSigns::KEY)
 				board.addKeyToInventory(pos, this->getChar());
@@ -64,7 +64,7 @@ void Player::dispose()
 		board.setChar(position, c);
 		if (c == objSigns::KEY) {board.RemoveKeyFromInventory(this->getChar(), position);}
 		else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
-		position.draw(board.IsColor() ? getColorForChar(position.getChar()) : (int)Color::WHITE);
+		position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
 		inventory[0] = ' ';
 	}
 	else {
@@ -143,7 +143,7 @@ bool Player::takeStep() {
 			}
 		}
 		position = nextCandidate;
-		position.draw(board.IsColor() ? getColorForChar(position.getChar()) : (int)Color::WHITE);
+		position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
 		return false; // can continue
 	}
 }

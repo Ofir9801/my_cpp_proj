@@ -18,11 +18,12 @@ public:
 	void setY(int _y) { y = _y; }
 	void setChar(char _ch) { ch = _ch; }
 	char getChar() const { return ch; }
-	void draw(char c, int color);
-	void draw(int color) {draw(ch, color);}
+	void draw(char c, Color color);
+	void draw(Color color) {draw(ch, color);}
 	void move();
 	void setDirection(Keyboard_bind dir, bool state = true, int speed = 1 );
 	Keyboard_bind getDirectionEnum() const;
 	bool operator== (const Point& otherPos) const;
 	bool operator < (const Point& other) const;
+	bool InBounds(int max_x = MAX_X, int max_y = MAX_Y, int min_x = 0, int min_y = 0) const;
 };

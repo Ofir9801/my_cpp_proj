@@ -12,8 +12,8 @@
 
 
 Game::Game() :
-	player1(Point(PLAYER_1_START_X, PLAYER_1_START_Y, objSigns::PLAYER1), keys1, board),
-	player2(Point(PLAYER_2_START_X, PLAYER_2_START_Y, objSigns::PLAYER2), keys2, board) {}
+	player1(Point(PLAYER_1_START_X, PLAYER_1_START_Y, (char) objSigns::PLAYER1), keys1, board),
+	player2(Point(PLAYER_2_START_X, PLAYER_2_START_Y, (char) objSigns::PLAYER2), keys2, board) {}
 
 void Game::run() {
 	hideCursor();
@@ -105,7 +105,7 @@ void Game::run() {
 		if (player1.hasFinished() && player2.hasFinished()) {
 			size_t index = board.getCurrentRoom();
 			if (index < (int)roomIndex::VICTORY) {
-				changeRoom(++index);
+				changeRoom((roomIndex)++index);
 				winningDoorId = (char)('0' + (board.getCurrentRoom() - 1));
 			}
 			else {
@@ -121,7 +121,7 @@ void Game::run() {
 
 
 void Game::showMenu(bool& started){
-	changeRoom((int)roomIndex::MENU);
+	changeRoom(roomIndex::MENU);
 	bool inMenu = true;
 	char a;
 	while (inMenu) {
@@ -129,19 +129,19 @@ void Game::showMenu(bool& started){
 			char key = (char)_getch();
 			switch (key) {
 			case '1':
-				changeRoom((int)roomIndex::ROOM1);
+				changeRoom(roomIndex::ROOM1);
 				inMenu = false;
 				break;
 			case '2':
 				SetColorfullGame();
-				changeRoom((int)roomIndex::ROOM2);
+				changeRoom(roomIndex::ROOM2);
 				inMenu = false;
 				break;
 			case '8':
-				changeRoom((int)roomIndex::INSTRUCTIONS);
+				changeRoom(roomIndex::INSTRUCTIONS);
 				board.showKeyBinds();
 				a = (char)_getch();
-				changeRoom((int)roomIndex::MENU);
+				changeRoom(roomIndex::MENU);
 				break;
 			case '9':
 				started = false;
@@ -152,15 +152,16 @@ void Game::showMenu(bool& started){
 	}
 }
 
-void Game::changeRoom(int roomNumber)
+void Game::changeRoom(roomIndex room)
 {
+	int roomNumber = (int)room;
 	board.loadMap(roomNumber);
 	board.drawMap(roomNumber);
-	if (roomNumber != (int)roomIndex::MENU && roomNumber != (int)roomIndex::INSTRUCTIONS && roomNumber != (int)roomIndex::VICTORY) {
-	player1.reset(Point(1, 4, objSigns::PLAYER1));
-	player2.reset(Point(75, 4, objSigns::PLAYER2));
+	if (room != roomIndex::MENU && room != roomIndex::INSTRUCTIONS && room != roomIndex::VICTORY) {
+	player1.reset(Point(1, 4, (char)objSigns::PLAYER1));
+	player2.reset(Point(75, 4, (char)objSigns::PLAYER2));
 	}
-	if (roomNumber == (int)roomIndex::ROOM3)
+	if (room == roomIndex::ROOM3)
 		board.showMessage("it is very dark in here, you will need something to light it up");
 }
 

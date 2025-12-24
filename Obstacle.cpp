@@ -61,7 +61,7 @@ bool Obstacle::push(int force, Keyboard_bind dir) {
         Point newPos(p.getX() + dx, p.getY() + dy);
 
         obs->setPosition(newPos);
-        board->setChar(newPos, objSigns::OBSTACLE);
+        board->setChar(newPos, (char)objSigns::OBSTACLE);
     }
     return true;
 }

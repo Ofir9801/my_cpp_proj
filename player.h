@@ -17,7 +17,7 @@ class Player
 	bool state = true; //Player state - can move or not
 	bool finishedLevel = false;
 	bool handleSpecialObjects(char nextTile, Point nextPos, int force);
-	int color = (int)Color::CYAN;
+	Color color = Color::CYAN;
 
 public:
 	Player(const Point& point, const string(&keys), Screen& theScreen) :board(theScreen), position(point), p_keys(keys)
@@ -28,10 +28,10 @@ public:
 	void move(); //function to move the Player in the current direction
 	void draw(); 
 	void handleKeyPressed(char key_pressed);
-	bool addToInventory(char item,Point position);
+	bool addToInventory(objSigns item,Point pos);
 	char getChar() const { return position.getChar(); } 
 	const char* getInventory() const { return inventory; }
-	bool hasItem(char item) const { return inventory[0] == item; }
+	bool hasItem(objSigns item) const { return inventory[0] == item; }
 	void removeItem();
 	void dispose();
 	void clearFromScreen();
