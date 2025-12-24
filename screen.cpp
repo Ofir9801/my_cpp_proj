@@ -40,7 +40,6 @@ void Screen::loadMap(int roomNumber){
 		riddles = savedRooms[currentRoom].riddles;
 	}
 	else { //first time loading the room
-		
 		for (int i = 0; i < MAX_Y; i++) {
 			board[i] = Rooms[roomNumber][i];
 		}
@@ -167,14 +166,11 @@ void Screen::showKeyBinds() const
 		cout << (unsigned char)toupper(keys2[i]); //print uppercase
 	}
 }
-void Screen::showMessage(string msg){ //work on it!
+void Screen::showMessage(string msg){
 	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
 	string extraSpace(MAX_X - msg.length(), ' ');
 	std::cout << msg <<extraSpace <<std::flush;
 	MessageTimer = TIMER_MESSAGE;
-	std::cout << EMPTYLINE << std::flush;//clear the line before printing the requested message
-	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
-	std::cout << msg << std::flush;
 }
 
 void Screen::initaializeRoomsArray() {
@@ -300,7 +296,7 @@ void Screen::loadItems(int doorIdOpen) {//enter the items from the board to the 
 	for (int y = 3; y < MAX_Y; y++) {
 		for (int x = 0; x < MAX_X; x++) {
 			char c = getCharAt(Point(x, y));
-			if (c == (char)objSigns::SWITCH_OFF) {
+			if (c == objSigns::SWITCH_OFF) {
 				switches.push_back(Switch(x, y, this, false));
 			}
 			else if (c == objSigns::SWITCH_ON) {

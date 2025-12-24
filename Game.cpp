@@ -33,6 +33,7 @@ void Game::run() {
 		if (firstMessage) {
 			board.showMessage("Welcome to the Adventure Game! some doors will lead you to other rooms.");
 			Sleep(2000);
+			board.clearMessegeArea();
 			firstMessage = false;
 		}
 
@@ -147,8 +148,8 @@ void Game::updateSwitches() {
 		}
 }
 
+// Enable color mode in the game
 void Game::SetColorfullGame() {
-	// Enable color mode in the game
 	board.colorToggle = true;
 }
 
@@ -243,7 +244,7 @@ void Game::handleLevelCompletion() {
 	roomIndex player2Room = player2.getRoomOpen(); //the room number of the door opened by player 2
 	if (player1Room == player2Room) { changeRoom(player1Room); }			//both players chose the same door
 	else {
-		string msg = "you chose different rooms! choose one room you willing to continue with between " + std::to_string((int)player1Room) + "/" + std::to_string((int)player2Room);
+		string msg = "you chose different rooms!choose a room : " + std::to_string((int)player1Room) + " / " + std::to_string((int)player2Room);
 		board.showMessage(msg);
 		while (true) {
 			if (_kbhit()) {
@@ -263,3 +264,6 @@ void Game::handleLevelCompletion() {
 		}
 	}
 }
+
+
+

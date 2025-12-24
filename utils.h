@@ -132,11 +132,11 @@ inline bool operator==(int n, roomIndex index) { //overload operator
 	return n == static_cast<int>(index);
 }
 inline bool operator>= (int n, roomIndex index){ //overload operator 
-	return n >= static_cast<int>(index);
+	return static_cast<int>(index) >= n;
 }
 inline bool operator<= (int n, roomIndex index) { //overload operator 
-	return n <= static_cast<int>(index);
+	return static_cast<int>(index) <= n;
 }
 inline bool operator> (int n, roomIndex index) { //overload operator 
-	return n > static_cast<int>(index);
+	return static_cast<int>(index) > n;
 }

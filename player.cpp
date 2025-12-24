@@ -298,7 +298,9 @@ bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
 	}
 	int keyDoorId = board.GetDoorIdByKey(this->getChar());
 	bool RealDoor = board.isRealDoor(doorId);
-
+	
+	//add check when two keys in inventory + remove the designated one from inventory
+	
 	if (hasItem(objSigns::KEY) && keyDoorId == doorId) {
 		board.openDoor(doorId);
 		board.RemoveKeyFromInventory(this->getChar(), position);
