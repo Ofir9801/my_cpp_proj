@@ -76,7 +76,6 @@ public:
     bool isWall(const Point& p) const;
     bool isValid(const Point& p) const;
     size_t getCurrentRoom() const { return currentRoom; }
-
     // lighting system
     bool isDark() const { return isDarkRoom; }
     void updateLighting(const Point& p1, const Point& p1Prev, const Player& player1,

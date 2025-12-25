@@ -81,6 +81,7 @@ inline constexpr int LIGHT_RADIUS_TORCH = 7;
 inline constexpr int LIGHT_RADIUS_DEFAULT = 2;
 inline constexpr int EXPLODE_BOMB_TIME = 15;
 inline constexpr int BOMB_RADIUS = 3;
+inline constexpr int BOMB_WALL_EFFECTIVE_RADIUS = 1;
 inline constexpr int PLAYER_1_START_X = 1;
 inline constexpr int PLAYER_1_START_Y = 4;
 inline constexpr int PLAYER_2_START_X = 75;

@@ -16,14 +16,18 @@ void Bomb::explode(Screen& board, Player& p1, Player& p2) {
 			if (x == 0 || x == MAX_X - 1 || y == 3 || y == MAX_Y - 1) {//if the explosion occurs on the game borders - skip
 				continue;
 			}
-			if (board.Distance(x, y, position, BOMB_RADIUS)){
-				Point target(x, y);
+			Point target(x, y);
+			if (board.isWall(target)) {//explode walls only if adjacent 
+				if (!(board.Distance(x, y, position, BOMB_WALL_EFFECTIVE_RADIUS)))
+					continue;
+			}
+			else //if (board.Distance(x, y, position, BOMB_RADIUS)){
 				if (!board.isValid(target)) continue; //none board tiles
 				if (isShielded(board, position, target)) continue;
 				char realCharAtBoard = board.getCharAt(target);
 				target.setChar(realCharAtBoard);
 				affectedPoints.push_back(target);
-			}
+			//}
 		}
 	}
 	for (const auto& p : affectedPoints) {

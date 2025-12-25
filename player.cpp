@@ -198,7 +198,9 @@ void Player::handleActiveSpring() {
 		activeSpring->draw(position,board, true);
 		Point checkWall = position;
 		checkWall.move();
-		if (board.isWall(checkWall)) {
+		bool hittingWall = board.isWall(checkWall);
+		bool isStaying = (position.getDirectionEnum() == Keyboard_bind::STAY);
+		if (hittingWall || isStaying) {
 			Sleep(200); //pause to show the spring effect
 			int force = activeSpring->calculateForce(position);
 			springCyclesLeft = force * force;
