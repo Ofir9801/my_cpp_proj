@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Point.h"
 class Screen;//forward declaration to avoid circular dependency
+class Player;//forward declaration to avoid circular dependency
 
 class Spring {//Spring class to represent springs on the board
     //Spring's fields are starting position, length and direction.
@@ -21,4 +22,7 @@ public:
     Keyboard_bind getDirection() const { return pushDirection; }
 	void draw(const Point& playerPos, const Screen& board ,bool active = false)const ;//function to draw the functioning of the spring on the board
 
+    void interact(Player& p, const Screen& board);
+    bool handleExplosion(const Point& hitPos);
+    static Spring* CreateFromMap(const Screen& board, int x, int y, bool(&processed)[MAX_Y][MAX_X]);
 };

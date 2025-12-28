@@ -212,47 +212,63 @@ Obstacle* Screen::getObstacleAt(const Point& p) {
 	}
 	return nullptr;
 }
+//void Screen::loadSprings() {
+//	springs.clear();
+//	bool processed[MAX_Y][MAX_X] = {false };
+//	for (int y = 0; y < MAX_Y; y++) {
+//		for (int x = 0; x < MAX_X; x++) {
+//			Point p(x, y);
+//			if (getCharAt(p) == objSigns::SPRING && !processed[y][x]) {
+//				bool isHorizontal = (x + 1 < MAX_X && getCharAt(Point(x + 1, y)) == objSigns::SPRING);
+//				if (!isHorizontal && (y + 1 >= MAX_Y || getCharAt(Point(x, y + 1)) != objSigns::SPRING)) {
+//					isHorizontal = true;
+//				}
+//
+//				int length = 0;
+//				Keyboard_bind dir = Keyboard_bind::STAY;
+//				Point currentStart(x, y);
+//
+//				if (isHorizontal) {//horizontal
+//					int currX = x;
+//					while (currX < MAX_X && getCharAt(Point(currX, y)) == objSigns::SPRING) {
+//						processed[y][currX] = true;
+//						length++;
+//						currX++;
+//					}
+//					if (isWall(Point(x - 1, y))) dir = Keyboard_bind::RIGHT;
+//					else if (isWall(Point(x + length, y))) dir = Keyboard_bind::LEFT;
+//					else if (isWall(Point(x, y - 1))) dir = Keyboard_bind::DOWN;
+//					else if (isWall(Point(x, y + 1))) dir = Keyboard_bind::UP;
+//				}
+//				else { //vertical
+//					int currY = y;
+//					while (currY < MAX_Y && getCharAt(Point(x, currY)) == objSigns::SPRING) {
+//						processed[currY][x] = true;
+//						length++;
+//						currY++;
+//					}
+//					// walls check
+//					if (isWall(Point(x, y - 1))) dir = Keyboard_bind::DOWN;
+//					else if (isWall(Point(x, y + length))) dir = Keyboard_bind::UP;
+//				}
+//				if (dir != Keyboard_bind::STAY) {
+//					springs.push_back(Spring(currentStart, length, dir));
+//				}
+//			}
+//		}
+//	}
+//}
 void Screen::loadSprings() {
 	springs.clear();
-	bool processed[MAX_Y][MAX_X] = {false };
+	bool processed[MAX_Y][MAX_X] = { false };
 	for (int y = 0; y < MAX_Y; y++) {
 		for (int x = 0; x < MAX_X; x++) {
 			Point p(x, y);
 			if (getCharAt(p) == objSigns::SPRING && !processed[y][x]) {
-				bool isHorizontal = (x + 1 < MAX_X && getCharAt(Point(x + 1, y)) == objSigns::SPRING);
-				if (!isHorizontal && (y + 1 >= MAX_Y || getCharAt(Point(x, y + 1)) != objSigns::SPRING)) {
-					isHorizontal = true;
-				}
-
-				int length = 0;
-				Keyboard_bind dir = Keyboard_bind::STAY;
-				Point currentStart(x, y);
-
-				if (isHorizontal) {//horizontal
-					int currX = x;
-					while (currX < MAX_X && getCharAt(Point(currX, y)) == objSigns::SPRING) {
-						processed[y][currX] = true;
-						length++;
-						currX++;
-					}
-					if (isWall(Point(x - 1, y))) dir = Keyboard_bind::RIGHT;
-					else if (isWall(Point(x + length, y))) dir = Keyboard_bind::LEFT;
-					else if (isWall(Point(x, y - 1))) dir = Keyboard_bind::DOWN;
-					else if (isWall(Point(x, y + 1))) dir = Keyboard_bind::UP;
-				}
-				else { //vertical
-					int currY = y;
-					while (currY < MAX_Y && getCharAt(Point(x, currY)) == objSigns::SPRING) {
-						processed[currY][x] = true;
-						length++;
-						currY++;
-					}
-					// walls check
-					if (isWall(Point(x, y - 1))) dir = Keyboard_bind::DOWN;
-					else if (isWall(Point(x, y + length))) dir = Keyboard_bind::UP;
-				}
-				if (dir != Keyboard_bind::STAY) {
-					springs.push_back(Spring(currentStart, length, dir));
+				Spring* newSpring = Spring::CreateFromMap(*this, x, y, processed);
+				if (newSpring != nullptr) {
+					springs.push_back(*newSpring);
+					delete newSpring; // Clean up the dynamically allocated memory
 				}
 			}
 		}
@@ -544,9 +560,8 @@ void Screen::deleteKey(Point position){
 void Screen::deleteSpring(Point position){
 	for (size_t i = 0; i < springs.size(); ++i) {
 		if (springs[i].isPointOn(position)) {
-			int hitIndex = springs[i].getSegmentIndex(position);
-			springs[i].setLength(hitIndex);
-			if (springs[i].getLength() <= 0) {
+			bool destroyed = springs[i].handleExplosion(position);
+			if (destroyed) {
 				springs.erase(springs.begin() + i);
 			}
 			return;

@@ -66,3 +66,63 @@ void Spring::draw(const Point& playerPos,const Screen& board, bool active)const 
         }
     }
 }
+
+void Spring::interact(Player& p, const Screen& board){
+    draw(p.getPosition(), board, true);
+    Point checkWall = p.getPosition();
+    checkWall.move();
+	bool hittingWall = board.isWall(checkWall);
+	bool isStaying = (p.getPosition().getDirectionEnum() == Keyboard_bind::STAY);
+
+    if (hittingWall || isStaying) {
+        Sleep(200); //pause to show the spring effect
+        int force = calculateForce(p.getPosition());
+        p.SetSpringState(force,pushDirection,startPos);
+	}
+}
+
+bool Spring::handleExplosion(const Point& hitPos)
+{
+    int hitIndex = getSegmentIndex(hitPos);
+    this->length = hitIndex; // Shorten the spring
+    return (this->length <= 0);
+}
+
+Spring* Spring::CreateFromMap(const Screen& board, int x, int y, bool(&processed)[MAX_Y][MAX_X])
+{
+    bool isHorizontal = (x + 1 < MAX_X && board.getCharAt(Point(x + 1, y)) == objSigns::SPRING);
+    if (!isHorizontal && (y + 1 >= MAX_Y || board.getCharAt(Point(x, y + 1)) != objSigns::SPRING)) {
+        isHorizontal = true; //default to horizontal if single spring char
+    }
+    int length = 0;
+    Keyboard_bind dir = Keyboard_bind::STAY;
+    Point currentStart(x, y);
+
+    if (isHorizontal) {
+        int currX = x;
+        while (currX < MAX_X && board.getCharAt(Point(currX, y)) == objSigns::SPRING) {
+            processed[y][currX] = true;
+            length++;
+            currX++;
+        }
+        if(board.isWall(Point(x-1,y))){dir = Keyboard_bind::RIGHT; }
+        else if (board.isWall(Point(x + length, y))) dir = Keyboard_bind::LEFT;
+        else if (board.isWall(Point(x, y - 1))) dir = Keyboard_bind::DOWN;
+		else if (board.isWall(Point(x, y + 1))) dir = Keyboard_bind::UP;
+    }
+    else {
+        int currY = y;
+        while (currY < MAX_Y && board.getCharAt(Point(x, currY)) == objSigns::SPRING) {
+            processed[currY][x] = true;
+            length++;
+            currY++;
+        }
+        // Check walls for direction
+        if (board.isWall(Point(x, y - 1))) dir = Keyboard_bind::DOWN;
+        else if (board.isWall(Point(x, y + length))) dir = Keyboard_bind::UP;
+    }
+    if (dir != Keyboard_bind::STAY) {
+        return new Spring(currentStart, length, dir);
+    }
+    return nullptr;
+}

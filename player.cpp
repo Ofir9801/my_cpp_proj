@@ -133,15 +133,27 @@ void Player::move() {
 		// takeStep() will return true when movement should stop (blocked or state changed)
 		if (takeStep()) break;
 	}
-	handleActiveSpring();
+	Spring* activeSpring = board.getSpringAt(position);
+	if(activeSpring){
+		activeSpring->interact(*this, board);
+	}
+	//handleActiveSpring();
 	finalizeMovement();
 }
 
 
 void Player::applySpringDirectionIfNeeded() {
 	if (springCyclesLeft > 0) {
-		position.setDirection(springDir.getDirectionEnum());
+		position.setDirection(springDir);
 	}
+}
+
+void Player::SetSpringState(int force, Keyboard_bind direction, Point StartPos)
+{
+	springCyclesLeft = force * force;
+	currentForce = force;
+	springDir = direction;
+	position.setDirection(direction);
 }
 
 int Player::computeStepsToTake() const {
@@ -191,26 +203,26 @@ bool Player::takeStep() {
 	}
 }
 
-void Player::handleActiveSpring() {
-	Spring* activeSpring = board.getSpringAt(position);
-	// now we want to 'visualize' the spring if we are on one
-	if (activeSpring != nullptr) {
-		activeSpring->draw(position,board, true);
-		Point checkWall = position;
-		checkWall.move();
-		bool hittingWall = board.isWall(checkWall);
-		bool isStaying = (position.getDirectionEnum() == Keyboard_bind::STAY);
-		if (hittingWall || isStaying) {
-			Sleep(200); //pause to show the spring effect
-			int force = activeSpring->calculateForce(position);
-			springCyclesLeft = force * force;
-			currentForce = force;
-			springDir = position;
-			springDir.setDirection(activeSpring->getDirection());
-			position.setDirection(activeSpring->getDirection());
-		}
-	}
-}
+//void Player::handleActiveSpring() {
+//	Spring* activeSpring = board.getSpringAt(position);
+//	// now we want to 'visualize' the spring if we are on one
+//	if (activeSpring != nullptr) {
+//		activeSpring->draw(position,board, true);
+//		Point checkWall = position;
+//		checkWall.move();
+//		bool hittingWall = board.isWall(checkWall);
+//		bool isStaying = (position.getDirectionEnum() == Keyboard_bind::STAY);
+//		if (hittingWall || isStaying) {
+//			Sleep(200); //pause to show the spring effect
+//			int force = activeSpring->calculateForce(position);
+//			springCyclesLeft = force * force;
+//			currentForce = force;
+//			springDir = position;
+//			springDir.setDirection(activeSpring->getDirection());
+//			position.setDirection(activeSpring->getDirection());
+//		}
+//	}
+//}
 
 void Player::finalizeMovement() {
 	if (springCyclesLeft > 0) {
@@ -255,7 +267,7 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 	}
 		
 	if (nextTile == objSigns::OBSTACLE) {
-		Keyboard_bind pushDir = (springCyclesLeft > 0) ? springDir.getDirectionEnum() : position.getDirectionEnum();
+		Keyboard_bind pushDir = (springCyclesLeft > 0) ? springDir : position.getDirectionEnum();
 		Obstacle* obs = board.getObstacleAt(nextPos);
 		if (obs && obs->push(force, pushDir)) {
 			return false;
