@@ -11,7 +11,7 @@ public:
     Key() : position(0, 0, ' '), targetDoorId(-1), playerUse(' ') {} //default constructor for empty key for map
 
     Key(int x, int y, int targetDoorId = -1, char playerUse = ' ')
-        : position(x, y, (char)objSigns::KEY), targetDoorId(targetDoorId), playerUse(playerUse) {
+        : position(x, y, objSigns::KEY), targetDoorId(targetDoorId), playerUse(playerUse) {
     }   
 
     void setTargetDoorId(int doorId) { targetDoorId = doorId; }

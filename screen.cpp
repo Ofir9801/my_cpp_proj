@@ -115,17 +115,17 @@ string Screen::CreateInventoryDisplay(const Player & p) {
 }
 
 void Screen::showPlayerInfo(const Player& p) {
-	char playerChar = p.getChar();
+	objSigns playerChar =(objSigns) p.getChar();
 	string inventory = CreateInventoryDisplay(p);
 
 	switch (playerChar) {
-	case (char)objSigns::PLAYER1:
+	case objSigns::PLAYER1:
 		gotoxy(INFO_SLOTS::PLAYER1_SIGN_START_X, INFO_SLOTS::PLAYER_SIGN_Y); //print player char
 		cout << playerChar << std::flush;
 		gotoxy(INFO_SLOTS::PLAYER1_INV_START_X, INFO_SLOTS::PLAYER_INV_Y); //print inventory
 		cout << p.getInventory() << std::flush;
 		break;
-	case (char)objSigns::PLAYER2:
+	case objSigns::PLAYER2:
 		gotoxy(INFO_SLOTS::PLAYER2_SIGN_START_X, INFO_SLOTS::PLAYER_SIGN_Y); //print player char
 		cout << playerChar << std::flush;
 		gotoxy(INFO_SLOTS::PLAYER2_INV_START_X, INFO_SLOTS::PLAYER_INV_Y);//print inventory
@@ -151,6 +151,10 @@ void Screen::setChar(const Point& p, char c) {
 	}
 	else
 		cout << c;
+}
+void Screen::setChar(const Point& p, objSigns sign) {
+	char c = static_cast<char>(sign);
+	setChar(p, c);
 }
 
 void Screen::showKeyBinds() const
@@ -335,7 +339,7 @@ void Screen::loadItems(int doorIdOpen) {//enter the items from the board to the 
 				keys[Point(x, y)] = Key(x, y);
 			}
 			else if (c == objSigns::RIDDLE) {
-				riddles[Point(x, y)] = Riddle(Point(x, y,(char)objSigns::RIDDLE));
+				riddles[Point(x, y)] = Riddle(Point(x, y,objSigns::RIDDLE));
 			}
 		}
 	}
@@ -473,7 +477,7 @@ bool Screen::handleVaultRiddle(Point riddlePos) {
 		drawMap(); //redraw the map after riddle engagement
 		if (solved) {
 			string msg = "Congratulations! You solved the last challenge. Proceed to the final door";
-			setChar(riddlePos, (char)objSigns::EMPTY);
+			setChar(riddlePos, objSigns::EMPTY);
 			showMessage(msg);
 			return true;
 		}

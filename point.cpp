@@ -8,6 +8,11 @@ void Point::draw(char c, Color color)
 	std::cout << c;
 	SetTextColor(Color::WHITE); //reset to default color
 }
+void Point::draw(objSigns sign, Color color)
+{
+	char c = static_cast<char>(sign);
+	draw(c, color);
+}
 
 void Point::move() {
 	x = (x + diff_x);

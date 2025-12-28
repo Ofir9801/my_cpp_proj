@@ -124,6 +124,7 @@ void cls();
 //color functions
 void SetTextColor(Color color);
 Color getColorForChar(char c);
+Color getColorForChar(objSigns sign);
 //file reading functions
 bool ReadRoomLayoutFromFile(string FileName, roomIndex room);
 bool HandleLegendLine(string& line, roomIndex room, int& loopIndex);
@@ -143,4 +144,8 @@ inline bool operator<= (int n, roomIndex index) { //overload operator
 }
 inline bool operator> (int n, roomIndex index) { //overload operator 
 	return static_cast<int>(index) > n;
+}
+inline std::ostream& operator<<(std::ostream& os, const objSigns& sign) {
+	os << static_cast<char>(sign);
+	return os;
 }

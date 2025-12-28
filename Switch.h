@@ -12,7 +12,7 @@ class Switch {//Switch class to represent switches on the board, quite self expl
 
 public:
     Switch(int x, int y, Screen* theMap, int targetDoorId = -1, bool initialState = false)
-        : position(x, y, (char)objSigns::SWITCH_OFF), board(theMap), isOn(initialState), targetDoorId(targetDoorId) {
+        : position(x, y, objSigns::SWITCH_OFF), board(theMap), isOn(initialState), targetDoorId(targetDoorId) {
     }
 
     void toggle();

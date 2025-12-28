@@ -13,7 +13,7 @@ class Bomb//Bomb class to represent bombs on the board
 	void handlePlayerHit(Player& player); //helper function, self explanatory
 public:
 	Bomb(const Point& pos) : position(pos), timer(EXPLODE_BOMB_TIME), active(true) {
-		position.setChar((char)objSigns::BOMB);
+		position.setChar(objSigns::BOMB);
 	}
 	void tick() { if (active) timer--;}
 	bool shouldExplode() const { return active && timer <= 0; }

@@ -4,8 +4,8 @@
 void Switch::toggle() {
 	isOn = !isOn;
 	objSigns newSymbol = isOn ? objSigns::SWITCH_ON : objSigns::SWITCH_OFF;
-	position.setChar((char)newSymbol);
-	board->setChar(position, (char)newSymbol);
+	position.setChar(newSymbol);
+	board->setChar(position, newSymbol);
 	board->showMessage(isOn ? "Switch is ON" : "Switch is OFF");
 }
 

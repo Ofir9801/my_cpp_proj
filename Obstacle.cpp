@@ -17,7 +17,7 @@ void Obstacle::collectGroup(Point p, std::vector<Obstacle*>& group) {
 	int dx[] = { 0, 0, 1, -1 };//checking all 4 directions - no diagonals
 	int dy[] = { 1, -1, 0, 0 };
 	for (int i = 0; i < 4; i++) {
-		Point neighbor(p.getX() + dx[i], p.getY() + dy[i]);
+		Point neighbor(p.getX() + dx[i], p.getY() + dy[i],' ');
 		if (board->isValid(neighbor) && board->getCharAt(neighbor) == objSigns::OBSTACLE) {//if the neighbor is an obstacle, collect it too
 			collectGroup(neighbor, group);
 		}
@@ -38,7 +38,7 @@ bool Obstacle::push(int force, Keyboard_bind dir) {
     }
     for (const auto* obs : group) {
         Point p = obs->getPosition();
-        Point target(p.getX() + dx, p.getY() + dy);
+        Point target(p.getX() + dx, p.getY() + dy,' ');
         if (!board->isValid(target) || board->isWall(target)) return false;
 
         char targetChar = board->getCharAt(target);
@@ -58,10 +58,10 @@ bool Obstacle::push(int force, Keyboard_bind dir) {
     }
     for (auto* obs : group) {
         Point p = obs->getPosition();
-        Point newPos(p.getX() + dx, p.getY() + dy);
+        Point newPos(p.getX() + dx, p.getY() + dy,' ');
 
         obs->setPosition(newPos);
-        board->setChar(newPos, (char)objSigns::OBSTACLE);
+        board->setChar(newPos, objSigns::OBSTACLE);
     }
     return true;
 }

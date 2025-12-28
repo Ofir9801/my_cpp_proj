@@ -68,7 +68,7 @@ void Player::dispose()
 		if(inventory[0] != ' ' && inventory[1] != ' ') //two slots are full
 		{ //let the player choose which item to dispose
 			board.showMessage("Press 1 to dispose first item, 2 to dispose second item.");
-			char choice = _getch();
+			int choice = _getch();
 			while (true) {
 				if (choice == '1' || choice == '2') {
 					int index = choice - '1';
@@ -148,7 +148,7 @@ void Player::applySpringDirectionIfNeeded() {
 	}
 }
 
-void Player::SetSpringState(int force, Keyboard_bind direction, Point StartPos)
+void Player::SetSpringState(int force, Keyboard_bind direction)
 {
 	springCyclesLeft = force * force;
 	currentForce = force;

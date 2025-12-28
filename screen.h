@@ -73,6 +73,7 @@ public:
 	// general board functions
     char getCharAt(const Point& p) const { return board[p.getY()][p.getX()]; }
     void setChar(const Point& p, char c);
+	void setChar(const Point& p, objSigns sign);
     bool isWall(const Point& p) const;
     bool isValid(const Point& p) const;
     size_t getCurrentRoom() const { return currentRoom; }

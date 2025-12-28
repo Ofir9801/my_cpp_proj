@@ -10,8 +10,8 @@
 #include <cctype> //  for tolower, isdigit
 
 Game::Game() :
-	player1(Point(PLAYER_1_START_X, PLAYER_1_START_Y, (char) objSigns::PLAYER1), keys1, board),
-	player2(Point(PLAYER_2_START_X, PLAYER_2_START_Y, (char) objSigns::PLAYER2), keys2, board) {}
+	player1(Point(PLAYER_1_START_X, PLAYER_1_START_Y, objSigns::PLAYER1), keys1, board),
+	player2(Point(PLAYER_2_START_X, PLAYER_2_START_Y, objSigns::PLAYER2), keys2, board) {}
 
 void Game::run() {
 	hideCursor();
@@ -95,10 +95,10 @@ void Game::run() {
 void Game::showMenu(bool& started){
 	changeRoom(roomIndex::MENU);
 	bool inMenu = true;
-	char a;
+	int a;
 	while (inMenu) {
 		if (_kbhit()) {
-			char key = (char)_getch();
+			int key = _getch();
 			switch (key) {
 			case '1':
 				changeRoom(roomIndex::ROOM1);
@@ -112,7 +112,7 @@ void Game::showMenu(bool& started){
 			case '8':
 				changeRoom(roomIndex::INSTRUCTIONS);
 				board.showKeyBinds();
-				a = (char)_getch();
+				a = _getch();
 				changeRoom(roomIndex::MENU);
 				break;
 			case '9':
@@ -134,8 +134,8 @@ void Game::changeRoom(roomIndex room){
 	board.loadMap(roomNumber);
 	board.drawMap(roomNumber);
 	if (room != roomIndex::MENU && room != roomIndex::INSTRUCTIONS && room != roomIndex::VICTORY) {
-	player1.reset(Point(1, 4, (char)objSigns::PLAYER1));
-	player2.reset(Point(75, 4, (char)objSigns::PLAYER2));
+	player1.reset(Point(1, 4, objSigns::PLAYER1));
+	player2.reset(Point(75, 4, objSigns::PLAYER2));
 	}
 	if (room == roomIndex::ROOM3)
 		board.showMessage("it is very dark in here, you will need something to light it up");
@@ -248,8 +248,8 @@ void Game::handleLevelCompletion() {
 		board.showMessage(msg);
 		while (true) {
 			if (_kbhit()) {
-				char key = (char)_getch();
-				if (std::isdigit((unsigned char)key)) {
+				int key = _getch();
+				if (key <= '9' && key >= '0') {
 					size_t chosenRoom = key - '0';
 
 					if (chosenRoom == player1Room || chosenRoom == player2Room) {

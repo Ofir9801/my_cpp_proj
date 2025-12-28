@@ -10,15 +10,18 @@ class Point //classic Point class for 2D coordinates
 	int diff_y = 0; //direction y
 	char ch; //character to draw
 public:
-	Point(int _x = 0, int _y = 0, char _ch = ' ') { x = _x; y = _y; ch = _ch; }//constractor with default values
-	//some general functions for point management
+	Point(int _x = 0, int _y = 0, char _ch = ' '):x(_x), y(_y), ch(_ch){}//constractor with default values
+	Point(int _x, int _y, objSigns _sign) :Point(_x, _y, static_cast<char>(_sign)) {}//constractor overload for objSigns
+
 	int getX() const { return x; }
 	int getY() const { return y; }
 	void setX(int _x) { x = _x; }
 	void setY(int _y) { y = _y; }
 	void setChar(char _ch) { ch = _ch; }
+	void setChar(objSigns _sign) { ch = static_cast<char>(_sign); }
 	char getChar() const { return ch; }
 	void draw(char c, Color color);
+	void draw(objSigns sign, Color color);
 	void draw(Color color) {draw(ch, color);}
 	void move();
 	void setDirection(Keyboard_bind dir, bool state = true, int speed = 1 );

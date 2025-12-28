@@ -76,6 +76,10 @@ Color getColorForChar(char c)
 	else
 		return Color::WHITE;
 }
+Color getColorForChar(objSigns sign)
+{
+	return getColorForChar(static_cast<char>(sign));
+}
 
 bool ReadRoomLayoutFromFile(string FileName, roomIndex room) {
 	std::ifstream inFile(FileName);

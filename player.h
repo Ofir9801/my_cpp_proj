@@ -19,7 +19,7 @@ class Player
 	bool ExtraInventory = false; //flag to indicate if player has extra inventory slot
 	Screen& board; //reference to the Game Screen
 	bool handleSpecialObjects(char nextTile, Point nextPos, int force);
-	Keyboard_bind springDir; //direction of the flight
+	Keyboard_bind springDir = Keyboard_bind::STAY; //direction of the flight
 	
 
 public:
@@ -68,6 +68,5 @@ public:
 
 	//spring handlement
 	void applySpringDirectionIfNeeded();
-	void SetSpringState(int force, Keyboard_bind direction, Point StartPos);
-	void handleActiveSpring();
+	void SetSpringState(int force, Keyboard_bind direction);
 };
