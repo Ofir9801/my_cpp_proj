@@ -6,7 +6,7 @@
 class Screen;//forward declaration to avoid circular dependency
 
 class Player
-{
+{//Player class has many fields to track player's state and characteristics
 	Point position; //Player's position on the board
 	string p_keys;
 	bool state = true; //Player state - can move or not
@@ -49,7 +49,7 @@ public:
 	bool isExtraInventory() const { return ExtraInventory; }
 	void setExtraInventory(bool val) { ExtraInventory = val; }
 
-	//get and set player data
+	//get and set player's fields
 	int getLives() const;
 	int getScore() const;
 	void decreaseLife();
@@ -70,7 +70,4 @@ public:
 	//spring handlement
 	void applySpringDirectionIfNeeded();
 	void handleActiveSpring();
-
-
-
 };

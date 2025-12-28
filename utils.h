@@ -4,7 +4,7 @@
 
 using std::string;
 
-enum class INFO_SLOTS {
+enum class INFO_SLOTS {//for players' display info
 	PLAYER1_SIGN_START_X = 10,
 	PLAYER1_INV_START_X = 10,
 	PLAYER2_SIGN_START_X = 74,
@@ -14,11 +14,11 @@ enum class INFO_SLOTS {
 	PLAYER_SIGN_Y = 0,
 	PLAYER_INV_Y = 1
 };
-enum class MESSAGES_POS {
+enum class MESSAGES_POS {//for message display area
 	MES_X = 0,
 	MES_Y = 2 
 };
-enum class roomIndex {
+enum class roomIndex {//rooms indcies
 	VAULT = 0,
 	ROOM1 = 1,
 	ROOM2 = 2,
@@ -27,7 +27,7 @@ enum class roomIndex {
 	MENU = 5,
 	INSTRUCTIONS = 6,
 };
-enum class Keyboard_bind {
+enum class Keyboard_bind {//possible movement directions for players
 	UP,
 	RIGHT,
 	DOWN,
@@ -35,7 +35,7 @@ enum class Keyboard_bind {
 	STAY,
 	DISPOSE
 };
-enum class objSigns {
+enum class objSigns {//game objects' signs on the board
 	PLAYER1 = '$',
 	PLAYER2 = '&',
 	KEY = 'K',
@@ -48,7 +48,7 @@ enum class objSigns {
 	SWITCH_ON = '/',
 	BOMB = '@'
 };
-enum class Color {
+enum class Color {//when colors are enabled, this is how we access colors
 	BLACK = 0,
 	BLUE = 1,
 	GREEN = 2,
@@ -66,12 +66,13 @@ enum class Color {
 	YELLOW = 14,
 	WHITE = 15
 };
-
+//constants of basic game handling
 inline constexpr char ESC = 27;
 inline const string EMPTYLINE = "                                                                                ";
 inline const string keys1 = "wdsaeq";
 inline const string keys2 = "ilkjou";
 
+//constants of game design
 inline constexpr int MAX_X = 80;
 inline constexpr int MAX_Y = 25;
 inline constexpr int INVENTORY_SIZE = 2; //Player can hold up to one item
@@ -114,18 +115,20 @@ inline const string RiddlesRoom1PathWay = "Riddles/Riddles1.txt";
 inline const string RiddlesRoom2PathWay = "Riddles/Riddles2.txt";
 inline const string RiddlesRoom3PathWay = "Riddles/Riddles3.txt";
 inline const string RiddlesVaultPathWay = "Riddles/RiddleVault.txt";
-
+//utility functions for screen handling
 void gotoxy(int x, int y);
 void gotoxy(INFO_SLOTS x, INFO_SLOTS y);
 void gotoxy(MESSAGES_POS x, MESSAGES_POS y);
 void hideCursor();
 void cls();
+//color functions
 void SetTextColor(Color color);
 Color getColorForChar(char c);
+//file reading functions
 bool ReadRoomLayoutFromFile(string FileName, roomIndex room);
 bool HandleLegendLine(string& line, roomIndex room, int& loopIndex);
 void ReadLegendFromFile(roomIndex room);
-
+//operator overloads for enum classes
 inline bool operator==(char c, objSigns sign) { //overload operator == for enum class objsign
 	return c == static_cast<char>(sign);
 }

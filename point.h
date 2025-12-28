@@ -11,7 +11,7 @@ class Point //classic Point class for 2D coordinates
 	char ch; //character to draw
 public:
 	Point(int _x = 0, int _y = 0, char _ch = ' ') { x = _x; y = _y; ch = _ch; }//constractor with default values
-	//some general functions, may remove those later
+	//some general functions for point management
 	int getX() const { return x; }
 	int getY() const { return y; }
 	void setX(int _x) { x = _x; }
@@ -25,5 +25,5 @@ public:
 	Keyboard_bind getDirectionEnum() const;
 	bool operator== (const Point& otherPos) const;
 	bool operator < (const Point& other) const; //for using Point as a key in map
-	bool InBounds(int max_x = MAX_X, int max_y = MAX_Y, int min_x = 0, int min_y = 0)const;
+	bool InBounds(int max_x = MAX_X, int max_y = MAX_Y, int min_x = 0, int min_y = 0) const;//making sure point is in bounds of the board
 };

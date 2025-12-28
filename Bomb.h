@@ -4,8 +4,8 @@
 class Player; //forward declaration to avoid circular dependency
 class Screen; //forward declaration to avoid circular dependency
 
-class Bomb
-{
+class Bomb//Bomb class to represent bombs on the board
+{//the first three fields are bomb's position, timer to explosion and active state
 	Point position;
 	int timer;
 	bool active;

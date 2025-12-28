@@ -237,8 +237,9 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 	}
 	if(nextTile == objSigns::RIDDLE){
 		this->position.setDirection(Keyboard_bind::STAY); //try to make it stay when hit a riddle to avoid touching it several times in a row
-		if (board.getCurrentRoom() == roomIndex::VAULT) { return !board.handleVaultRiddle(nextPos); }
-		return !board.handleRiddle(nextPos, *this);
+		if (board.getCurrentRoom() == roomIndex::VAULT) { return !board.handleVaultRiddle(nextPos); }//if its vault its a special case
+		board.handleRiddle(nextPos, *this);
+		return true;
 	}
 	if(nextTile == objSigns::BOMB){
 		if (addToInventory(objSigns::BOMB, nextPos)) {

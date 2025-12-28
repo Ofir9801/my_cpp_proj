@@ -83,7 +83,7 @@ public:
     void ProcessLightning(int cx, int cy, int radius, bool erase, const Point& p1, const Point& p2, const int r1, const int r2);
 	bool Distance(int x, int y, const Point& p, int r) const;
 
-    // game state (score & lives)
+    // game state score & lives
     void addScore(int amount) { sharedScore += amount; }
     int getScore() const { return sharedScore; }
     int getLives() const { return sharedLives; }

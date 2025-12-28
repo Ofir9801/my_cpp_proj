@@ -6,7 +6,7 @@
 #include "Player.h"
 
 class Riddle
-{
+{//Riddle class to represent riddles on the board, quite self explanatory
 	Point position;
 	std::string question;
 	std::string correctAnswer;
@@ -25,5 +25,5 @@ public:
 	std::string getCorrectAnswer() const { return correctAnswer; };
 	int getCorrectIndex() const { return correctIndex; };
 	bool engage(Player& player);
-	bool engageVaultRiddle();
+	bool engageVaultRiddle();//vault riddle has no options, player must type the answer
 };

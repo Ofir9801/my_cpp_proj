@@ -2,11 +2,11 @@
 #include "Point.h"
 class Screen;//forward declaration to avoid circular dependency
 
-class Spring {
+class Spring {//Spring class to represent springs on the board
+    //Spring's fields are starting position, length and direction.
     Point startPos;
-    int length;
-    Keyboard_bind pushDirection;
-    //Screen& board;
+    int length;//to determine speed
+    Keyboard_bind pushDirection;//each springbar has a single direction
 
 public:
     Spring(Point start, int len, Keyboard_bind dir)//constractor
