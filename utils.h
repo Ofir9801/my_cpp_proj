@@ -18,7 +18,7 @@ enum class MESSAGES_POS {//for message display area
 	MES_X = 0,
 	MES_Y = 2 
 };
-enum class roomIndex {//rooms indcies
+enum class roomIndex {//rooms indices
 	VAULT = 0,
 	ROOM1 = 1,
 	ROOM2 = 2,
@@ -81,7 +81,7 @@ inline constexpr int NUM_ROOMS = 7; //number of rooms in the Game
 inline constexpr int LIGHT_RADIUS_TORCH = 7;
 inline constexpr int LIGHT_RADIUS_DEFAULT = 2;
 inline constexpr int EXPLODE_BOMB_TIME = 15;
-inline constexpr int BOMB_RADIUS = 3;
+inline constexpr int BOMB_RADIUS = 2;
 inline constexpr int BOMB_WALL_EFFECTIVE_RADIUS = 1;
 inline constexpr int PLAYER_1_START_X = 1;
 inline constexpr int PLAYER_1_START_Y = 4;

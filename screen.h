@@ -59,6 +59,7 @@ public:
 	void loadRiddles();
 	void saveRoom();
 	void clearSavedRooms() { savedRooms.clear(); }
+
     // display
     void drawMap();
     void drawMap(int roomNumber);
@@ -106,7 +107,8 @@ public:
 
     // game logic: Keys & Inventory
     void addKeyToInventory(Point position, char p);
-    void RemoveKeyFromInventory(char p, Point newPos);
+	void RemoveKey(int doorId);
+    void DisposeKeyToScreen(char p, Point newPos);
     void deleteKey(Point position);
 
     // game logic: Bombs & Obstacles

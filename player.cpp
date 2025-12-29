@@ -74,7 +74,7 @@ void Player::dispose()
 					int index = choice - '1';
 					char c = inventory[index];
 					board.setChar(position, c);
-					if (c == objSigns::KEY) {board.RemoveKeyFromInventory(this->getChar(), position);}
+					if (c == objSigns::KEY) {board.DisposeKeyToScreen(this->getChar(), position);}
 					else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
 					position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
 					inventory[index] = ' ';
@@ -90,7 +90,7 @@ void Player::dispose()
 			int index = (inventory[0] != ' ') ? 0 : 1;
 			char c = inventory[index];
 			board.setChar(position, c);
-			if (c == objSigns::KEY) {board.RemoveKeyFromInventory(this->getChar(), position);}
+			if (c == objSigns::KEY) {board.DisposeKeyToScreen(this->getChar(), position);}
 			else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
 			position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
 			inventory[index] = ' ';
@@ -105,7 +105,7 @@ void Player::dispose()
 	if (inventory[0] != ' ') { //player has one inventory slot
 		char c = inventory[0];
 		board.setChar(position, c);
-		if (c == objSigns::KEY) {board.RemoveKeyFromInventory(this->getChar(), position);}
+		if (c == objSigns::KEY) {board.DisposeKeyToScreen(this->getChar(), position);}
 		else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
 		position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
 		inventory[0] = ' ';
@@ -137,7 +137,6 @@ void Player::move() {
 	if(activeSpring){
 		activeSpring->interact(*this, board);
 	}
-	//handleActiveSpring();
 	finalizeMovement();
 }
 
@@ -202,27 +201,6 @@ bool Player::takeStep() {
 		return false; // can continue
 	}
 }
-
-//void Player::handleActiveSpring() {
-//	Spring* activeSpring = board.getSpringAt(position);
-//	// now we want to 'visualize' the spring if we are on one
-//	if (activeSpring != nullptr) {
-//		activeSpring->draw(position,board, true);
-//		Point checkWall = position;
-//		checkWall.move();
-//		bool hittingWall = board.isWall(checkWall);
-//		bool isStaying = (position.getDirectionEnum() == Keyboard_bind::STAY);
-//		if (hittingWall || isStaying) {
-//			Sleep(200); //pause to show the spring effect
-//			int force = activeSpring->calculateForce(position);
-//			springCyclesLeft = force * force;
-//			currentForce = force;
-//			springDir = position;
-//			springDir.setDirection(activeSpring->getDirection());
-//			position.setDirection(activeSpring->getDirection());
-//		}
-//	}
-//}
 
 void Player::finalizeMovement() {
 	if (springCyclesLeft > 0) {
@@ -302,6 +280,16 @@ bool Player::atDoor(unsigned char nextTile, Point nextPos){
 	
 }
 
+void Player::RemoveKeyFromInventory(int keyDoorId) {
+	for (int i = 0; i < INVENTORY_SIZE; ++i) {
+		if (inventory[i] == (char)objSigns::KEY) {
+			board.RemoveKey(keyDoorId);
+			inventory[i] = ' ';
+			return;
+		}
+	}
+}
+
 bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
 	bool isOpenDoor = board.isDoorOpen(doorId);
 	if (isOpenDoor) { //door is open
@@ -314,11 +302,10 @@ bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
 	int keyDoorId = board.GetDoorIdByKey(this->getChar());
 	bool RealDoor = board.isRealDoor(doorId);
 	
-	//add check when two keys in inventory + remove the designated one from inventory
-	
 	if (hasItem(objSigns::KEY) && keyDoorId == doorId) {
 		board.openDoor(doorId);
-		board.RemoveKeyFromInventory(this->getChar(), position);
+		board.DisposeKeyToScreen(this->getChar(), position);
+		RemoveKeyFromInventory(keyDoorId);
 		board.showPlayerInfo(*this);
 		if (doorId == roomIndex::VAULT) { return OpenVaultRoom(); }
 		if (RealDoor) {
@@ -361,8 +348,6 @@ bool Player::OpenVaultRoom() {
 bool Player::OpenVictoryRoom() {
 	if (board.allRiddlesSolved()) {
 		board.openDoor((int)roomIndex::VICTORY);
-		//string msg = "Congratulations, you may proceed to the final screen";
-		//board.showMessage(msg);
 		clearFromScreen();
 		finishedLevel = true;
 		roomOpen = (int)roomIndex::VICTORY;

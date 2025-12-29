@@ -43,7 +43,13 @@ void Screen::loadMap(int roomNumber){
 		for (int i = 0; i < MAX_Y; i++) {
 			board[i] = Rooms[roomNumber][i];
 		}
-		loadItems(lastRoom);
+		if (lastRoom != roomIndex::MENU) {
+			loadItems(lastRoom);
+		}
+		else {
+			loadItems(-1); //no door to open
+		}
+		
 	}
 	if (roomNumber == roomIndex::ROOM3)
 		isDarkRoom = true;
@@ -216,52 +222,7 @@ Obstacle* Screen::getObstacleAt(const Point& p) {
 	}
 	return nullptr;
 }
-//void Screen::loadSprings() {
-//	springs.clear();
-//	bool processed[MAX_Y][MAX_X] = {false };
-//	for (int y = 0; y < MAX_Y; y++) {
-//		for (int x = 0; x < MAX_X; x++) {
-//			Point p(x, y);
-//			if (getCharAt(p) == objSigns::SPRING && !processed[y][x]) {
-//				bool isHorizontal = (x + 1 < MAX_X && getCharAt(Point(x + 1, y)) == objSigns::SPRING);
-//				if (!isHorizontal && (y + 1 >= MAX_Y || getCharAt(Point(x, y + 1)) != objSigns::SPRING)) {
-//					isHorizontal = true;
-//				}
-//
-//				int length = 0;
-//				Keyboard_bind dir = Keyboard_bind::STAY;
-//				Point currentStart(x, y);
-//
-//				if (isHorizontal) {//horizontal
-//					int currX = x;
-//					while (currX < MAX_X && getCharAt(Point(currX, y)) == objSigns::SPRING) {
-//						processed[y][currX] = true;
-//						length++;
-//						currX++;
-//					}
-//					if (isWall(Point(x - 1, y))) dir = Keyboard_bind::RIGHT;
-//					else if (isWall(Point(x + length, y))) dir = Keyboard_bind::LEFT;
-//					else if (isWall(Point(x, y - 1))) dir = Keyboard_bind::DOWN;
-//					else if (isWall(Point(x, y + 1))) dir = Keyboard_bind::UP;
-//				}
-//				else { //vertical
-//					int currY = y;
-//					while (currY < MAX_Y && getCharAt(Point(x, currY)) == objSigns::SPRING) {
-//						processed[currY][x] = true;
-//						length++;
-//						currY++;
-//					}
-//					// walls check
-//					if (isWall(Point(x, y - 1))) dir = Keyboard_bind::DOWN;
-//					else if (isWall(Point(x, y + length))) dir = Keyboard_bind::UP;
-//				}
-//				if (dir != Keyboard_bind::STAY) {
-//					springs.push_back(Spring(currentStart, length, dir));
-//				}
-//			}
-//		}
-//	}
-//}
+
 void Screen::loadSprings() {
 	springs.clear();
 	bool processed[MAX_Y][MAX_X] = { false };
@@ -328,7 +289,7 @@ void Screen::loadItems(int doorIdOpen) {//enter the items from the board to the 
 			else if (isdigit((unsigned char)c)) {
 				int door_id = c - '0';
 				doors[door_id] = Door(x, y, c);
-				if (doorIdOpen == door_id) {
+				if (door_id == doorIdOpen) {
 					doors[door_id].open();
 				}
 				else {
@@ -420,7 +381,7 @@ void Screen::addKeyToInventory(Point position, char p){
 	}
 }
 
-void Screen::RemoveKeyFromInventory(char p, Point newPos) {
+void Screen::DisposeKeyToScreen(char p, Point newPos) {
 	auto it = keys.begin();
 	while (it != keys.end())
 	{
@@ -430,6 +391,18 @@ void Screen::RemoveKeyFromInventory(char p, Point newPos) {
 			tempKey.setInUse(' ');
 			tempKey.SetPosition(newPos);
 			keys[newPos] = tempKey;
+			return;
+		}
+		else {
+			++it;
+		}
+	}
+}
+void Screen::RemoveKey(int doorId) {
+	auto it = keys.begin();
+	while (it != keys.end()){
+		if (it->second.getTargetDoorId() == doorId) {
+			keys.erase(it);
 			return;
 		}
 		else {

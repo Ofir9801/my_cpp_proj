@@ -45,6 +45,7 @@ public:
 	void resetInventory() { inventory[0] = ' '; inventory[1] = ' '; inventory[2] = '\0'; }
 	bool addToInventory(objSigns item, Point pos);
 	void dispose();
+	void RemoveKeyFromInventory(int keyDoorId);
 	bool isExtraInventory() const { return ExtraInventory; }
 	void setExtraInventory(bool val) { ExtraInventory = val; }
 

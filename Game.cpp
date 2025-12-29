@@ -127,7 +127,7 @@ void Game::showMenu(bool& started){
 void Game::changeRoom(roomIndex room){
 
 	int currentRoom = board.getCurrentRoom();
-	if (currentRoom >= roomIndex::ROOM1 && currentRoom <= roomIndex::VAULT){
+	if (currentRoom >= roomIndex::VAULT && currentRoom <= roomIndex::ROOM3){
 		board.saveRoom();
 	}
 	int roomNumber = (int)room;
