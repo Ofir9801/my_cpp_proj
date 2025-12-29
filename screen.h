@@ -62,7 +62,7 @@ public:
 
     // display
     void drawMap();
-    void drawMap(int roomNumber);
+    void drawVictoryRoom();
     void refreshSpringsDisplay(const Point& p1, const Point& p2) const;
     void showKeyBinds() const;
     bool IsColor() const { return colorToggle; }
@@ -99,7 +99,7 @@ public:
     bool isWinningDoor(int doorId) const { return doorId == currentRoom - 1; }
     void setconnection(int door_id);
 	bool getConnectionStatus(int door_id) const;
-	bool isRealDoor(int doorId) const { return doorId >= roomIndex::VICTORY && doorId <= roomIndex::VAULT; }
+	bool isRealDoor(int doorId) const { return doorId < roomIndex::MENU; }
 	bool SwitchState(int doorId) const;
 	int GetDoorIdByKey(char p) const;
     void deleteDoor(Point position);

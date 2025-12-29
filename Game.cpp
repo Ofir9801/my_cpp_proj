@@ -125,14 +125,12 @@ void Game::showMenu(bool& started){
 }
 
 void Game::changeRoom(roomIndex room){
-
 	int currentRoom = board.getCurrentRoom();
-	if (currentRoom >= roomIndex::VAULT && currentRoom <= roomIndex::ROOM3){
+	if (currentRoom < roomIndex::VICTORY) {
 		board.saveRoom();
 	}
 	int roomNumber = (int)room;
 	board.loadMap(roomNumber);
-	board.drawMap(roomNumber);
 	if (room != roomIndex::MENU && room != roomIndex::INSTRUCTIONS && room != roomIndex::VICTORY) {
 	player1.reset(Point(1, 4, objSigns::PLAYER1));
 	player2.reset(Point(75, 4, objSigns::PLAYER2));
@@ -237,12 +235,11 @@ void Game::handleLevelCompletion() {
 			messageShown = true;
 		}
 	}
-  //check here!
 
 	if (!player1.hasFinished() || !player2.hasFinished()) { return; }
 	roomIndex player1Room = player1.getRoomOpen(); //the room number of the door opened by player 1
 	roomIndex player2Room = player2.getRoomOpen(); //the room number of the door opened by player 2
-	if (player1Room == player2Room) { changeRoom(player1Room); }			//both players chose the same door
+	if (player1Room == player2Room) { changeRoom(player1Room); }//both players chose the same door
 	else {
 		string msg = "you chose different rooms!choose a room : " + std::to_string((int)player1Room) + " / " + std::to_string((int)player2Room);
 		board.showMessage(msg);

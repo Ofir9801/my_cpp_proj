@@ -129,6 +129,7 @@ Color getColorForChar(objSigns sign);
 bool ReadRoomLayoutFromFile(string FileName, roomIndex room);
 bool HandleLegendLine(string& line, roomIndex room, int& loopIndex);
 void ReadLegendFromFile(roomIndex room);
+
 //operator overloads for enum classes
 inline bool operator==(char c, objSigns sign) { //overload operator == for enum class objsign
 	return c == static_cast<char>(sign);
@@ -137,13 +138,16 @@ inline bool operator==(int n, roomIndex index) { //overload operator
 	return n == static_cast<int>(index);
 }
 inline bool operator>= (int n, roomIndex index){ //overload operator 
-	return static_cast<int>(index) >= n;
+	return n >= static_cast<int>(index);
 }
 inline bool operator<= (int n, roomIndex index) { //overload operator 
-	return static_cast<int>(index) <= n;
+	return n <= static_cast<int>(index);
+}
+inline bool operator< (int n, roomIndex index) { //overload operator 
+	return n < static_cast<int>(index);
 }
 inline bool operator> (int n, roomIndex index) { //overload operator 
-	return static_cast<int>(index) > n;
+	return n > static_cast<int>(index);
 }
 inline std::ostream& operator<<(std::ostream& os, const objSigns& sign) {
 	os << static_cast<char>(sign);

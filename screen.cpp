@@ -25,7 +25,6 @@ Screen::Screen() {
 
 void Screen::loadMap(int roomNumber){
 	int lastRoom = currentRoom;
-	if (lastRoom > roomIndex::VAULT) { lastRoom = -1; }
 	currentRoom = roomNumber;
 	if (savedRooms.find(roomNumber)!=savedRooms.end()) { //load saved state
 		for (int i = 0; i < MAX_Y; i++) {
@@ -55,6 +54,13 @@ void Screen::loadMap(int roomNumber){
 		isDarkRoom = true;
 	else
 		isDarkRoom = false;
+	if (roomNumber == roomIndex::VICTORY && colorToggle) {
+		drawVictoryRoom();
+	}
+	else {
+		drawMap();
+	}
+	
 }
 
 void Screen::drawMap() {
@@ -81,25 +87,22 @@ void Screen::drawMap() {
 	}
 }
 
-void Screen::drawMap(int roomNumber) {
+void Screen::drawVictoryRoom() {
 	cls();
-	if (roomNumber == roomIndex::VICTORY &&colorToggle) {
-		for (int i = 0; i < MAX_Y; i++) {
-			gotoxy(0, i);
-			if (i > 2) {
-				for (int j = 0; j < MAX_X; j++) {
-					char c = board[i][j];
-					SetTextColor(Color::BROWN);
-					cout << c;
-				}
-				SetTextColor(Color::WHITE); //reset to default color
+	for (int i = 0; i < MAX_Y; i++) {
+		gotoxy(0, i);
+		if (i > 2) {
+			for (int j = 0; j < MAX_X; j++) {
+				char c = board[i][j];
+				SetTextColor(Color::BROWN);
+				cout << c;
 			}
-			else {
-				cout << board[i];
-			}
+			SetTextColor(Color::WHITE); //reset to default color
+		}
+		else {
+			cout << board[i];
 		}
 	}
-	else {drawMap();}
 }
 
 bool Screen::isWall(const Point& p) const{
