@@ -124,4 +124,5 @@ private:
 	// game logic: Riddles
 	Riddle ReadRiddleFromFile(const string& filePath, const Point pos, int riddleIndex, bool& error);
 	Riddle ReadVaultRiddleFromFile(const string& filePath, const Point pos, bool& error);
+	void CheckExplodeNecessaryObject(int doorId);
 };

@@ -533,6 +533,7 @@ bool Screen::isValid(const Point& p) const{
 void Screen::deleteKey(Point position){
 	auto it = keys.find(position);
 	if (it != keys.end()) {
+		CheckExplodeNecessaryObject(it->second.getTargetDoorId());
 		keys.erase(it);
 	}
 }
@@ -555,6 +556,7 @@ void Screen::deleteSwitch(Point position){
 	while (it != switches.end() && !flag) {
 		if (it->getPosition() == position)
 		{
+			CheckExplodeNecessaryObject(it->getTargetDoorId());
 			it = switches.erase(it);
 			flag = true;
 		}
@@ -566,12 +568,16 @@ void Screen::deleteDoor(Point position){
 	int door_id = position.getChar() - '0';
 	auto it = doors.find(door_id);
 	if (it != doors.end()) {
-		if (isRealDoor(door_id)){ //explode winning door
-			gameState = false;
-			showMessage("you blew up a real door. you lost the game");
-			Sleep(2000);
-		}
+		CheckExplodeNecessaryObject(door_id);
 		doors.erase(it);
+	}
+}
+
+void Screen::CheckExplodeNecessaryObject(int doorId) {
+	if (isRealDoor(doorId)) { //explode real door
+		gameState = false;
+		showMessage("you blew up a real door. you lost the game");
+		Sleep(2000);
 	}
 }
 
