@@ -20,8 +20,6 @@ class Player
 	Screen& board; //reference to the Game Screen
 	bool handleSpecialObjects(char nextTile, Point nextPos, int force);
 	Keyboard_bind springDir = Keyboard_bind::STAY; //direction of the flight
-	
-
 public:
 	//ctor
 	Player(const Point& point, const string(&keys), Screen& theScreen) :board(theScreen), position(point), p_keys(keys) {
@@ -33,41 +31,39 @@ public:
 	void move(); //function to move the Player in the current direction
 	void draw();
 	void handleKeyPressed(char key_pressed);
-	int computeStepsToTake() const;
-	bool takeStep();
 	void reset(Point newPosition);
-	void finalizeMovement();
 	void clearFromScreen();
-
 	//Inventory Handling
 	const char* getInventory() const { return inventory; }
 	bool hasItem(objSigns item) const { return inventory[0] == item || inventory[1] == item; }
 	void resetInventory() { inventory[0] = ' '; inventory[1] = ' '; inventory[2] = '\0'; }
-	bool addToInventory(objSigns item, Point pos);
-	void dispose();
-	void RemoveKeyFromInventory(int keyDoorId);
 	bool isExtraInventory() const { return ExtraInventory; }
 	void setExtraInventory(bool val) { ExtraInventory = val; }
-
 	//get and set player's fields
 	int getLives() const;
 	int getScore() const;
 	void decreaseLife();
 	void increaseScore(int amount);
-	bool isAlive() const;
 	char getChar() const { return position.getChar(); }
 	Point getPosition() const { return position; }
 	bool hasFinished() const { return finishedLevel; }
-	void setRoomOpen(size_t roomIndex) { roomOpen = roomIndex; };
 	roomIndex getRoomOpen() const { return (roomIndex)roomOpen; }
-
+	//spring handlement
+	void SetSpringState(int force, Keyboard_bind direction);
+private:
+	//handle player movement
+	int computeStepsToTake() const;
+	bool takeStep();
+	void finalizeMovement();
+	//Inventory Handling
+	bool addToInventory(objSigns item, Point pos);
+	void dispose();
+	void RemoveKeyFromInventory(int keyDoorId);
 	//interaction with other objects
 	bool atDoor(unsigned char nextTile, Point nextPos);
 	bool OpenDoorWithKey(int doorId, Point nextPos);
 	bool OpenVaultRoom();
 	bool OpenVictoryRoom();
-
 	//spring handlement
 	void applySpringDirectionIfNeeded();
-	void SetSpringState(int force, Keyboard_bind direction);
 };

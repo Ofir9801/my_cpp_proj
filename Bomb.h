@@ -9,8 +9,6 @@ class Bomb//Bomb class to represent bombs on the board
 	Point position;
 	int timer;
 	bool active;
-	void destroyCell(Screen& board, Player& p1, Player& p2, Point target); //helper function, self explanatory
-	void handlePlayerHit(Player& player); //helper function, self explanatory
 public:
 	Bomb(const Point& pos) : position(pos), timer(EXPLODE_BOMB_TIME), active(true) {
 		position.setChar(objSigns::BOMB);
@@ -19,8 +17,11 @@ public:
 	bool shouldExplode() const { return active && timer <= 0; }
 	Point getPosition() const { return position; }
 	void explode(Screen& board,Player& p1, Player& p2);
-	bool isShielded (Screen& board, Point bombPos, Point targetPos) const;
 	int getTimer() const{ return timer; }
+private:
+	void destroyCell(Screen& board, Player& p1, Player& p2, Point target); //helper function, self explanatory
+	void handlePlayerHit(Player& player); //helper function, self explanatory
+	bool isShielded(Screen& board, Point bombPos, Point targetPos) const; //helper function to check if an obstacle is shielding the target from the bomb explosion
 };
 
 

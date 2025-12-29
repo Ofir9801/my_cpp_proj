@@ -11,10 +11,7 @@ public:
 	Door() : position(0, 0, ' '), id(0), isOpen(false), connection(false) {} //default constructor for empty door for map
 	Door(int x, int y, char _id, bool connection = false) :
 		position(Point(x, y, _id)),id(_id - '0'), isOpen(false), connection(connection) {}
-
 	void open() { isOpen = true;};
-	bool isAt(const Point& p) const {return position == p;}
-	int getId() const { return id; }
 	bool getIsOpen() const { return isOpen; }
 	bool getConnection() const { return connection; }
 	void setConnection(bool conn) { connection = conn; }

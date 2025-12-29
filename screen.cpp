@@ -132,13 +132,13 @@ void Screen::showPlayerInfo(const Player& p) {
 		gotoxy(INFO_SLOTS::PLAYER1_SIGN_START_X, INFO_SLOTS::PLAYER_SIGN_Y); //print player char
 		cout << playerChar << std::flush;
 		gotoxy(INFO_SLOTS::PLAYER1_INV_START_X, INFO_SLOTS::PLAYER_INV_Y); //print inventory
-		cout << p.getInventory() << std::flush;
+		cout << inventory << std::flush;
 		break;
 	case objSigns::PLAYER2:
 		gotoxy(INFO_SLOTS::PLAYER2_SIGN_START_X, INFO_SLOTS::PLAYER_SIGN_Y); //print player char
 		cout << playerChar << std::flush;
 		gotoxy(INFO_SLOTS::PLAYER2_INV_START_X, INFO_SLOTS::PLAYER_INV_Y);//print inventory
-		cout << p.getInventory() << std::flush;
+		cout << inventory << std::flush;
 		break;
 	}
 	gotoxy(INFO_SLOTS::SCORE_START_X, INFO_SLOTS::PLAYER_SIGN_Y); //print score

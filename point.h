@@ -21,7 +21,7 @@ public:
 	void setChar(objSigns _sign) { ch = static_cast<char>(_sign); }
 	char getChar() const { return ch; }
 	void draw(char c, Color color);
-	void draw(objSigns sign, Color color);
+	void draw(objSigns sign, Color color) { draw(static_cast<char>(sign), color); }
 	void draw(Color color) {draw(ch, color);}
 	void move();
 	void setDirection(Keyboard_bind dir, bool state = true, int speed = 1 );
@@ -29,4 +29,5 @@ public:
 	bool operator== (const Point& otherPos) const;
 	bool operator < (const Point& other) const; //for using Point as a key in map
 	bool InBounds(int max_x = MAX_X, int max_y = MAX_Y, int min_x = 0, int min_y = 0) const;//making sure point is in bounds of the board
+
 };

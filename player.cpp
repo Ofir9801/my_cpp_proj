@@ -364,5 +364,4 @@ int Player::getLives() const { return board.getLives(); }
 int Player::getScore() const { return board.getScore(); }
 void Player::decreaseLife() { board.decreaseLife(); }
 void Player::increaseScore(int amount) { board.addScore(amount); }
-bool Player::isAlive() const { return board.getLives() > 0; }
 

@@ -16,16 +16,15 @@ class Game{
 	void handlePause(bool& exitGame, int& gameCycle);
 	void handleGameOver(bool& exitGame, int& gameCycle);
 	void handleLevelCompletion();
-
 public:
 	Game(); //default constructor to initialize the Game components	
 	void run(); //function to run the main Game loop
-	void showMenu(bool &started);//function to show the Game menu
-	void changeRoom(roomIndex room);
 private:
 	void updateSwitches();
 	bool isSpecialKey(int key) const{ return key == 0 || key == 224; } //when keyboard presses special keys like arrows
 	void SetColorfullGame();
 	bool isGameOver() const{ return board.getLives() <= 0 || !board.gameState; }
+	void showMenu(bool& started);//function to show the Game menu
+	void changeRoom(roomIndex room);
 };
 
