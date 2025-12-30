@@ -54,11 +54,12 @@ public:
     void loadMap(int roomNumber); // Loads board from string array
     void loadSprings();
 	void saveRoom();
+	void setGameState(bool state) { gameState = state; }
 	void clearSavedRooms() { savedRooms.clear(); }
     // display
     void drawMap();
     void refreshSpringsDisplay(const Point& p1, const Point& p2) const;
-    void showKeyBinds() const;
+    void showInstructionBinds() const;
     bool IsColor() const { return colorToggle; }
     // UI
     void showPlayerInfo(const Player& p);
@@ -75,7 +76,8 @@ public:
     bool isDark() const { return isDarkRoom; }
     void updateLighting(const Point& p1, const Point& p1Prev, const Player& player1,
 						const Point& p2, const Point& p2Prev, const Player& player2);
-	bool Distance(int x, int y, const Point& p, int r) const;
+	bool BoxDistance(int x, int y, const Point& p, int radius) const;
+	bool RoundDistance(int x, int y, const Point& p, int radius) const;
     // game state score & lives
     void addScore(int amount) { sharedScore += amount; }
     int getScore() const { return sharedScore; }
@@ -86,7 +88,7 @@ public:
 	bool isDoorOpen(int door_id) const;
     void openDoor(int door_id);
 	bool getConnectionStatus(int door_id) const;
-	bool isRealDoor(int doorId) const { return doorId < roomIndex::MENU; }
+	bool isRealDoor(int doorId) const { return doorId >= roomIndex::VAULT && doorId <= roomIndex::VICTORY; }
 	bool SwitchState(int doorId) const;
 	int GetDoorIdByKey(char p) const;
     void deleteDoor(Point position);

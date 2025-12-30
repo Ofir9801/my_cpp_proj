@@ -166,16 +166,27 @@ void Screen::setChar(const Point& p, objSigns sign) {
 	setChar(p, c);
 }
 
-void Screen::showKeyBinds() const
+void Screen::showInstructionBinds() const
 {
-	int const INITIAL_Y = 19;
-	int const INITIAL_X1 = 11;
-	int const INITIAL_X2 = 40;
+	int const OBJ_Y = 7;
+	int const OBJ_X = 1;
+	gotoxy(OBJ_X, OBJ_Y);
+	cout << objSigns::KEY << endl;
+	gotoxy(OBJ_X, OBJ_Y+1);
+	cout << objSigns::SWITCH_OFF << endl;
+	gotoxy(OBJ_X, OBJ_Y+3);
+	cout << objSigns::BOMB << endl;
+	gotoxy(OBJ_X, OBJ_Y+6);
+	cout << objSigns::SPRING << endl;
+
+	int const KEYS_Y = 19;
+	int const KEYS_X1 = 11;
+	int const KEYS_X2 = 40;
 
 	for (int i = 0; i < NUM_KEYS; i++) {
-		gotoxy(INITIAL_X1, INITIAL_Y + i);
+		gotoxy(KEYS_X1, KEYS_Y + i);
 		cout << (unsigned char)toupper(keys1[i]); //print uppercase
-		gotoxy(INITIAL_X2, INITIAL_Y + i);
+		gotoxy(KEYS_X2, KEYS_Y + i);
 		cout << (unsigned char)toupper(keys2[i]); //print uppercase
 	}
 }
@@ -484,11 +495,18 @@ void Screen::updateLighting(const Point& p1, const Point& p1Prev, const Player& 
 
 }
 
-bool Screen::Distance(int x, int y, const Point& p, int radius) const {
+bool Screen::BoxDistance(int x, int y, const Point& p, int radius) const {
+	int dx =std::abs(x - p.getX()); //calculate the the distance between two points by x
+	int dy = std::abs(y - p.getY()); //calculate the the distance between two points by y
+	return dx <= radius && dy <= radius;
+	//return (dx * dx + dy * dy) <= (radius * radius); //true if the given point is in player's light radius
+}
+bool Screen::RoundDistance(int x, int y, const Point& p, int radius) const {
 	int dx = x - p.getX(); //calculate the the distance between two points by x
 	int dy = y - p.getY(); //calculate the the distance between two points by y
 	return (dx * dx + dy * dy) <= (radius * radius); //true if the given point is in player's light radius
 }
+
 
 void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point& p1,const Point& p2, const int r1, const int r2) {
 	for (int y = cy - radius; y <= cy + radius; y++) {
@@ -496,11 +514,11 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 			if (x < 0 || x >= MAX_X || y < 3 || y >= MAX_Y)
 				continue;
 
-			bool inRange = Distance(x, y, Point(cx, cy), radius); //check if point in distance
+			bool inRange = RoundDistance(x, y, Point(cx, cy), radius); //check if point in distance
 
 			if (inRange) {
 				if (erase) {
-					if (!Distance(x, y, p1, r1) && !Distance(x, y, p2, r2)) {
+					if (!RoundDistance(x, y, p1, r1) && !RoundDistance(x, y, p2, r2)) {
 						gotoxy(x, y);
 						std::cout << ' ';
 					}
@@ -541,7 +559,7 @@ void Screen::deleteKey(Point position){
 void Screen::deleteSpring(Point position){
 	for (size_t i = 0; i < springs.size(); ++i) {
 		if (springs[i].isPointOn(position)) {
-			bool destroyed = springs[i].handleExplosion(position);
+			bool destroyed = springs[i].handleExplosion(position,*this);
 			if (destroyed) {
 				springs.erase(springs.begin() + i);
 			}
@@ -576,7 +594,7 @@ void Screen::deleteDoor(Point position){
 void Screen::CheckExplodeNecessaryObject(int doorId) {
 	if (isRealDoor(doorId)) { //explode real door
 		gameState = false;
-		showMessage("you blew up a real door. you lost the game");
+		showMessage("you blew up a necessary object for your progress. you lost the game!");
 		Sleep(2000);
 	}
 }

@@ -106,12 +106,12 @@ void Game::showMenu(bool& started){
 				break;
 			case '2':
 				SetColorfullGame();
-				changeRoom(roomIndex::ROOM2);
+				changeRoom(roomIndex::ROOM1);
 				inMenu = false;
 				break;
 			case '8':
 				changeRoom(roomIndex::INSTRUCTIONS);
-				board.showKeyBinds();
+				board.showInstructionBinds();
 				a = _getch();
 				changeRoom(roomIndex::MENU);
 				break;
@@ -151,10 +151,11 @@ void Game::SetColorfullGame() {
 	board.colorToggle = true;
 }
 
-void Game::performRestart(int& gameCycle){
+void Game::performRestart(bool& exitGame, int& gameCycle){
 	board.resetStats();
 	board.clearSavedRooms();
 	board.currentRoom = (size_t)roomIndex::MENU;
+	board.setGameState(true);
 	player1.resetInventory();
 	player2.resetInventory();
 	changeRoom(roomIndex::ROOM1);
@@ -165,6 +166,8 @@ void Game::PerformGoToMenu(bool& exitGame, int& gameCycle)
 {
 	board.clearSavedRooms();
 	board.resetStats();
+	board.setGameState(true);
+	board.colorToggle = false; //reset color mode when going to menu
 	bool gameActive = true;
 	showMenu(gameActive);
 	if (!gameActive) {
@@ -187,7 +190,7 @@ void Game::handlePause(bool& exitGame, int& gameCycle)
 			break;
 		}
 		else if (choice == 'r') {
-			performRestart(gameCycle);
+			performRestart(exitGame,gameCycle);
 			break;
 		}
 		else if (choice == 'h') {
@@ -204,13 +207,13 @@ void Game::handleGameOver(bool& exitGame, int& gameCycle)
 	gotoxy(30, 10);
 	board.showMessage("Game Over! you lost!");
 	Sleep(1000);
-	std::cout << "Press 'R' to Restart or 'H' to go to Main Menu";
+	std::cout << "Press 'R' to Restart,'H' to go to Main Menu, ESC to exit the game";
 
 	while (true) {
 		if (_kbhit()) {
 			char choice = std::tolower(_getch());
 			if (choice == 'r') {
-				performRestart(gameCycle);
+				performRestart(exitGame, gameCycle);
 				break;
 			}
 			else if (choice == 'h') {

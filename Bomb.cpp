@@ -18,16 +18,19 @@ void Bomb::explode(Screen& board, Player& p1, Player& p2) {
 			}
 			Point target(x, y);
 			if (board.isWall(target)) {//explode walls only if adjacent 
-				if (!(board.Distance(x, y, position, BOMB_WALL_EFFECTIVE_RADIUS)))
+				if (!(board.BoxDistance(x, y, position, BOMB_WALL_EFFECTIVE_RADIUS)))
 					continue;
+				char realCharAtBoard = board.getCharAt(target);
+				target.setChar(realCharAtBoard);
+				affectedPoints.push_back(target);
 			}
-			else //if (board.Distance(x, y, position, BOMB_RADIUS)){
+			else{ //if (board.Distance(x, y, position, BOMB_RADIUS)){
 				if (!board.isValid(target)) continue; //none board tiles
 				if (isShielded(board, position, target)) continue;
 				char realCharAtBoard = board.getCharAt(target);
 				target.setChar(realCharAtBoard);
 				affectedPoints.push_back(target);
-			//}
+			}
 		}
 	}
 	for (const auto& p : affectedPoints) {

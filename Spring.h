@@ -19,7 +19,7 @@ public:
     //Keyboard_bind getDirection() const { return pushDirection; }
 	void draw(const Point& playerPos, const Screen& board ,bool active = false)const ;//function to draw the functioning of the spring on the board
     void interact(Player& p, const Screen& board);
-    bool handleExplosion(const Point& hitPos);
+    bool handleExplosion(const Point& hitPos,Screen& board);
     bool isPointOn(const Point& p) const;
     static Spring* CreateFromMap(const Screen& board, int x, int y, bool(&processed)[MAX_Y][MAX_X]);
 private:

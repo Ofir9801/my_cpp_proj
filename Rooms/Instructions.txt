@@ -1,21 +1,21 @@
-			Instructions of the Game:				                            
+                         Instructions of the Game:				                            
                                                                                 
- *You are trapped in a world that contains different rooms.                     
- *Between each room you have several locked doors that you need to open.
- *You may advance to several rooms and back to the original room.
- *You have various objects located in the rooms that will help you.             
-                                                                                
-     					                                                        
-                                                                                
-                                                                                
-                                                                                
-                                                                                
-                                                                                
-                                                                                
-                                                                                
-                                                                                
-                                                                                
-                                                                                                                                                              
+ - You are trapped in a world that contains different rooms.                     
+ - Between each room you have several locked doors that you need to open.
+ - You may advance to several rooms and back to the original room.
+ - here are some objects that will help you to escape the rooms:
+ 
+[ ] Keys: You need to collect keys to open doors. Each door unique.
+[ ] Switches: the switches control the doors. each switch is unique too,
+    You need to turn on and find the correct key for the designated door.   
+[ ] Bombs: You may use bombs to destroy obstacles that block your way. 
+    Be careful not to destroy essential items! or yourself...
+    here a tip:walls may protect you from bomb explosions.                     
+[ ] Springs: You may use springs to push very heavy obstacles.
+  
+  you and your partner share lifes and score. work together to escape the rooms!
+  you have few suprises waiting for you in the rooms...Good luck!
+                                                                                                                    
  Player 1 key binds:        Player 2 key binds:                                 
     UP   -                        UP  -                                         
   RIGHT  -                      RIGHT -                                         

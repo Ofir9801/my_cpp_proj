@@ -81,11 +81,20 @@ void Spring::interact(Player& p, const Screen& board){
 	}
 }
 
-bool Spring::handleExplosion(const Point& hitPos)
+bool Spring::handleExplosion(const Point& hitPos, Screen& board)
 {
     int hitIndex = getSegmentIndex(hitPos);
-    this->length = hitIndex; // Shorten the spring
-    return (this->length <= 0);
+	
+	for (int i = hitIndex; i < length; i++) { //remove the segments from the hit index to the end
+		Point currentSegment = startPos;
+		if (pushDirection == Keyboard_bind::RIGHT || pushDirection == Keyboard_bind::LEFT)
+			currentSegment.setX(startPos.getX() + i);
+		else
+            currentSegment.setY(startPos.getY() + i);
+		board.setChar(currentSegment, objSigns::EMPTY);
+    }
+    length = hitIndex; // Shorten the spring
+    return (length <= 0);
 }
 
 Spring* Spring::CreateFromMap(const Screen& board, int x, int y, bool(&processed)[MAX_Y][MAX_X])

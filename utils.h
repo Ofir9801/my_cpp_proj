@@ -87,7 +87,7 @@ inline constexpr int PLAYER_1_START_X = 1;
 inline constexpr int PLAYER_1_START_Y = 4;
 inline constexpr int PLAYER_2_START_X = 75;
 inline constexpr int PLAYER_2_START_Y = 4;
-inline constexpr int MIN_SCORE = 300;
+inline constexpr int MIN_SCORE = 500;
 inline constexpr int FAKE_DOOR_SCORE = 50;
 inline constexpr int WRONG_ANSWER = 50;
 inline constexpr int SUCCESS_SCORE = 100;
@@ -115,6 +115,7 @@ inline const string RiddlesRoom1PathWay = "Riddles/Riddles1.txt";
 inline const string RiddlesRoom2PathWay = "Riddles/Riddles2.txt";
 inline const string RiddlesRoom3PathWay = "Riddles/Riddles3.txt";
 inline const string RiddlesVaultPathWay = "Riddles/RiddleVault.txt";
+
 //utility functions for screen handling
 void gotoxy(int x, int y);
 void gotoxy(INFO_SLOTS x, INFO_SLOTS y);
@@ -134,22 +135,22 @@ void ReadLegendFromFile(roomIndex room);
 inline bool operator==(char c, objSigns sign) { //overload operator == for enum class objsign
 	return c == static_cast<char>(sign);
 }
-inline bool operator==(int n, roomIndex index) { //overload operator 
+inline bool operator==(int n, roomIndex index) { //overload operator == for enum class roomIndex
 	return n == static_cast<int>(index);
 }
-inline bool operator>= (int n, roomIndex index){ //overload operator 
+inline bool operator>= (int n, roomIndex index) { //overload operator >= for enum class roomIndex
 	return n >= static_cast<int>(index);
 }
-inline bool operator<= (int n, roomIndex index) { //overload operator 
+inline bool operator<= (int n, roomIndex index) { //overload operator <= for enum class roomIndex
 	return n <= static_cast<int>(index);
 }
-inline bool operator< (int n, roomIndex index) { //overload operator 
+inline bool operator< (int n, roomIndex index) { //overload operator < for enum class roomIndex
 	return n < static_cast<int>(index);
 }
-inline bool operator> (int n, roomIndex index) { //overload operator 
+inline bool operator> (int n, roomIndex index) { //overload operator > for enum class roomIndex
 	return n > static_cast<int>(index);
 }
-inline std::ostream& operator<<(std::ostream& os, const objSigns& sign) {
+inline std::ostream& operator<<(std::ostream& os, const objSigns& sign) { //overload operator << for enum class objsign
 	os << static_cast<char>(sign);
 	return os;
 }
