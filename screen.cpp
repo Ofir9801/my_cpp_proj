@@ -106,11 +106,6 @@ void Screen::drawVictoryRoom() {
 	}
 }
 
-//bool Screen::isWall(const Point& p) const{
-//	char c = getCharAt(p);
-//	return c == '-' || c == '|' || c == 'X';
-//}
-
 bool Screen::isWall(const Point& p) const {
 	int legendY = roomLegendRows[currentRoom];
 
@@ -216,6 +211,8 @@ void Screen::showMessage(string msg){
 	MessageTimer = TIMER_MESSAGE;
 }
 
+
+//change this function based on amir code!!! flag
 void Screen::initaializeRoomsArray() {
 	loadwithRetry(MenuPathWay, roomIndex::MENU);
 	loadwithRetry(InstructionsPathWay, roomIndex::INSTRUCTIONS);
