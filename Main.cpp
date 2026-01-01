@@ -7,7 +7,6 @@
 
 int main() {
 	try {
-		Screen board;
 		Game Game;
 		Game.run();
 	}

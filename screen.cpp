@@ -11,6 +11,7 @@
 #include <random>
 #include <string>
 #include <windows.h>
+#include <conio.h>
 
 using std::cout;
 using std::endl;
@@ -105,7 +106,18 @@ void Screen::drawVictoryRoom() {
 	}
 }
 
-bool Screen::isWall(const Point& p) const{
+//bool Screen::isWall(const Point& p) const{
+//	char c = getCharAt(p);
+//	return c == '-' || c == '|' || c == 'X';
+//}
+
+bool Screen::isWall(const Point& p) const {
+	int legendY = roomLegendRows[currentRoom];
+
+	if (inLegendBounds(legendY, p.getY())) {
+		return true;
+	}
+
 	char c = getCharAt(p);
 	return c == '-' || c == '|' || c == 'X';
 }
@@ -124,32 +136,39 @@ string Screen::CreateInventoryDisplay(const Player & p) {
 }
 
 void Screen::showPlayerInfo(const Player& p) {
-	objSigns playerChar =(objSigns) p.getChar();
+	objSigns playerChar = (objSigns)p.getChar();
 	string inventory = CreateInventoryDisplay(p);
+	int legendY = roomLegendRows[currentRoom];
+	//if (legendY == -1) { legendY = 0; }
 
 	switch (playerChar) {
 	case objSigns::PLAYER1:
-		gotoxy(INFO_SLOTS::PLAYER1_SIGN_START_X, INFO_SLOTS::PLAYER_SIGN_Y); //print player char
+		gotoxy(INFO_SLOTS::PLAYER1_SIGN_START_X, legendY); //print player char
 		cout << playerChar << std::flush;
-		gotoxy(INFO_SLOTS::PLAYER1_INV_START_X, INFO_SLOTS::PLAYER_INV_Y); //print inventory
+		gotoxy(INFO_SLOTS::PLAYER1_INV_START_X, legendY + 1); //print inventory
 		cout << inventory << std::flush;
 		break;
 	case objSigns::PLAYER2:
-		gotoxy(INFO_SLOTS::PLAYER2_SIGN_START_X, INFO_SLOTS::PLAYER_SIGN_Y); //print player char
+		gotoxy(INFO_SLOTS::PLAYER2_SIGN_START_X, legendY); //print player char
 		cout << playerChar << std::flush;
-		gotoxy(INFO_SLOTS::PLAYER2_INV_START_X, INFO_SLOTS::PLAYER_INV_Y);//print inventory
+		gotoxy(INFO_SLOTS::PLAYER2_INV_START_X, legendY +1);//print inventory
 		cout << inventory << std::flush;
 		break;
 	}
-	gotoxy(INFO_SLOTS::SCORE_START_X, INFO_SLOTS::PLAYER_SIGN_Y); //print score
+	gotoxy(INFO_SLOTS::SCORE_START_X, legendY); //print score
 	cout << p.getLives() << std::flush;
-	gotoxy(INFO_SLOTS::LIVES_START_X, INFO_SLOTS::PLAYER_SIGN_Y); //print lives
+	gotoxy(INFO_SLOTS::LIVES_START_X, legendY); //print lives
 	cout << p.getScore() << std::flush;
 }
 
 void Screen::setChar(const Point& p, char c) {
 	if (!p.InBounds())
 		return;
+	int legendY = roomLegendRows[currentRoom];
+	if (inLegendBounds(legendY, p.getY())) {
+		return;
+	}
+
 	board[p.getY()][p.getX()] = c;
 	gotoxy(p.getX(), p.getY());
 	if (colorToggle) {
@@ -191,34 +210,21 @@ void Screen::showInstructionBinds() const
 	}
 }
 void Screen::showMessage(string msg){
-	gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
+	gotoxy(MESSAGES_POS::MES_X, roomLegendRows[currentRoom] + MESSAGES_POS::MES_Y);
 	string extraSpace(MAX_X - msg.length(), ' ');
 	std::cout << msg <<extraSpace <<std::flush;
 	MessageTimer = TIMER_MESSAGE;
 }
 
 void Screen::initaializeRoomsArray() {
-	if (ReadRoomLayoutFromFile(MenuPathWay, roomIndex::MENU)){
-		throw std::runtime_error("Something wrong with the file menu.txt");
-	}
-	if (ReadRoomLayoutFromFile(InstructionsPathWay, roomIndex::INSTRUCTIONS)) { 
-		throw std::runtime_error("Something wrong with the file instructiopn.txt"); 
-	}
-	if (ReadRoomLayoutFromFile(Room1PathWay, roomIndex::ROOM1)){
-		throw std::runtime_error("Something wrong with the file room1.txt"); 
-	}
-	if (ReadRoomLayoutFromFile(Room2PathWay, roomIndex::ROOM2)){ 
-		throw std::runtime_error("Something wrong with the file room2.txt"); 
-	}
-	if (ReadRoomLayoutFromFile(Room3PathWay, roomIndex::ROOM3)) {
-		throw std::runtime_error("Something wrong with the file room3.txt");
-	}
-	if (ReadRoomLayoutFromFile(VaultPathWay, roomIndex::VAULT)) {
-		throw std::runtime_error("Something wrong with the file vault.txt");
-	}
-	if (ReadRoomLayoutFromFile(EndingScreenPathWay, roomIndex::VICTORY)){
-		throw std::runtime_error("Something wrong with the file endingscreen.txt"); 
-	}	
+	loadwithRetry(MenuPathWay, roomIndex::MENU);
+	loadwithRetry(InstructionsPathWay, roomIndex::INSTRUCTIONS);
+	loadwithRetry(Room1PathWay, roomIndex::ROOM1);
+	loadwithRetry(Room2PathWay, roomIndex::ROOM2);
+	loadwithRetry(Room3PathWay, roomIndex::ROOM3);
+	loadwithRetry(VaultPathWay, roomIndex::VAULT);
+	loadwithRetry(EndingScreenPathWay, roomIndex::VICTORY);
+
 	Rooms[(int)roomIndex::MENU] = Menu;
 	Rooms[(int)roomIndex::INSTRUCTIONS] = Instructions;
 	Rooms[(int)roomIndex::ROOM1] = Room1;
@@ -227,6 +233,29 @@ void Screen::initaializeRoomsArray() {
 	Rooms[(int)roomIndex::VAULT] = Vault;
 	Rooms[(int)roomIndex::VICTORY] = EndingScreen;
 }
+
+void Screen::loadwithRetry(string fileName, roomIndex room){
+	while (true) {
+		string errorMsg = ReadRoomLayoutFromFile(fileName, room);
+		if (errorMsg.empty())
+			break;
+		cls();
+		std::cout << "########################################################" << std::endl;
+		std::cout << "CRITICAL ERROR LOADING MAP" << std::endl;
+		std::cout << "########################################################" << std::endl;
+		std::cout << errorMsg << std::endl << std::endl;
+		std::cout << "1. Fix the file externally." << std::endl;
+		std::cout << "2. Press 'r' to RETRY." << std::endl;
+		std::cout << "3. Press 'ESC' to EXIT Game." << std::endl;
+		char c = _getch();
+		if (c == ESC) {
+			throw std::runtime_error("Game stopped by user due to file error: " + fileName);
+		}
+	}
+}
+
+
+
 
 Obstacle* Screen::getObstacleAt(const Point& p) {
 	for (auto& obs : obstacles) {
@@ -275,7 +304,7 @@ void Screen::clearMessegeArea(){
 	if (MessageTimer > 0) {
 		MessageTimer--;
 		if (MessageTimer == 0) {
-			gotoxy(MESSAGES_POS::MES_X, MESSAGES_POS::MES_Y);
+			gotoxy(MESSAGES_POS::MES_X, roomLegendRows[currentRoom] + MESSAGES_POS::MES_Y);
 			std::cout << EMPTYLINE<<std::flush;
 		}
 	}
@@ -288,7 +317,11 @@ void Screen::loadItems(int doorIdOpen) {//enter the items from the board to the 
 	doorIDs.clear();
 	keys.clear();
 	riddles.clear();
-	for (int y = 3; y < MAX_Y; y++) {
+	int legendY = roomLegendRows[currentRoom];
+	for (int y = 0; y < MAX_Y; y++) { 
+		if (inLegendBounds(legendY,y)) { //skip legend lines from scanning
+			continue;
+		}
 		for (int x = 0; x < MAX_X; x++) {
 			char c = getCharAt(Point(x, y));
 			if (c == objSigns::SWITCH_OFF) {
@@ -509,11 +542,14 @@ bool Screen::RoundDistance(int x, int y, const Point& p, int radius) const {
 
 
 void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point& p1,const Point& p2, const int r1, const int r2) {
+	int legendY = roomLegendRows[currentRoom];
 	for (int y = cy - radius; y <= cy + radius; y++) {
 		for (int x = cx - radius; x <= cx + radius; x++) {
-			if (x < 0 || x >= MAX_X || y < 3 || y >= MAX_Y)
+			if (x < 0 || x >= MAX_X || y < 0 || y >= MAX_Y)
 				continue;
-
+			if (inLegendBounds(legendY, y)) {
+				continue;
+			}
 			bool inRange = RoundDistance(x, y, Point(cx, cy), radius); //check if point in distance
 
 			if (inRange) {
@@ -544,8 +580,53 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 }
 
 bool Screen::isValid(const Point& p) const{ 
-	bool insideBoard = p.InBounds(MAX_X - 1, MAX_Y - 1, 1, 4);
-	return insideBoard;
+	if (!p.InBounds(MAX_X - 1, MAX_Y - 1, 0, 0))
+		return false;
+	if (!isDestructible(p)) {
+		return false;
+	}
+	return true;
+}
+
+bool Screen::isDestructible(const Point& p) const
+{
+	const int px = p.getX();
+	const int py = p.getY();
+
+	//check if point is in legend
+	int legendY = roomLegendRows[currentRoom];
+	if (inLegendBounds(legendY, py)) {
+		return false;
+	}
+
+	//check horizontal exterior walls (left and right)
+	if (px == 0 || px == MAX_X - 1) {
+		return false;
+	}
+	//check verticl exterior walls (top and buttom)
+	int topWallY = 0;
+	int bottomWallY = MAX_Y - 1;
+	if (legendY != -1) {
+		if (legendY == 0) {
+			topWallY = LEGEND_SIZE;
+		}
+		else if (legendY + LEGEND_SIZE >= MAX_Y) {
+			bottomWallY = legendY - 1;
+		}
+	}
+	if (py == topWallY || py == bottomWallY) {
+		return false;
+	}
+	return true;
+
+}
+
+bool Screen::inLegendBounds(const int legendY, const int y) const
+{
+	if (legendY != -1) {
+		return y >= legendY && y < legendY + LEGEND_SIZE;
+	}
+	return false;
 }
 
 void Screen::deleteKey(Point position){
@@ -669,6 +750,7 @@ void Screen::loadRiddles(){
 		}
 	}
 }
+
 
 Riddle Screen::ReadRiddleFromFile(const string& filePath,const Point pos, int riddleIndex, bool& error){
 	std::ifstream inFile(filePath);

@@ -115,6 +115,9 @@ private:
 	void linkDoorsToKeysAndSwitches();
 	void loadItems(int doorIdOpen);
 	void loadRiddles();
+	void loadwithRetry(string fileName, roomIndex room);
+	bool isDestructible(const Point& p)const;
+	bool inLegendBounds(const int legendY, const int y) const;
 	// display
 	void drawVictoryRoom();
 	// UI

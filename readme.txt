@@ -19,6 +19,8 @@ Ofir Eren, id: 323958082
 - We made a 'Vault' room as the 4th room with difficult challenge to solve - exploding many obstacles and solving one last great riddle to finish the challenge.
 - this is unique riddle that requires players to collect 3 digits from the previous rooms(riddle answers) and combine them to one final answer.
   * If you are having a tough time answering, the correct answer is '132'.
+- by completing all the riddles in room 2, the player get another inventory slot as a reward. if they want to dispose one item they will get message to choose which item to dispose.(press 1 or 2)
+- when the players enter different rooms, they will need to choose which room they want to enter and both players will be in that room.
 
 - the stracture of the riddle txt is: notice that each riddle txt is named according to the room number it belongs to, for example room2riddle.txt and saved in designated folder
 	Riddle: <riddle question>
@@ -26,8 +28,9 @@ Ofir Eren, id: 323958082
 	4 possible answers:<options[0:3]>
 
 - the stracture of the room.txt is: notice that each room txt is named according to the room number it belongs to, for example Room2.txt and saved in designated folder
-	L - for legend (must be 3 lines)
+	L - for legend (must be 3 lines) - notice that the char L must be in most left place in line and in width of maximum 80 chars.
 	<room design> - by the size of 80x22 (legend is 3 lines extra)
+
 
 
 

@@ -94,6 +94,7 @@ inline constexpr int SUCCESS_SCORE = 100;
 inline constexpr int STARTING_LIVES = 4;
 inline int constexpr TIMER_MESSAGE = 15;
 inline int constexpr LEGEND_SIZE = 3;
+inline int roomLegendRows[NUM_ROOMS];
 
 inline string Room1[MAX_Y];
 inline string Room2[MAX_Y];
@@ -118,8 +119,6 @@ inline const string RiddlesVaultPathWay = "Riddles/RiddleVault.txt";
 
 //utility functions for screen handling
 void gotoxy(int x, int y);
-void gotoxy(INFO_SLOTS x, INFO_SLOTS y);
-void gotoxy(MESSAGES_POS x, MESSAGES_POS y);
 void hideCursor();
 void cls();
 //color functions
@@ -127,10 +126,15 @@ void SetTextColor(Color color);
 Color getColorForChar(char c);
 Color getColorForChar(objSigns sign);
 //file reading functions
-bool ReadRoomLayoutFromFile(string FileName, roomIndex room);
-bool HandleLegendLine(string& line, roomIndex room, int& loopIndex);
-void ReadLegendFromFile(roomIndex room);
+string ReadRoomLayoutFromFile(string FileName, roomIndex room);
+void ReadLegendFromFile(roomIndex room, int yOffset);
 
+inline void gotoxy(INFO_SLOTS x, INFO_SLOTS y) { gotoxy(static_cast<int>(x), static_cast<int>(y)); }
+inline void gotoxy(INFO_SLOTS x, int y) { gotoxy(static_cast<int>(x), y); }
+inline void gotoxy(MESSAGES_POS x, int y) { gotoxy(static_cast<int>(x), y); }
+inline bool isGameRoom(roomIndex room) {
+	return room == roomIndex::ROOM1 || room == roomIndex::ROOM2 || room == roomIndex::ROOM3 || room == roomIndex::VAULT;
+}
 //operator overloads for enum classes
 inline bool operator==(char c, objSigns sign) { //overload operator == for enum class objsign
 	return c == static_cast<char>(sign);
@@ -153,4 +157,10 @@ inline bool operator> (int n, roomIndex index) { //overload operator > for enum 
 inline std::ostream& operator<<(std::ostream& os, const objSigns& sign) { //overload operator << for enum class objsign
 	os << static_cast<char>(sign);
 	return os;
+}
+inline int operator+ (MESSAGES_POS p, int offset) { //overload operator <= for enum class roomIndex
+	return static_cast<int>(p) + offset;
+}
+inline int operator+ (int offset, MESSAGES_POS p) { //overload operator <= for enum class roomIndex
+	return offset + static_cast<int>(p);
 }

@@ -15,24 +15,6 @@ void gotoxy(int x, int y) {
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-void gotoxy(INFO_SLOTS x, INFO_SLOTS y)
-{
-	std::cout.flush();
-	COORD coord;
-	coord.X = (int)x;
-	coord.Y = (int)y;
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-}
-
-void gotoxy(MESSAGES_POS x, MESSAGES_POS y)
-{
-	std::cout.flush();
-	COORD coord;
-	coord.X = (int)x;
-	coord.Y = (int)y;
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-}
-
 void hideCursor()
 {
     HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -81,85 +63,94 @@ Color getColorForChar(objSigns sign)
 	return getColorForChar(static_cast<char>(sign));
 }
 
-bool ReadRoomLayoutFromFile(string FileName, roomIndex room) {
+string ReadRoomLayoutFromFile(string FileName, roomIndex room){
 	std::ifstream inFile(FileName);
-	bool error = false;
 	if (!inFile.is_open()) {
-		error = true;
+		return "Error: Could not open file [" + FileName + " ]";
 	}
+
+	roomLegendRows[static_cast<int>(room)] = -1;
+	int legendLocation = -1;
 	string templine;
+	bool gameRoom = isGameRoom(room);
+
 	for (int i = 0; i < MAX_Y; i++) {
 		if (!std::getline(inFile, templine)) {
 			templine = "";
 		}
+
+		if (gameRoom) {
+			size_t lPos = templine.find('L');
+			if (lPos != string::npos) {
+				if (lPos != 0) {
+					return "Error in [" + FileName + "] line " + std::to_string(i + 1) + ": Legend marker 'L' must be the start of the line";
+				}
+				if (templine.length() > MAX_X) {
+					return "Error in[" + FileName + "] line " + std::to_string(i + 1) + ": Legend line is too long(max " + std::to_string(MAX_X) + " chars)";
+				}
+				legendLocation = i;
+				roomLegendRows[static_cast<int>(room)] = i;
+				i += LEGEND_SIZE-1;
+				continue;
+			}
+		}
+
 		templine.resize(MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
 		switch (room) {
-		case roomIndex::MENU:
-			Menu[i] = templine;
-			break;
-		case roomIndex::INSTRUCTIONS:
-			Instructions[i] = templine;
-			break;
-		case roomIndex::ROOM1:
-			if (i == 0) {error = HandleLegendLine(templine, room, i);}
-			else {Room1[i] = templine;}
-			break;
-		case roomIndex::ROOM2:
-			if (i == 0) { error = HandleLegendLine(templine, room, i); }
-			else {Room2[i] = templine;}
-			break;
-		case roomIndex::ROOM3:
-			if (i == 0) { error = HandleLegendLine(templine, room, i); }
-			else {Room3[i] = templine;}
-			break;
-		case roomIndex::VAULT:
-			if (i == 0) { error = HandleLegendLine(templine, room, i); }
-			else {Vault[i] = templine;}
-			break;		
-		case roomIndex::VICTORY:
-			EndingScreen[i] = templine;
-			break;
+		case roomIndex::MENU: Menu[i] = templine; break;
+		case roomIndex::INSTRUCTIONS: Instructions[i] = templine; break;
+		case roomIndex::ROOM1: Room1[i] = templine; break;
+		case roomIndex::ROOM2: Room2[i] = templine; break;
+		case roomIndex::ROOM3: Room3[i] = templine; break;
+		case roomIndex::VAULT: Vault[i] = templine; break;
+		case roomIndex::VICTORY: EndingScreen[i] = templine; break;
 		}
 	}
 	inFile.close();
-	return error;
-}
-
-bool HandleLegendLine(string& line, roomIndex room, int& loopIndex) {
-	if (!line.empty() && line[0] == 'L')
-	{
-		ReadLegendFromFile(room);
-		loopIndex = 2; //skip next two lines since they are part of the legend
-		return false;
+	if (gameRoom) {
+		if (legendLocation != -1) {
+			try {
+				ReadLegendFromFile(room, legendLocation);
+			}
+			catch (const std::runtime_error& e) {
+				return "Error reading legend for [ " + FileName + "]: " + string(e.what());
+			}
+		}
+		else
+			return "Error: L (represnet for legend) is missing in [" + FileName + "]";
 	}
-	return true;
+	return "";
 }
 
-void ReadLegendFromFile(roomIndex room) {
+
+void ReadLegendFromFile(roomIndex room, int yOffset) {
 	std::ifstream inFile(LegendPathWay);
 	if (!inFile.is_open()) {
 		throw std::runtime_error("Something wrong with the file Legend.txt");
 	}
 	string templine;
-	for (int i = 0; i < LEGEND_SIZE;++i) {
+	for (int i = 0; i < LEGEND_SIZE; ++i) {
 		if (!std::getline(inFile, templine)) {
 			templine = "";
 		}
 		templine.resize(MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
+		int currentLine = yOffset + i;
+		if (currentLine >= MAX_Y) {
+			continue; // Prevent writing beyond the room's bounds
+		}
 		switch (room) {
 		case roomIndex::ROOM1:
-			Room1[i] = templine;
+			Room1[currentLine] = templine;
 			break;
 		case roomIndex::ROOM2:
-			Room2[i] = templine;
+			Room2[currentLine] = templine;
 			break;
 		case roomIndex::ROOM3:
-			Room3[i] = templine;
+			Room3[currentLine] = templine;
 			break;
 		case roomIndex::VAULT:
-			Vault[i] = templine;
+			Vault[currentLine] = templine;
 			break;
 		}
 	}
-	inFile.close();
 }

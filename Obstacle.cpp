@@ -39,8 +39,7 @@ bool Obstacle::push(int force, Keyboard_bind dir) {
     for (const auto* obs : group) {
         Point p = obs->getPosition();
         Point target(p.getX() + dx, p.getY() + dy,' ');
-        if (!board->isValid(target) || board->isWall(target)) return false;
-
+        if (!board->isValid(target) || board->isWall(target)) { return false; }
         char targetChar = board->getCharAt(target);
         if (targetChar != ' ') {
             bool isSelfGroup = false;

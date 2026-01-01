@@ -13,10 +13,10 @@ void Bomb::explode(Screen& board, Player& p1, Player& p2) {
 	int by = position.getY(); // bomb y
 	for (int y = by-BOMB_RADIUS; y <= by + BOMB_RADIUS; y++) {
 		for (int x = bx - BOMB_RADIUS; x <= bx + BOMB_RADIUS; x++) {
-			if (x == 0 || x == MAX_X - 1 || y == 3 || y == MAX_Y - 1) {//if the explosion occurs on the game borders - skip
+			Point target(x, y);
+			if (!board.isValid(target)) {//if the explosion occurs on the game borders - skip
 				continue;
 			}
-			Point target(x, y);
 			if (board.isWall(target)) {//explode walls only if adjacent 
 				if (!(board.BoxDistance(x, y, position, BOMB_WALL_EFFECTIVE_RADIUS)))
 					continue;
@@ -25,7 +25,6 @@ void Bomb::explode(Screen& board, Player& p1, Player& p2) {
 				affectedPoints.push_back(target);
 			}
 			else{ //if (board.Distance(x, y, position, BOMB_RADIUS)){
-				if (!board.isValid(target)) continue; //none board tiles
 				if (isShielded(board, position, target)) continue;
 				char realCharAtBoard = board.getCharAt(target);
 				target.setChar(realCharAtBoard);

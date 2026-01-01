@@ -106,7 +106,7 @@ void Game::showMenu(bool& started){
 				break;
 			case '2':
 				SetColorfullGame();
-				changeRoom(roomIndex::ROOM1);
+				changeRoom(roomIndex::ROOM3);
 				inMenu = false;
 				break;
 			case '8':
