@@ -53,7 +53,7 @@ public:
 	
 	//gamecycle and initialization
     Screen();
-    void loadMap(int roomNumber); // Loads board from string array
+    void loadMap(int roomNumber, Point& doorPos); // Loads board from string array
     void loadSprings();
 	void saveRoom();
 	void setGameState(bool state) { gameState = state; }
@@ -117,7 +117,7 @@ private:
 	//gamecycle and initialization
 	void initializeRoomsArray();
 	void linkDoorsToKeysAndSwitches();
-	void loadItems(int doorIdOpen);
+	void loadItems(int doorIdOpen, Point& doorPos);
 	string loadRiddles();
 	//void loadWithRetry(string fileName, roomIndex room);
 	void loadFilesByType(bool type);

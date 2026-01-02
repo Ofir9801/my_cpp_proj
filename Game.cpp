@@ -61,10 +61,10 @@ void Game::run() {
 			board.updateLighting(player1.getPosition(), p1Prev, player1,
 								player2.getPosition(), p2Prev, player2);
 		}
-		player1.draw();
-		player2.draw();
 
 		Sleep(100);
+		player1.draw();
+		player2.draw();
 		
 		if (_kbhit()) {
 			char key = (char)_getch();
@@ -125,15 +125,24 @@ void Game::showMenu(bool& started){
 }
 
 void Game::changeRoom(roomIndex room){
-	int currentRoom = board.getCurrentRoom();
-	if (currentRoom < roomIndex::VICTORY) {
+	int prevRoom = board.getCurrentRoom();
+	if (prevRoom < roomIndex::VICTORY) {
 		board.saveRoom();
 	}
+	Point doorPos(PLAYER_1_START_X, PLAYER_1_START_Y);
 	int roomNumber = (int)room;
-	board.loadMap(roomNumber);
-	if (room != roomIndex::MENU && room != roomIndex::INSTRUCTIONS && room != roomIndex::VICTORY) {
-	player1.reset(Point(1, 4, objSigns::PLAYER1));
-	player2.reset(Point(75, 4, objSigns::PLAYER2));
+	board.loadMap(roomNumber, doorPos);
+	if (!isPlayableRoom(prevRoom)) {
+		player1.reset(Point(PLAYER_1_START_X, PLAYER_1_START_Y,objSigns::PLAYER1));
+		player2.reset(Point(PLAYER_2_START_X, PLAYER_2_START_Y, objSigns::PLAYER2));
+	}
+	else {
+		if (isPlayableRoom(room)) {
+			doorPos.setChar(objSigns::PLAYER1);
+			player1.reset(doorPos);
+			doorPos.setChar(objSigns::PLAYER2);
+			player2.reset(doorPos);
+		}
 	}
 	if (room == roomIndex::ROOM3)
 		board.showMessage("it is very dark in here, you will need something to light it up");

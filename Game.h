@@ -26,5 +26,7 @@ private:
 	bool isGameOver() const{ return board.getLives() <= 0 || !board.gameState; }
 	void showMenu(bool& started);//function to show the Game menu
 	void changeRoom(roomIndex room);
+	bool isPlayableRoom(roomIndex room) { return !(room == roomIndex::MENU || room == roomIndex::INSTRUCTIONS || room == roomIndex::VICTORY);}
+	bool isPlayableRoom(int room) { return isPlayableRoom(static_cast<roomIndex>(room)); }
 };
 

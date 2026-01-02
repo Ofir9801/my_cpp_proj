@@ -124,9 +124,7 @@ void SetTextColor(Color color);
 Color getColorForChar(char c);
 Color getColorForChar(objSigns sign);
 //file reading functions
-string ReadRoomLayoutFromFile(string FileName, roomIndex room);
 void ReadLegendFromFile(roomIndex room, int yOffset);
-void getAllBoardFileNames(std::vector<std::string>& vec_to_fill);
 string ReadRoomFromFile();
 roomIndex getRoomNumber(std::string fileName);
 void getAllFilePaths(std::vector<std::string>& vec_to_fill, std::string extension, std::string subFolder);

@@ -15,8 +15,7 @@ void gotoxy(int x, int y) {
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-void hideCursor()
-{
+void hideCursor(){
     HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO curInfo;
     GetConsoleCursorInfo(hStdOut, &curInfo);
@@ -28,13 +27,11 @@ void cls() {
     system("cls");
 }
 
-void SetTextColor(Color color)
-{
+void SetTextColor(Color color){
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), static_cast<WORD>(color));
 }
 
-Color getColorForChar(char c)
-{
+Color getColorForChar(char c){
 	if (c == objSigns::PLAYER1 || c == objSigns::PLAYER2)
 		return Color::CYAN;
 	else if (c == objSigns::KEY)
@@ -58,9 +55,74 @@ Color getColorForChar(char c)
 	else
 		return Color::WHITE;
 }
-Color getColorForChar(objSigns sign)
-{
+
+Color getColorForChar(objSigns sign){
 	return getColorForChar(static_cast<char>(sign));
+}
+
+string ReadRoomFromFile() {
+	std::vector<std::string> roomFilePaths;
+	getAllFilePaths(roomFilePaths, RoomsExtension, RoomsFolder); //change to const
+
+	if (roomFilePaths.empty())
+		return "Error: no files in directory that given";
+
+	for (const auto& fullPath : roomFilePaths) {
+		std::ifstream inFile(fullPath);
+		if (!inFile.is_open()) {
+			return "Error: Could not open file [" + fullPath + " ]";
+		}
+		roomIndex room;
+		try {
+			room = getRoomNumber(fullPath);
+		}
+		catch (const std::exception& e) {
+			return std::string(e.what());
+		}
+
+		roomLegendRows[static_cast<int>(room)] = -1;
+		int legendLocation = -1;
+		string templine;
+		bool gameRoom = isGameRoom(room);
+
+		for (int i = 0; i < MAX_Y; i++) {
+			if (!std::getline(inFile, templine)) {
+				templine = "";
+			}
+
+			if (gameRoom) {
+				size_t lPos = templine.find('L');
+				if (lPos != string::npos) {
+					if (lPos != 0)  return "Error in [" + fullPath + "] line " + std::to_string(i + 1) + ": Legend marker 'L' must be the start of the line";
+					if (templine.length() > MAX_X) return "Error in[" + fullPath + "] line " + std::to_string(i + 1) + ": Legend line is too long(max " + std::to_string(MAX_X) + " chars)";
+
+					legendLocation = i;
+					roomLegendRows[static_cast<int>(room)] = i;
+					i += LEGEND_SIZE - 1;
+					continue;
+				}
+			}
+
+			templine.resize(MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
+			WriteLineToRoom(room, i, templine);
+		}
+
+		inFile.close();
+
+		if (gameRoom) {
+			if (legendLocation != -1) {
+				try {
+					ReadLegendFromFile(room, legendLocation);
+				}
+				catch (const std::runtime_error& e) {
+					return "Error reading legend for [" + LegendPathWay + "]: " + string(e.what());
+				}
+			}
+			else
+				return "Error: L (represent for legend) is missing in [" + fullPath + "]";
+		}
+	}
+	return "";
 }
 
 void ReadLegendFromFile(roomIndex room, int yOffset) {
@@ -95,69 +157,6 @@ void getAllFilePaths(std::vector<std::string>& vec_to_fill, std::string extensio
 	}
 }
 
-string ReadRoomFromFile() {
-	std::vector<std::string> roomFilePaths;
-	getAllFilePaths(roomFilePaths, RoomsExtension, RoomsFolder); //change to const
-
-	if (roomFilePaths.empty())
-		return "Error: no files in directory that given";
-
-	for (const auto& fullPath : roomFilePaths) {
-		std::ifstream inFile(fullPath);
-		if (!inFile.is_open()) {
-			return "Error: Could not open file [" + fullPath + " ]";
-		}
-		roomIndex room;
-		try {
-			room = getRoomNumber(fullPath);
-		}catch (const std::exception& e){
-			return std::string(e.what());
-		}
-
-		roomLegendRows[static_cast<int>(room)] = -1;
-		int legendLocation = -1;
-		string templine;
-		bool gameRoom = isGameRoom(room);
-
-		for (int i = 0; i < MAX_Y; i++) {
-			if (!std::getline(inFile, templine)) {
-				templine = "";
-			}
-
-			if (gameRoom) {
-				size_t lPos = templine.find('L');
-				if (lPos != string::npos) {
-					if (lPos != 0)  return "Error in [" + fullPath + "] line " + std::to_string(i + 1) + ": Legend marker 'L' must be the start of the line";
-					if (templine.length() > MAX_X) return "Error in[" + fullPath + "] line " + std::to_string(i + 1) + ": Legend line is too long(max " + std::to_string(MAX_X) + " chars)";
-					
-					legendLocation = i;
-					roomLegendRows[static_cast<int>(room)] = i;
-					i += LEGEND_SIZE - 1;
-					continue;
-				}
-			}
-
-			templine.resize(MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
-			WriteLineToRoom(room, i, templine);
-		}
-
-		inFile.close();
-
-		if (gameRoom) {
-			if (legendLocation != -1) {
-				try {
-					ReadLegendFromFile(room, legendLocation);
-				} catch (const std::runtime_error& e) {
-					return "Error reading legend for [" + LegendPathWay + "]: " + string(e.what());
-				}
-			}
-			else
-				return "Error: L (represent for legend) is missing in [" + fullPath + "]";
-		}
-	}
-	return "";
-}
-
 roomIndex getRoomNumber(std::string fileName) {
 	std::string filename_prefix = std::filesystem::path(fileName).stem().string();
 	std::string lastTwoChars = "";
@@ -182,6 +181,7 @@ roomIndex getRoomNumber(std::string fileName) {
 		return roomIndex::VAULT;
 	throw std::runtime_error("Error: "+ fileName+" isn't written by the guidelines");
 }
+
 void WriteLineToRoom(roomIndex room, int lineIndex, const std::string& text) {
 	if (lineIndex < 0 || lineIndex >= MAX_Y) return;
 

@@ -275,7 +275,7 @@ bool Player::atDoor(unsigned char nextTile, Point nextPos){
 			return true;
 		}
 	}
-	else if (doorId == 0) { return OpenVictoryRoom(); }//In vault Room
+	else if (doorId == roomIndex::VICTORY) { return OpenVictoryRoom(); }//In vault Room
 	else { return OpenDoorWithKey(doorId, nextPos);}//not connected to a switch
 	
 }

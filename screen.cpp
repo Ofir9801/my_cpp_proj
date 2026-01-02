@@ -25,9 +25,11 @@ Screen::Screen() {
 	getAllFilePaths(RiddlePathWays, RiddlesExtension, RiddlesFolder);
 }
 
-void Screen::loadMap(int roomNumber){
+void Screen::loadMap(int roomNumber, Point& doorPos){
 	int lastRoom = currentRoom;
 	currentRoom = roomNumber;
+	const int legendY = roomLegendRows[currentRoom];
+
 	if (savedRooms.find(roomNumber)!=savedRooms.end()) { //load saved state
 		for (int i = 0; i < MAX_Y; i++) {
 			board[i] = savedRooms[currentRoom].layout[i];
@@ -39,16 +41,31 @@ void Screen::loadMap(int roomNumber){
 		keys = savedRooms[currentRoom].keys;
 		activeBombs = savedRooms[currentRoom].activeBombs;
 		riddles = savedRooms[currentRoom].riddles;
+		
+		if (lastRoom != roomIndex::MENU) {
+			char targetDoorChar = (char)('0' + lastRoom); // e.g., if coming from Room 1, look for '1'
+			bool found = false;
+
+			for (int y = 0; y < MAX_Y &&!inLegendBounds(legendY,y) && !found; y++) {
+				for (int x = 0; x < MAX_X && !found; x++) {
+					if (board[y][x] == targetDoorChar) {
+						doorPos.setX(x);
+						doorPos.setY(y);
+						found = true;
+					}
+				}
+			}
+		}
 	}
 	else { //first time loading the room
 		for (int i = 0; i < MAX_Y; i++) {
 			board[i] = Rooms[roomNumber][i];
 		}
 		if (lastRoom != roomIndex::MENU) {
-			loadItems(lastRoom);
+			loadItems(lastRoom, doorPos);
 		}
 		else {
-			loadItems(-1); //no door to open
+			loadItems(-1, doorPos); //no door to open
 		}
 		
 	}
@@ -67,13 +84,19 @@ void Screen::loadMap(int roomNumber){
 
 void Screen::drawMap() {
 	cls(); //clear the console
+	const int legendY = roomLegendRows[currentRoom];
 	if (isDarkRoom) {
-		for (int i = 0; i < 2; i++) {cout << board[i];}
+		if (legendY != -1) {
+			for (int i = 0; i < LEGEND_SIZE; i++) {
+				gotoxy(0, legendY + i);
+				std::cout << board[legendY + i];
+			}
+		}
 	}
 	else {
 		for (int i = 0; i < MAX_Y; i++) {
 			gotoxy(0, i);
-			if (i > 2 && colorToggle) {
+			if (!inLegendBounds(legendY,i) && colorToggle) {
 				for (int j = 0; j < MAX_X; j++) {
 					char c = board[i][j];
 					Color color = getColorForChar(c);
@@ -135,7 +158,7 @@ void Screen::showPlayerInfo(const Player& p) {
 	objSigns playerChar = (objSigns)p.getChar();
 	string inventory = CreateInventoryDisplay(p);
 	int legendY = roomLegendRows[currentRoom];
-	//if (legendY == -1) { legendY = 0; }
+	if (legendY == -1) { return; }
 
 	switch (playerChar) {
 	case objSigns::PLAYER1:
@@ -302,7 +325,7 @@ void Screen::clearMessegeArea(){
 	}
 }
 
-void Screen::loadItems(int doorIdOpen) {//enter the items from the board to the appropiete data structures
+void Screen::loadItems(int doorIdOpen, Point&doorPos) {//enter the items from the board to the appropiete data structures
 	switches.clear();
 	obstacles.clear();
 	doors.clear();
@@ -327,9 +350,12 @@ void Screen::loadItems(int doorIdOpen) {//enter the items from the board to the 
 			}
 			else if (isdigit(static_cast<unsigned char>(c))) {
 				int door_id = c - '0';
+				if (door_id == 9) { door_id = 0; }
 				doors[door_id] = Door(x, y, c);
 				if (door_id == doorIdOpen) {
 					doors[door_id].open();
+					doorPos.setX(x);
+					doorPos.setY(y);
 				}
 				else {
 					doorIDs.push_back(door_id);
@@ -688,6 +714,7 @@ void Screen::updateBombs(Player& p1, Player& p2) {
 		int time = activeBombs[i].getTimer();
 		setChar(activeBombs[i].getPosition(),'0' + time / 10);
 		if (activeBombs[i].shouldExplode()) {
+			setChar(activeBombs[i].getPosition(), ' ');
 			activeBombs[i].explode(*this, p1, p2);
 			setChar(activeBombs[i].getPosition(), ' ');
 			activeBombs.erase(activeBombs.begin() + i);
