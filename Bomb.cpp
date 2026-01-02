@@ -17,15 +17,7 @@ void Bomb::explode(Screen& board, Player& p1, Player& p2) {
 			if (!board.isValid(target)) {//if the explosion occurs on the game borders - skip
 				continue;
 			}
-			if (board.isWall(target)) {//explode walls only if adjacent 
-				if (!(board.BoxDistance(x, y, position, BOMB_WALL_EFFECTIVE_RADIUS)))
-					continue;
-				char realCharAtBoard = board.getCharAt(target);
-				target.setChar(realCharAtBoard);
-				affectedPoints.push_back(target);
-			}
-			else{ //if (board.Distance(x, y, position, BOMB_RADIUS)){
-				if (isShielded(board, position, target)) continue;
+			if (!isShielded(board, position, target)) {
 				char realCharAtBoard = board.getCharAt(target);
 				target.setChar(realCharAtBoard);
 				affectedPoints.push_back(target);
