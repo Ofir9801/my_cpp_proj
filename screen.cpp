@@ -44,7 +44,7 @@ void Screen::loadMap(int roomNumber, Point& doorPos){
 		riddles = savedRooms[currentRoom].riddles;
 		
 		if (lastRoom != roomIndex::MENU) {
-			char targetDoorChar = (char)('0' + lastRoom); // e.g., if coming from Room 1, look for '1'
+			char targetDoorChar = static_cast<char>('0' + lastRoom); // e.g., if coming from Room 1, look for '1'
 			bool found = false;
 
 			for (int y = 0; y < MAX_Y && !found; y++) {
@@ -240,13 +240,13 @@ void Screen::showMessage(string msg){
 void Screen::initializeRoomsArray() {
 	loadFilesByType(true);
 
-	Rooms[(int)roomIndex::MENU] = Menu;
-	Rooms[(int)roomIndex::INSTRUCTIONS] = Instructions;
-	Rooms[(int)roomIndex::ROOM1] = Room1;
-	Rooms[(int)roomIndex::ROOM2] = Room2;
-	Rooms[(int)roomIndex::ROOM3] = Room3;
-	Rooms[(int)roomIndex::VAULT] = Vault;
-	Rooms[(int)roomIndex::VICTORY] = EndingScreen;
+	Rooms[static_cast<int>(roomIndex::MENU)] = Menu;
+	Rooms[static_cast<int>(roomIndex::INSTRUCTIONS)] = Instructions;
+	Rooms[static_cast<int>(roomIndex::ROOM1)] = Room1;
+	Rooms[static_cast<int>(roomIndex::ROOM2)] = Room2;
+	Rooms[static_cast<int>(roomIndex::ROOM3)] = Room3;
+	Rooms[static_cast<int>(roomIndex::VAULT)] = Vault;
+	Rooms[static_cast<int>(roomIndex::VICTORY)] = EndingScreen;
 }
 
 void Screen::loadFilesByType(bool type) {

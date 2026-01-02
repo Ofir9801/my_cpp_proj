@@ -101,7 +101,7 @@ bool Bomb::isShielded(Screen& board, Point bombPos, Point targetPos) const{//bon
 	for (int i = 1; i < steps; ++i) {
 		currX += xStep;
 		currY += yStep;
-		Point p((int)round(currX), (int)round(currY));
+		Point p(static_cast<int>(round(currX)), static_cast<int>(round(currY)));
 
 		if (board.isWall(p)) return true; // true if a wall is found
 	}

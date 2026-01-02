@@ -67,7 +67,7 @@ void Game::run() {
 		player2.draw();
 		
 		if (_kbhit()) {
-			char key = (char)_getch();
+			char key = static_cast<char>(_getch());
 			if (key == ESC) { 
 				handlePause(exitGame, gamecycle);
 			}
@@ -130,7 +130,7 @@ void Game::changeRoom(roomIndex room){
 		board.saveRoom();
 	}
 	Point doorPos(PLAYER_1_START_X, PLAYER_1_START_Y);
-	int roomNumber = (int)room;
+	int roomNumber = static_cast<int>(room);
 	board.loadMap(roomNumber, doorPos);
 	if (isPlayableRoom(room)) {
 		if (!isPlayableRoom(prevRoom)) {
@@ -192,7 +192,7 @@ void Game::handlePause(bool& exitGame, int& gameCycle)
 	board.showMessage("PAUSED: ESC-Continue, H-Menu, R-Restart");
 
 	while (true) {
-		char choice = std::tolower((char)_getch());
+		char choice = std::tolower(static_cast<char>(_getch()));
 		if (choice == ESC) {
 			board.showMessage(EMPTYLINE);
 			board.drawMap();
@@ -220,7 +220,7 @@ void Game::handleGameOver(bool& exitGame, int& gameCycle)
 
 	while (true) {
 		if (_kbhit()) {
-			char choice = std::tolower((char)_getch());
+			char choice = std::tolower(static_cast<char>(_getch()));
 			if (choice == 'r') {
 				performRestart(exitGame, gameCycle);
 				break;
@@ -253,7 +253,7 @@ void Game::handleLevelCompletion() {
 	roomIndex player2Room = player2.getRoomOpen(); //the room number of the door opened by player 2
 	if (player1Room == player2Room) { changeRoom(player1Room); }//both players chose the same door
 	else {
-		string msg = "you chose different rooms!choose a room : " + std::to_string((int)player1Room) + " / " + std::to_string((int)player2Room);
+		string msg = "you chose different rooms!choose a room : " + std::to_string(static_cast<int>(player1Room)) + " / " + std::to_string(static_cast<int>(player2Room));
 		board.showMessage(msg);
 		while (true) {
 			if (_kbhit()) {
@@ -266,7 +266,7 @@ void Game::handleLevelCompletion() {
 						break;
 					}
 					else {
-						board.showMessage("Invalid choice. Please choose again between " + std::to_string((int)player1Room) + "/" + std::to_string((int)player2Room));
+						board.showMessage("Invalid choice. Please choose again between " + std::to_string(static_cast<int>(player1Room)) + "/" + std::to_string(static_cast<int>(player2Room)));
 					}
 				}
 			}

@@ -40,7 +40,7 @@ bool Player::addToInventory(objSigns item, Point pos)
 	if (ExtraInventory) {
 		for (int i = 0; i < INVENTORY_SIZE && !added; ++i) {
 			if (inventory[i] == ' ') {
-				inventory[i] = (char)item; //add item to inventory
+				inventory[i] = static_cast<char>(item); //add item to inventory
 				added = true;
 				if (item == objSigns::KEY)
 					board.addKeyToInventory(pos, this->getChar());
@@ -49,7 +49,7 @@ bool Player::addToInventory(objSigns item, Point pos)
 	}
 	else {
 		if (inventory[0] == ' ') {
-			inventory[0] = (char)item; //add item to inventory
+			inventory[0] = static_cast<char>(item); //add item to inventory
 			added = true;
 			if (item == objSigns::KEY)
 				board.addKeyToInventory(pos, this->getChar());
@@ -282,7 +282,7 @@ bool Player::atDoor(unsigned char nextTile, Point nextPos){
 
 void Player::RemoveKeyFromInventory(int keyDoorId) {
 	for (int i = 0; i < INVENTORY_SIZE; ++i) {
-		if (inventory[i] == (char)objSigns::KEY) {
+		if (inventory[i] == objSigns::KEY) {
 			board.RemoveKey(keyDoorId);
 			inventory[i] = ' ';
 			return;
@@ -336,7 +336,7 @@ bool Player::OpenVaultRoom() {
 	if (score >= MIN_SCORE) { //check if door is open and player has enough score to finish
 		clearFromScreen();
 		finishedLevel = true;
-		roomOpen = (int)roomIndex::VAULT;
+		roomOpen = static_cast<int>(roomIndex::VAULT);
 		return false;
 	}
 		//alert the player that he needs more score to finish
@@ -347,10 +347,10 @@ bool Player::OpenVaultRoom() {
 
 bool Player::OpenVictoryRoom() {
 	if (board.allRiddlesSolved()) {
-		board.openDoor((int)roomIndex::VICTORY);
+		board.openDoor(static_cast<int>(roomIndex::VICTORY));
 		clearFromScreen();
 		finishedLevel = true;
-		roomOpen = (int)roomIndex::VICTORY;
+		roomOpen = static_cast<int>(roomIndex::VICTORY);
 		return false;
 	}
 	else {
