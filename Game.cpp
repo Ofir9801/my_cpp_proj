@@ -101,7 +101,7 @@ void Game::showMenu(bool& started){
 			int key = _getch();
 			switch (key) {
 			case '1':
-				changeRoom(roomIndex::ROOM1);
+				changeRoom(roomIndex::VAULT);
 				inMenu = false;
 				break;
 			case '2':
