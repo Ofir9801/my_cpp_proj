@@ -17,7 +17,7 @@ void Game::run() {
 	hideCursor();
 	int gamecycle = 0;
 	bool started = true;
-	
+
 	showMenu(started);
 	
 	if (!started) {	return;	}
@@ -106,7 +106,7 @@ void Game::showMenu(bool& started){
 				break;
 			case '2':
 				SetColorfullGame();
-				changeRoom(roomIndex::ROOM3);
+				changeRoom(roomIndex::ROOM1);
 				inMenu = false;
 				break;
 			case '8':
@@ -132,18 +132,18 @@ void Game::changeRoom(roomIndex room){
 	Point doorPos(PLAYER_1_START_X, PLAYER_1_START_Y);
 	int roomNumber = (int)room;
 	board.loadMap(roomNumber, doorPos);
-	if (!isPlayableRoom(prevRoom)) {
-		player1.reset(Point(PLAYER_1_START_X, PLAYER_1_START_Y,objSigns::PLAYER1));
-		player2.reset(Point(PLAYER_2_START_X, PLAYER_2_START_Y, objSigns::PLAYER2));
-	}
-	else {
-		if (isPlayableRoom(room)) {
-			doorPos.setChar(objSigns::PLAYER1);
-			player1.reset(doorPos);
-			doorPos.setChar(objSigns::PLAYER2);
-			player2.reset(doorPos);
+	if (isPlayableRoom(room)) {
+		if (!isPlayableRoom(prevRoom)) {
+			player1.reset(Point(PLAYER_1_START_X, PLAYER_1_START_Y, objSigns::PLAYER1));
+			player2.reset(Point(PLAYER_2_START_X, PLAYER_2_START_Y, objSigns::PLAYER2));
 		}
-	}
+		else {
+				doorPos.setChar(objSigns::PLAYER1);
+				player1.reset(doorPos);
+				doorPos.setChar(objSigns::PLAYER2);
+				player2.reset(doorPos);
+			}
+		}
 	if (room == roomIndex::ROOM3)
 		board.showMessage("it is very dark in here, you will need something to light it up");
 }

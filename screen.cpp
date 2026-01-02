@@ -23,6 +23,7 @@ Screen::Screen() {
 	}
 	RiddlePathWays.clear();
 	getAllFilePaths(RiddlePathWays, RiddlesExtension, RiddlesFolder);
+	currentRoom = static_cast<int>(roomIndex::INSTRUCTIONS);//when start the game the first screen is menu
 }
 
 void Screen::loadMap(int roomNumber, Point& doorPos){
@@ -46,7 +47,8 @@ void Screen::loadMap(int roomNumber, Point& doorPos){
 			char targetDoorChar = (char)('0' + lastRoom); // e.g., if coming from Room 1, look for '1'
 			bool found = false;
 
-			for (int y = 0; y < MAX_Y &&!inLegendBounds(legendY,y) && !found; y++) {
+			for (int y = 0; y < MAX_Y && !found; y++) {
+				if (inLegendBounds(legendY, y)) { continue; }
 				for (int x = 0; x < MAX_X && !found; x++) {
 					if (board[y][x] == targetDoorChar) {
 						doorPos.setX(x);
