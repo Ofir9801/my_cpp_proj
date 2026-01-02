@@ -17,6 +17,7 @@ class Screen {
 private:
 	string board[MAX_Y];
 	string* Rooms[NUM_ROOMS];
+	string finalMessage = "";
 	int currentRoom = 0;
 	std::vector<Spring> springs;
 	std::vector<Switch> switches;
@@ -26,6 +27,7 @@ private:
 	std::map<Point, Key> keys;
 	std::map<Point, Riddle> riddles;
 	std::vector<Bomb> activeBombs;
+	std::vector<string>RiddlePathWays;
 	bool colorToggle = false;
 	bool isDarkRoom = false;
 	bool gameState = true;
@@ -61,10 +63,12 @@ public:
     void refreshSpringsDisplay(const Point& p1, const Point& p2) const;
     void showInstructionBinds() const;
     bool IsColor() const { return colorToggle; }
+	string getFinalMessage() { return finalMessage; }
     // UI
     void showPlayerInfo(const Player& p);
     void showMessage(string msg);
     void clearMessegeArea();
+	
 	// general board functions
     char getCharAt(const Point& p) const { return board[p.getY()][p.getX()]; }
     void setChar(const Point& p, char c);
@@ -111,11 +115,12 @@ public:
 	bool handleVaultRiddle(Point riddlePos);
 private:
 	//gamecycle and initialization
-	void initaializeRoomsArray();
+	void initializeRoomsArray();
 	void linkDoorsToKeysAndSwitches();
 	void loadItems(int doorIdOpen);
-	void loadRiddles();
-	void loadwithRetry(string fileName, roomIndex room);
+	string loadRiddles();
+	//void loadWithRetry(string fileName, roomIndex room);
+	void loadFilesByType(bool type);
 	bool isDestructible(const Point& p)const;
 	bool inLegendBounds(const int legendY, const int y) const;
 	// display
@@ -125,9 +130,9 @@ private:
 	// lighting system
 	void ProcessLightning(int cx, int cy, int radius, bool erase, const Point& p1, const Point& p2, const int r1, const int r2);
 	// game logic:Switches
-	void setconnection(int door_id);
+	void setConnection(int door_id);
 	// game logic: Riddles
-	Riddle ReadRiddleFromFile(const string& filePath, const Point pos, int riddleIndex, bool& error);
-	Riddle ReadVaultRiddleFromFile(const string& filePath, const Point pos, bool& error);
+	Riddle ReadRiddleFromFile(const string& filePath, const Point pos, int riddleIndex, string& errorMsg);
+	Riddle ReadVaultRiddleFromFile(const string& filePath, const Point pos, string& errorMsg);
 	void CheckExplodeNecessaryObject(int doorId);
 };

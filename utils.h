@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include <vector>
 
 using std::string;
 
@@ -104,18 +105,15 @@ inline string EndingScreen[MAX_Y];
 inline string Menu[MAX_Y];
 inline string Instructions[MAX_Y];
 
-inline const string Room1PathWay = "Rooms/Room1.txt";
-inline const string Room2PathWay = "Rooms/Room2.txt";
-inline const string Room3PathWay = "Rooms/Room3.txt";
-inline const string VaultPathWay = "Rooms/Vault.txt";
-inline const string EndingScreenPathWay = "Rooms/EndingScreen.txt";
-inline const string MenuPathWay = "Rooms/Menu.txt";
-inline const string InstructionsPathWay = "Rooms/Instructions.txt";
-inline const string LegendPathWay = "Rooms/Legend.txt";
-inline const string RiddlesRoom1PathWay = "Riddles/Riddles1.txt";
-inline const string RiddlesRoom2PathWay = "Riddles/Riddles2.txt";
-inline const string RiddlesRoom3PathWay = "Riddles/Riddles3.txt";
-inline const string RiddlesVaultPathWay = "Riddles/RiddleVault.txt";
+inline const string MenuPrefix = "Menu";
+inline const string InstructionsPrefix = "Instructions";
+inline const string VictoryPrefix = "Final";
+inline const string VaultPrefix = "Vault";
+inline const string RoomsFolder = "Rooms";
+inline const string RiddlesFolder = "Riddles";
+inline const string RoomsExtension = ".screen";
+inline const string RiddlesExtension = ".riddle";
+inline const string LegendPathWay = "Rooms/Legend.legend";
 
 //utility functions for screen handling
 void gotoxy(int x, int y);
@@ -128,6 +126,11 @@ Color getColorForChar(objSigns sign);
 //file reading functions
 string ReadRoomLayoutFromFile(string FileName, roomIndex room);
 void ReadLegendFromFile(roomIndex room, int yOffset);
+void getAllBoardFileNames(std::vector<std::string>& vec_to_fill);
+string ReadRoomFromFile();
+roomIndex getRoomNumber(std::string fileName);
+void getAllFilePaths(std::vector<std::string>& vec_to_fill, std::string extension, std::string subFolder);
+void WriteLineToRoom(roomIndex room, int lineIndex, const std::string& text);
 
 inline void gotoxy(INFO_SLOTS x, INFO_SLOTS y) { gotoxy(static_cast<int>(x), static_cast<int>(y)); }
 inline void gotoxy(INFO_SLOTS x, int y) { gotoxy(static_cast<int>(x), y); }

@@ -5,7 +5,6 @@
 #include "Spring.h"
 #include "Utils.h"
 #include <algorithm>
-#include <cctype> //  for tolower, isdigit
 #include <fstream>
 #include <iostream>
 #include <random>
@@ -18,10 +17,12 @@ using std::endl;
 using std::string;
 
 Screen::Screen() {
-	initaializeRoomsArray();
+	initializeRoomsArray();
 	for (int i = 0; i < MAX_Y; i++) {
 		board[i].resize(MAX_X, ' ');
 	}
+	RiddlePathWays.clear();
+	getAllFilePaths(RiddlePathWays, RiddlesExtension, RiddlesFolder);
 }
 
 void Screen::loadMap(int roomNumber){
@@ -211,16 +212,8 @@ void Screen::showMessage(string msg){
 	MessageTimer = TIMER_MESSAGE;
 }
 
-
-//change this function based on amir code!!! flag
-void Screen::initaializeRoomsArray() {
-	loadwithRetry(MenuPathWay, roomIndex::MENU);
-	loadwithRetry(InstructionsPathWay, roomIndex::INSTRUCTIONS);
-	loadwithRetry(Room1PathWay, roomIndex::ROOM1);
-	loadwithRetry(Room2PathWay, roomIndex::ROOM2);
-	loadwithRetry(Room3PathWay, roomIndex::ROOM3);
-	loadwithRetry(VaultPathWay, roomIndex::VAULT);
-	loadwithRetry(EndingScreenPathWay, roomIndex::VICTORY);
+void Screen::initializeRoomsArray() {
+	loadFilesByType(true);
 
 	Rooms[(int)roomIndex::MENU] = Menu;
 	Rooms[(int)roomIndex::INSTRUCTIONS] = Instructions;
@@ -231,14 +224,19 @@ void Screen::initaializeRoomsArray() {
 	Rooms[(int)roomIndex::VICTORY] = EndingScreen;
 }
 
-void Screen::loadwithRetry(string fileName, roomIndex room){
+void Screen::loadFilesByType(bool type) {
+	string errorMsg;
 	while (true) {
-		string errorMsg = ReadRoomLayoutFromFile(fileName, room);
+		//string errorMsg = ReadRoomLayoutFromFile(fileName, room);
+		if (type) //true = read room, false = read riddle
+			errorMsg = ReadRoomFromFile();
+		else
+			errorMsg = loadRiddles();
 		if (errorMsg.empty())
 			break;
 		cls();
 		std::cout << "########################################################" << std::endl;
-		std::cout << "CRITICAL ERROR LOADING MAP" << std::endl;
+		std::cout << "ERROR LOADING Game" << std::endl;
 		std::cout << "########################################################" << std::endl;
 		std::cout << errorMsg << std::endl << std::endl;
 		std::cout << "1. Fix the file externally." << std::endl;
@@ -246,13 +244,10 @@ void Screen::loadwithRetry(string fileName, roomIndex room){
 		std::cout << "3. Press 'ESC' to EXIT Game." << std::endl;
 		char c = _getch();
 		if (c == ESC) {
-			throw std::runtime_error("Game stopped by user due to file error: " + fileName);
+			throw std::runtime_error("Game stopped by user due to file error");
 		}
 	}
 }
-
-
-
 
 Obstacle* Screen::getObstacleAt(const Point& p) {
 	for (auto& obs : obstacles) {
@@ -330,7 +325,7 @@ void Screen::loadItems(int doorIdOpen) {//enter the items from the board to the 
 			else if (c == objSigns::OBSTACLE) {
 				obstacles.push_back(Obstacle(x, y, this, 1));
 			}
-			else if (isdigit((unsigned char)c)) {
+			else if (isdigit(static_cast<unsigned char>(c))) {
 				int door_id = c - '0';
 				doors[door_id] = Door(x, y, c);
 				if (door_id == doorIdOpen) {
@@ -349,7 +344,7 @@ void Screen::loadItems(int doorIdOpen) {//enter the items from the board to the 
 		}
 	}
 	linkDoorsToKeysAndSwitches();
-	loadRiddles();
+	loadFilesByType(false); //loading riddles from files
 	loadSprings();
 }
 
@@ -375,7 +370,7 @@ void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number 
 			break;
 		int currentDoorId = doorIdCopy[i];
 		switches[i].setTargetDoorId(currentDoorId);
-		setconnection(currentDoorId);
+		setConnection(currentDoorId);
 	}
 }
 
@@ -395,7 +390,7 @@ void Screen::openDoor(int door_id){
 	}
 }
 
-void Screen::setconnection(int door_id) {
+void Screen::setConnection(int door_id) {
 	auto it = doors.find(door_id);
 	if (it != doors.end()) {
 		it->second.setConnection(true);
@@ -526,14 +521,14 @@ void Screen::updateLighting(const Point& p1, const Point& p1Prev, const Player& 
 }
 
 bool Screen::BoxDistance(int x, int y, const Point& p, int radius) const {
-	int dx =std::abs(x - p.getX()); //calculate the the distance between two points by x
-	int dy = std::abs(y - p.getY()); //calculate the the distance between two points by y
+	int dx =std::abs(x - p.getX()); //calculate the distance between two points by x
+	int dy = std::abs(y - p.getY()); //calculate the distance between two points by y
 	return dx <= radius && dy <= radius;
 	//return (dx * dx + dy * dy) <= (radius * radius); //true if the given point is in player's light radius
 }
 bool Screen::RoundDistance(int x, int y, const Point& p, int radius) const {
-	int dx = x - p.getX(); //calculate the the distance between two points by x
-	int dy = y - p.getY(); //calculate the the distance between two points by y
+	int dx = x - p.getX(); //calculate the distance between two points by x
+	int dy = y - p.getY(); //calculate the distance between two points by y
 	return (dx * dx + dy * dy) <= (radius * radius); //true if the given point is in player's light radius
 }
 
@@ -663,6 +658,7 @@ void Screen::deleteSwitch(Point position){
 void Screen::deleteDoor(Point position){
 	int door_id = position.getChar() - '0';
 	auto it = doors.find(door_id);
+	if (door_id == 9) door_id = 0;
 	if (it != doors.end()) {
 		CheckExplodeNecessaryObject(door_id);
 		doors.erase(it);
@@ -671,9 +667,9 @@ void Screen::deleteDoor(Point position){
 
 void Screen::CheckExplodeNecessaryObject(int doorId) {
 	if (isRealDoor(doorId)) { //explode real door
+		finalMessage = "you blew up a necessary object for your progress. you lost the game!";
 		gameState = false;
-		showMessage("you blew up a necessary object for your progress. you lost the game!");
-		Sleep(2000);
+		Sleep(300);
 	}
 }
 
@@ -714,56 +710,55 @@ void Screen::decreaseLife() {
 	}
 }
 
-void Screen::loadRiddles(){
+string Screen::loadRiddles(){
 	auto it = riddles.begin();
 	int counter = 0;
-	
-	while (it != riddles.end())
+	string path;
+	for (auto& fileName: RiddlePathWays)
 	{
-		bool error = false;
-		Riddle temp;
-		switch ((roomIndex)currentRoom) {
-			case roomIndex::ROOM1:
-				temp = ReadRiddleFromFile(RiddlesRoom1PathWay,it->first, counter, error);
+		if (getRoomNumber(fileName) == currentRoom)
+		{
+			path = fileName;
 			break;
-			case roomIndex::ROOM2:
-				temp = ReadRiddleFromFile(RiddlesRoom2PathWay, it->first, counter, error);
-				break;
-			case roomIndex::ROOM3:
-				temp = ReadRiddleFromFile(RiddlesRoom3PathWay, it->first, counter, error);
-				break;
-			case roomIndex::VAULT:
-				temp = ReadVaultRiddleFromFile(RiddlesVaultPathWay, it->first, error);
-				break;
 		}
-		
-		if (error) {
-			throw std::runtime_error("Something wrong with the file riddle.txt");
-		}
-		else {
+			
+	}
+
+	while (it != riddles.end()){
+		string errorMsg = "";
+		Riddle temp;
+		if (currentRoom != roomIndex::VAULT)
+			temp = ReadRiddleFromFile(path, it->first, counter, errorMsg);
+		else
+			temp = ReadVaultRiddleFromFile(path, it->first, errorMsg);
+
+		if (errorMsg.empty()) {
 			it->second = std::move(temp);
 			++it;
 			counter++;
 		}
+		else {
+			return errorMsg;
+		}
 	}
+	return "";
 }
 
-
-Riddle Screen::ReadRiddleFromFile(const string& filePath,const Point pos, int riddleIndex, bool& error){
+Riddle Screen::ReadRiddleFromFile(const string& filePath,const Point pos, int riddleIndex, string& errorMsg){
 	std::ifstream inFile(filePath);
 	std::string question;
 	std::vector<std::string> options;
 	int correctIndex = 0;
 
 	if (!inFile.is_open()) {
-		error = true;
+		errorMsg = "Error: Could not open file [" + filePath + " ]";
 		return Riddle();
 	}
 	string templine;
 	for (int i = 0; i < riddleIndex; i++) { //skip to the right riddle index
 		for (int j = 0; j < 6	; j++) { //every riddle is represnt by 6 lines in riddle text file
 			if (!std::getline(inFile, templine)) {
-				error = true;
+				errorMsg = "Error: there is problem in [" + filePath + " ]";
 				return Riddle();
 			}
 		}
@@ -771,7 +766,7 @@ Riddle Screen::ReadRiddleFromFile(const string& filePath,const Point pos, int ri
 
 	for (int i = 0; i < 6; i++) {
 		if (!std::getline(inFile, templine)) {
-			error = true;
+			errorMsg = "Error: there is problem in [" + filePath + " ]";
 			return Riddle();
 		}
 		if (!templine.empty() && templine.back() == '\r') {
@@ -796,26 +791,21 @@ bool Screen::allRiddlesSolved() const{
 	}
 	return true;
 }
-Riddle Screen::ReadVaultRiddleFromFile(const string& filePath, const Point pos, bool& error) {
+Riddle Screen::ReadVaultRiddleFromFile(const string& filePath, const Point pos, string& errorMsg) {
 	std::ifstream inFile(filePath);
-	if (!inFile.is_open()) {
-		std::cout << "DEBUG: Failed to open: [" << filePath << "]" << std::endl;
-		// Check if the file even exists according to the OS
-		std::ifstream test(filePath.c_str());
-		if (!test) perror("System Error Message");
-	}
+	
 	std::string question;
 	std::string correctAnswer;
 	
 	if (!inFile.is_open()) {
-		error = true;
+		errorMsg = "Error: Could not open file [" + filePath + " ]";
 		return Riddle();
 	}
 	string templine;
 
 	for (int i = 0; i < 2; i++) {
 		if (!std::getline(inFile, templine)) {
-			error = true;
+			errorMsg = "Error: there is problem in [" + filePath + " ]";
 			return Riddle();
 		}
 		if (!templine.empty() && templine.back() == '\r') {
@@ -845,6 +835,3 @@ void Screen::saveRoom()
 	savedRooms[currentRoom].riddles = riddles;
 	savedRooms[currentRoom].visited = true;
 }
-
-
-

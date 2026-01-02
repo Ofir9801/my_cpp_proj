@@ -6,6 +6,7 @@
 #include "Player.h"
 
 class Riddle
+
 {//Riddle class to represent riddles on the board, quite self explanatory
 	Point position;
 	std::string question;
@@ -16,7 +17,7 @@ class Riddle
 public:
 	Riddle() :position(Point()), question(" "), correctIndex(-1) {}  //default constructor for empty door for map
 	Riddle(Point pos) :position(pos), question(" "), correctIndex(-1) {}
-	Riddle(Point pos,string question, string correctAnswer) :position(pos), question(question), correctAnswer(correctAnswer), correctIndex(-1) {}
+	Riddle(const Point& pos, std::string question, std::string correctAnswer) :position(pos), question(question), correctAnswer(correctAnswer), correctIndex(-1) {}
 	Riddle(Point pos, std::string q, const std::vector<std::string>& allOptions, int correctIndex) :
 		position(pos), question(q), options(allOptions), correctIndex(correctIndex) {
 		if (options.size() > 0 && correctIndex < options.size()) { correctAnswer = options[correctIndex]; }

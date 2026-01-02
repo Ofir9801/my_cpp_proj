@@ -27,9 +27,14 @@ Ofir Eren, id: 323958082
 	index of correct Answer: <number of the correct answer>
 	4 possible answers:<options[0:3]>
 
-- the stracture of the room.txt is: notice that each room txt is named according to the room number it belongs to, for example Room2.txt and saved in designated folder
-	L - for legend (must be 3 lines) - notice that the char L must be in most left place in line and in width of maximum 80 chars.
-	<room design> - by the size of 80x22 (legend is 3 lines extra)
+-when designing new room you must saved it in Rooms folder, and the name need to RoomXX.screen. the XX reprsent the number of room like Room01.screen
+the file must be:
+	contain the letter L - for legend (must be 3 lines) - notice that the char L must be in most left place in line and in width of maximum 80 chars.
+room design - by the size of 80x22 (legend is 3 lines extra)
+this build according answer from the forum: https://mama.mta.ac.il/mod/forum/discuss.php?d=3446
+	
+
+
 
 
 

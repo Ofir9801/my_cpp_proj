@@ -204,8 +204,8 @@ void Game::handlePause(bool& exitGame, int& gameCycle)
 void Game::handleGameOver(bool& exitGame, int& gameCycle)
 {
 	cls();
-	gotoxy(30, 10);
-	board.showMessage("Game Over! you lost!");
+	std::cout << board.getFinalMessage() << std::endl;
+	std::cout <<"Game Over! you lost!"<<std::endl;
 	Sleep(1000);
 	std::cout << "Press 'R' to Restart,'H' to go to Main Menu, ESC to exit the game";
 

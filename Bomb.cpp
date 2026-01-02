@@ -67,8 +67,9 @@ void Bomb::destroyCell(Screen& board, Player& p1, Player& p2, Point target) {
 			board.deleteSwitch(target);
 			board.setChar(target, ' ');
 		}
-		else if (isdigit(c)){board.deleteDoor(target); 
-		board.setChar(target, 'X');
+		else if (isdigit(c)){
+			board.deleteDoor(target); 
+			board.setChar(target, 'X');
 		}
 		else{ board.setChar(target, ' '); }
 	}
