@@ -67,7 +67,7 @@ void Game::run() {
 		Sleep(100);
 		
 		if (_kbhit()) {
-			char key = _getch();
+			char key = (char)_getch();
 			if (key == ESC) { 
 				handlePause(exitGame, gamecycle);
 			}
@@ -183,7 +183,7 @@ void Game::handlePause(bool& exitGame, int& gameCycle)
 	board.showMessage("PAUSED: ESC-Continue, H-Menu, R-Restart");
 
 	while (true) {
-		char choice = std::tolower(_getch());
+		char choice = std::tolower((char)_getch());
 		if (choice == ESC) {
 			board.showMessage(EMPTYLINE);
 			board.drawMap();
@@ -211,7 +211,7 @@ void Game::handleGameOver(bool& exitGame, int& gameCycle)
 
 	while (true) {
 		if (_kbhit()) {
-			char choice = std::tolower(_getch());
+			char choice = std::tolower((char)_getch());
 			if (choice == 'r') {
 				performRestart(exitGame, gameCycle);
 				break;
@@ -248,7 +248,7 @@ void Game::handleLevelCompletion() {
 		board.showMessage(msg);
 		while (true) {
 			if (_kbhit()) {
-				int key = _getch();
+				size_t key = _getch();
 				if (key <= '9' && key >= '0') {
 					size_t chosenRoom = key - '0';
 

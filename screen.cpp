@@ -761,7 +761,7 @@ Riddle Screen::ReadRiddleFromFile(const string& filePath,const Point pos, int ri
 	}
 	string templine;
 	for (int i = 0; i < riddleIndex; i++) { //skip to the right riddle index
-		for (int j = 0; j < 6; j++) { //every riddle is represnt by 6 lines in riddle text file
+		for (int j = 0; j < 6	; j++) { //every riddle is represnt by 6 lines in riddle text file
 			if (!std::getline(inFile, templine)) {
 				error = true;
 				return Riddle();

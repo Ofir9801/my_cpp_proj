@@ -9,7 +9,7 @@ using std::string;
 
 void gotoxy(int x, int y) {
     std::cout.flush();
-    COORD coord;
+	COORD coord;
     coord.X = x;
     coord.Y = y;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);

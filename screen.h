@@ -17,7 +17,7 @@ class Screen {
 private:
 	string board[MAX_Y];
 	string* Rooms[NUM_ROOMS];
-	size_t currentRoom = 0;
+	int currentRoom = 0;
 	std::vector<Spring> springs;
 	std::vector<Switch> switches;
 	std::vector<Obstacle> obstacles;
@@ -71,7 +71,7 @@ public:
 	void setChar(const Point& p, objSigns sign);
     bool isWall(const Point& p) const;
     bool isValid(const Point& p) const;
-    size_t getCurrentRoom() const { return currentRoom; }
+    int getCurrentRoom() const { return currentRoom; }
     // lighting system
     bool isDark() const { return isDarkRoom; }
     void updateLighting(const Point& p1, const Point& p1Prev, const Player& player1,

@@ -13,7 +13,7 @@ bool Riddle::engage(Player& player){
 	std::cout << question << std::endl;
 	std::cout << "----------------" << std::endl;
 	std::cout << "Press 1-4 to answer..." << std::endl;
-	for(int i = 1; i <= options.size(); ++i) {
+	for(size_t i = 1; i <= options.size(); ++i) {
 		std::cout << i << ". " << options[i - 1] << std::endl;
 	}
 	while (true) {//waiting for a proper answer from user
