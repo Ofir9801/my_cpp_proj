@@ -129,6 +129,9 @@ void Screen::drawVictoryRoom() {
 		else {
 			cout << board[i];
 		}
+		string msg = "FINAL TEAM SCORE: " + std::to_string(sharedScore);
+		gotoxy(X_SCORE_PRINT, Y_SCORE_PRINT);
+		showMessage(msg);
 	}
 }
 
