@@ -19,8 +19,9 @@ Ofir Eren, id: 323958082
 - We made a 'Vault' room as the 4th room with difficult challenge to solve - exploding many obstacles and solving one last great riddle to finish the challenge.
 - this is unique riddle that requires players to collect 3 digits from the previous rooms(riddle answers) and combine them to one final answer.
   * If you are having a tough time answering, the correct answer is '132'.
-- by completing all the riddles in room 2, the player get another inventory slot as a reward. if they want to dispose one item they will get message to choose which item to dispose.(press 1 or 2)
-- when the players enter different rooms, they will need to choose which room they want to enter and both players will be in that room.
+- By completing all the riddles in room 2, the player get another inventory slot as a reward. if they want to dispose one item they will get message to choose which item to dispose.(press 1 or 2)
+- When the players enter different rooms, they will need to choose which room they want to enter and both players will be in that room. 
+- Nowwhen entering to a new room you spawn to each room from the door you entered also, you may travel back to the room you came from by entering the door you came from.
 
 - the stracture of the riddle txt is: notice that each riddle txt is named according to the room number it belongs to, for example room2riddle.txt and saved in designated folder
 	Riddle: <riddle question>
