@@ -96,8 +96,6 @@ inline constexpr int STARTING_LIVES = 4;
 inline int constexpr TIMER_MESSAGE = 15;
 inline int constexpr LEGEND_SIZE = 3;
 inline int roomLegendRows[NUM_ROOMS];
-inline int constexpr X_SCORE_PRINT = MAX_X / 2;
-inline int constexpr Y_SCORE_PRINT = MAX_Y - 5;
 
 inline string Room1[MAX_Y];
 inline string Room2[MAX_Y];

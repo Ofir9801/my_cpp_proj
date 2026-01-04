@@ -115,7 +115,8 @@ void Screen::drawMap() {
 }
 
 void Screen::drawVictoryRoom() {
-	cls();
+		cls();
+
 	for (int i = 0; i < MAX_Y; i++) {
 		gotoxy(0, i);
 		if (i > 2) {
@@ -129,10 +130,13 @@ void Screen::drawVictoryRoom() {
 		else {
 			cout << board[i];
 		}
-		string msg = "FINAL TEAM SCORE: " + std::to_string(sharedScore);
-		gotoxy(X_SCORE_PRINT, Y_SCORE_PRINT);
-		showMessage(msg);
+		
 	}
+	string msg = "FINAL TEAM SCORE: " + std::to_string(sharedScore);
+	int printCoordx = MAX_X / 2 - msg.size() / 2;
+	int printCoordy = MAX_Y - 5;
+	gotoxy(printCoordx, printCoordy);
+	cout << msg;
 }
 
 bool Screen::isWall(const Point& p) const {
