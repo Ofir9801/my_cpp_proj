@@ -67,7 +67,7 @@ public:
     // UI
     void showPlayerInfo(const Player& p);
     void showMessage(string msg);
-    void clearMessegeArea();
+    void clearMessegeArea(bool forceClean = false);
 	
 	// general board functions
     char getCharAt(const Point& p) const { return board[p.getY()][p.getX()]; }

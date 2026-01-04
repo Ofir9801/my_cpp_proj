@@ -31,9 +31,9 @@ void Game::run() {
 
 	while (exitGame) {
 		if (firstMessage) {
-			board.showMessage("Welcome to the Adventure Game! some doors will lead you to other rooms.");
-			Sleep(2000);
-			board.clearMessegeArea();
+			board.showMessage("Welcome to the Adventure Game!");
+			Sleep(1500);
+			board.clearMessegeArea(true);
 			firstMessage = false;
 		}
 
@@ -101,7 +101,7 @@ void Game::showMenu(bool& started){
 			int key = _getch();
 			switch (key) {
 			case '1':
-				changeRoom(roomIndex::VAULT);
+				changeRoom(roomIndex::ROOM1);
 				inMenu = false;
 				break;
 			case '2':
