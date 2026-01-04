@@ -160,7 +160,7 @@ void Game::SetColorfullGame() {
 	board.colorToggle = true;
 }
 
-void Game::performRestart(bool& exitGame, int& gameCycle){
+void Game::performRestart(int& gameCycle){
 	board.resetStats();
 	board.clearSavedRooms();
 	board.currentRoom = (size_t)roomIndex::MENU;
@@ -192,14 +192,14 @@ void Game::handlePause(bool& exitGame, int& gameCycle)
 	board.showMessage("PAUSED: ESC-Continue, H-Menu, R-Restart");
 
 	while (true) {
-		char choice = std::tolower(static_cast<char>(_getch()));
+		char choice = static_cast<char>(std::tolower(_getch()));
 		if (choice == ESC) {
 			board.showMessage(EMPTYLINE);
 			board.drawMap();
 			break;
 		}
 		else if (choice == 'r') {
-			performRestart(exitGame,gameCycle);
+			performRestart(gameCycle);
 			break;
 		}
 		else if (choice == 'h') {
@@ -220,9 +220,9 @@ void Game::handleGameOver(bool& exitGame, int& gameCycle)
 
 	while (true) {
 		if (_kbhit()) {
-			char choice = std::tolower(static_cast<char>(_getch()));
+			char choice = static_cast<char>(std::tolower(_getch()));
 			if (choice == 'r') {
-				performRestart(exitGame, gameCycle);
+				performRestart(gameCycle);
 				break;
 			}
 			else if (choice == 'h') {
@@ -249,9 +249,9 @@ void Game::handleLevelCompletion() {
 	}
 
 	if (!player1.hasFinished() || !player2.hasFinished()) { return; }
-	roomIndex player1Room = player1.getRoomOpen(); //the room number of the door opened by player 1
-	roomIndex player2Room = player2.getRoomOpen(); //the room number of the door opened by player 2
-	if (player1Room == player2Room) { changeRoom(player1Room); }//both players chose the same door
+	int player1Room = player1.getRoomOpen(); //the room number of the door opened by player 1
+	int player2Room = player2.getRoomOpen(); //the room number of the door opened by player 2
+	if (player1Room == player2Room) { changeRoom(static_cast<roomIndex>( player1Room)); }//both players chose the same door
 	else {
 		string msg = "you chose different rooms!choose a room : " + std::to_string(static_cast<int>(player1Room)) + " / " + std::to_string(static_cast<int>(player2Room));
 		board.showMessage(msg);

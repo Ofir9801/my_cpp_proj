@@ -133,7 +133,7 @@ void Screen::drawVictoryRoom() {
 		
 	}
 	string msg = "FINAL TEAM SCORE: " + std::to_string(sharedScore);
-	int printCoordx = MAX_X / 2 - msg.size() / 2;
+	int printCoordx = MAX_X / 2 -static_cast<int>( msg.size()) / 2;
 	int printCoordy = MAX_Y - 5;
 	gotoxy(printCoordx, printCoordy);
 	cout << msg;
@@ -274,7 +274,7 @@ void Screen::loadFilesByType(bool type) {
 		std::cout << "1. Fix the file externally." << std::endl;
 		std::cout << "2. Press 'r' to RETRY." << std::endl;
 		std::cout << "3. Press 'ESC' to EXIT Game." << std::endl;
-		char c = _getch();
+		char c = static_cast<char>(_getch());
 		if (c == ESC) {
 			throw std::runtime_error("Game stopped by user due to file error");
 		}
@@ -727,7 +727,7 @@ void Screen::updateBombs(Player& p1, Player& p2) {
 	for (size_t i = 0; i < activeBombs.size(); ) {
 		activeBombs[i].tick();
 		int time = activeBombs[i].getTimer();
-		setChar(activeBombs[i].getPosition(),'0' + time / 10);
+		setChar(activeBombs[i].getPosition(),static_cast<char>( '0' + time / 10));
 		if (activeBombs[i].shouldExplode()) {
 			setChar(activeBombs[i].getPosition(), ' ');
 			activeBombs[i].explode(*this, p1, p2);

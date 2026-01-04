@@ -10,8 +10,8 @@ using std::string;
 void gotoxy(int x, int y) {
     std::cout.flush();
 	COORD coord;
-    coord.X = x;
-    coord.Y = y;
+    coord.X = static_cast<short>(x);
+    coord.Y = static_cast<short>(y);
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 

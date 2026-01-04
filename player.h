@@ -47,7 +47,7 @@ public:
 	char getChar() const { return position.getChar(); }
 	Point getPosition() const { return position; }
 	bool hasFinished() const { return finishedLevel; }
-	roomIndex getRoomOpen() const { return (roomIndex)roomOpen; }
+	int getRoomOpen() const { return static_cast<int>(roomOpen); }
 	//spring handlement
 	void SetSpringState(int force, Keyboard_bind direction);
 private:

@@ -18,7 +18,7 @@ bool Riddle::engage(Player& player){
 	}
 	while (true) {//waiting for a proper answer from user
 		if (_kbhit()) {
-			char key = _getch();
+			char key = static_cast<char>(_getch());
 			if (key >= '1' && key < '1' + options.size()) {
 				int choiceIndex = key - '1';
 				if (choiceIndex == correctIndex) {

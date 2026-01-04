@@ -11,7 +11,7 @@ class Game{
 	Player player1;
 	Player player2;
 	bool messageShown = false;
-	void performRestart(bool& exitGame, int& gameCycle);
+	void performRestart(int& gameCycle);
 	void PerformGoToMenu(bool& exitGame, int& gameCycle);
 	void handlePause(bool& exitGame, int& gameCycle);
 	void handleGameOver(bool& exitGame, int& gameCycle);

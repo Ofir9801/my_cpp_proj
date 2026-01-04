@@ -143,6 +143,9 @@ inline bool operator==(char c, objSigns sign) { //overload operator == for enum 
 inline bool operator==(int n, roomIndex index) { //overload operator == for enum class roomIndex
 	return n == static_cast<int>(index);
 }
+inline bool operator==(roomIndex index, int n) { //overload operator == for enum class roomIndex
+	return static_cast<int>(index) == n;
+}
 inline bool operator>= (int n, roomIndex index) { //overload operator >= for enum class roomIndex
 	return n >= static_cast<int>(index);
 }
