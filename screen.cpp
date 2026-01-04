@@ -317,12 +317,18 @@ void Screen::refreshSpringsDisplay(const Point& p1, const Point& p2) const {
 	}
 }
 
-void Screen::clearMessegeArea(){
-	if (MessageTimer > 0) {
-		MessageTimer--;
-		if (MessageTimer == 0) {
-			gotoxy(MESSAGES_POS::MES_X, roomLegendRows[currentRoom] + MESSAGES_POS::MES_Y);
-			std::cout << EMPTYLINE<<std::flush;
+void Screen::clearMessegeArea(bool forceClean){
+	if (forceClean) {
+		gotoxy(MESSAGES_POS::MES_X, roomLegendRows[currentRoom] + MESSAGES_POS::MES_Y);
+		std::cout << EMPTYLINE << std::flush;
+	}
+	else {
+		if (MessageTimer > 0) {
+			MessageTimer--;
+			if (MessageTimer == 0) {
+				gotoxy(MESSAGES_POS::MES_X, roomLegendRows[currentRoom] + MESSAGES_POS::MES_Y);
+				std::cout << EMPTYLINE << std::flush;
+			}
 		}
 	}
 }
