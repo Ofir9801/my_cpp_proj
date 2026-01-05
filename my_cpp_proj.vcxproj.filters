@@ -13,6 +13,10 @@
     <ClCompile Include="Spring.cpp" />
     <ClCompile Include="Switch.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="Steps.cpp" />
+    <ClCompile Include="Results.cpp" />
+    <ClCompile Include="Event.cpp" />
+    <ClCompile Include="AutoGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bomb.h" />
@@ -27,6 +31,10 @@
     <ClInclude Include="Spring.h" />
     <ClInclude Include="Switch.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="Steps.h" />
+    <ClInclude Include="Results.h" />
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="AutoGame.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitattributes" />

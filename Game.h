@@ -24,9 +24,11 @@ private:
 	bool isSpecialKey(int key) const{ return key == 0 || key == 224; } //when keyboard presses special keys like arrows
 	void SetColorfullGame();
 	bool isGameOver() const{ return board.getLives() <= 0 || !board.gameState; }
-	void showMenu(bool& started);//function to show the Game menu
-	void changeRoom(roomIndex room);
 	bool isPlayableRoom(roomIndex room) { return !(room == roomIndex::MENU || room == roomIndex::INSTRUCTIONS || room == roomIndex::VICTORY);}
 	bool isPlayableRoom(int room) { return isPlayableRoom(static_cast<roomIndex>(room)); }
+protected:
+	virtual bool getInput(char& c);
+	virtual void showMenu(bool& started);//function to show the Game menu
+	void changeRoom(roomIndex room);
 };
 

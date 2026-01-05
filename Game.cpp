@@ -65,9 +65,8 @@ void Game::run() {
 		Sleep(100);
 		player1.draw();
 		player2.draw();
-		
-		if (_kbhit()) {
-			char key = static_cast<char>(_getch());
+		char key;
+		if (getInput(key)) {
 			if (key == ESC) { 
 				handlePause(exitGame, gamecycle);
 			}
@@ -119,6 +118,8 @@ void Game::showMenu(bool& started){
 				started = false;
 				inMenu = false;
 				break;
+			//case '3'
+				//function to read save data
 			}
 		}
 	}
@@ -146,6 +147,14 @@ void Game::changeRoom(roomIndex room){
 		}
 	if (room == roomIndex::ROOM3)
 		board.showMessage("it is very dark in here, you will need something to light it up");
+}
+
+bool Game::getInput(char& c){
+	if (_kbhit()) {
+		c = _getch();
+		return true;
+	}
+	return false;
 }
 
 void Game::updateSwitches() {
@@ -207,6 +216,8 @@ void Game::handlePause(bool& exitGame, int& gameCycle)
 			PerformGoToMenu(exitGame, gameCycle);
 			break;
 		}
+		//choice == 's'
+
 	}
 }
 
