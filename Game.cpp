@@ -7,11 +7,17 @@
 #include "Screen.h"
 #include <random>
 #include <algorithm>
+#include <chrono>
 #include <cctype> //  for tolower, isdigit
 
 Game::Game() :
+	random_seed(static_cast<long>(std::chrono::system_clock::now().time_since_epoch().count())),
+	board(random_seed),
 	player1(Point(PLAYER_1_START_X, PLAYER_1_START_Y, objSigns::PLAYER1), keys1, board),
-	player2(Point(PLAYER_2_START_X, PLAYER_2_START_Y, objSigns::PLAYER2), keys2, board) {}
+	player2(Point(PLAYER_2_START_X, PLAYER_2_START_Y, objSigns::PLAYER2), keys2, board) 
+{	
+	steps.setRandomSeed(random_seed);
+}
 
 void Game::run() {
 	hideCursor();

@@ -5,12 +5,19 @@
 #include "Obstacle.h"
 #include "Door.h"
 #include "Riddle.h"
+#include "Steps.h"
+#include "Results.h"
 
-class Game{
+class Game {
+	unsigned int random_seed;
 	Screen board;
 	Player player1;
 	Player player2;
 	bool messageShown = false;
+	Steps steps;
+	
+	Results results;
+
 	void performRestart(int& gameCycle);
 	void PerformGoToMenu(bool& exitGame, int& gameCycle);
 	void handlePause(bool& exitGame, int& gameCycle);
@@ -21,14 +28,17 @@ public:
 	void run(); //function to run the main Game loop
 private:
 	void updateSwitches();
-	bool isSpecialKey(int key) const{ return key == 0 || key == 224; } //when keyboard presses special keys like arrows
+	bool isSpecialKey(int key) const { return key == 0 || key == 224; } //when keyboard presses special keys like arrows
 	void SetColorfullGame();
-	bool isGameOver() const{ return board.getLives() <= 0 || !board.gameState; }
-	bool isPlayableRoom(roomIndex room) { return !(room == roomIndex::MENU || room == roomIndex::INSTRUCTIONS || room == roomIndex::VICTORY);}
+	bool isGameOver() const { return board.getLives() <= 0 || !board.gameState; }
+	bool isPlayableRoom(roomIndex room) { return !(room == roomIndex::MENU || room == roomIndex::INSTRUCTIONS || room == roomIndex::VICTORY); }
 	bool isPlayableRoom(int room) { return isPlayableRoom(static_cast<roomIndex>(room)); }
 protected:
 	virtual bool getInput(char& c);
 	virtual void showMenu(bool& started);//function to show the Game menu
 	void changeRoom(roomIndex room);
+	void setSeed(unsigned int seed) { random_seed = seed; }
+	unsigned int getSeed() const { return random_seed; }
+
 };
 

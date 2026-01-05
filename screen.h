@@ -9,6 +9,7 @@
 #include "Bomb.h"
 #include <vector>
 #include <map>
+#include <random>
 
 class Player; //forward declaration to avoid circular dependency
 using std::string;
@@ -34,6 +35,7 @@ private:
 	int sharedLives = STARTING_LIVES;
 	int sharedScore = 0;
 	int MessageTimer = 0;
+	std::mt19937 rng;
 
 	struct RoomState { //to save the state of each room
 		std::vector<string> layout;          
@@ -52,7 +54,7 @@ public:
 	friend class Game;
 	
 	//gamecycle and initialization
-    Screen();
+    Screen(unsigned int seed);
     void loadMap(int roomNumber, Point& doorPos); // Loads board from string array
     void loadSprings();
 	void saveRoom();

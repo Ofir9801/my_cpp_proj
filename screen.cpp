@@ -16,7 +16,7 @@ using std::cout;
 using std::endl;
 using std::string;
 
-Screen::Screen() {
+Screen::Screen(unsigned int seed) {
 	initializeRoomsArray();
 	for (int i = 0; i < MAX_Y; i++) {
 		board[i].resize(MAX_X, ' ');
@@ -24,6 +24,7 @@ Screen::Screen() {
 	RiddlePathWays.clear();
 	getAllFilePaths(RiddlePathWays, RiddlesExtension, RiddlesFolder);
 	currentRoom = static_cast<int>(roomIndex::INSTRUCTIONS);//when start the game the first screen is menu
+	rng.seed(seed);
 }
 
 void Screen::loadMap(int roomNumber, Point& doorPos){
@@ -392,11 +393,8 @@ void Screen::loadItems(int doorIdOpen, Point&doorPos) {//enter the items from th
 void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number of switches and  is equal to the number of doors
 	std::vector <int> doorIdCopy = doorIDs;  //make copy of doorIds vector 
 
-	std::random_device rd;  //use gemini to get known of the shuffle algorithm and how to integrate it with the code
-	std::mt19937 g(rd());	//the prompt is "give me idea to connect between doors id to switches and keys in randomize pattern in complexicity lower than o(n^2)
-	//logic: Use std::shuffle to randomize connections between doors, keys, and switches.
 	int currentIndex = 0;
-	std::shuffle(doorIdCopy.begin(), doorIdCopy.end(), g);
+	std::shuffle(doorIdCopy.begin(), doorIdCopy.end(), rng);
 	auto it = keys.begin();
 	while (it != keys.end() && currentIndex < doorIdCopy.size()) {
 			int currentDoorId = doorIdCopy[currentIndex];
@@ -405,7 +403,7 @@ void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number 
 			currentIndex++;
 	}
 	
-	std::shuffle(doorIdCopy.begin(), doorIdCopy.end(), g);
+	std::shuffle(doorIdCopy.begin(), doorIdCopy.end(), rng);
 	for (int i = 0; i < switches.size(); i++) {
 		if (i >= doorIdCopy.size())
 			break;
