@@ -24,7 +24,8 @@ public:
 	void showMenu(bool& started) override;
 	unsigned int getSeed() const { return random_seed; }
 	void wait(int ms)override;
-	void draw()override;
+	void drawMap()override;
+	void drawPlayer() override;
 	void onGameEvent(const Event& e) override;
 };
 

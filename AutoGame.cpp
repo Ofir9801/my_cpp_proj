@@ -45,8 +45,11 @@ void AutoGame::showMenu(bool& started)
     changeRoom(/*get from file */ );
 }
 
-void AutoGame::draw() {
-    if (!isSilent)Game::draw();
+void AutoGame::drawMap() {
+    if (!isSilent) Game::drawMap();
+}
+void AutoGame::drawPlayer() {
+    if (!isSilent) Game::drawPlayer();
 }
 
 void AutoGame::onGameEvent(const Event& e){

@@ -35,7 +35,8 @@ protected:
 	Player player2;
 	size_t gameCycle = 0;
 	virtual bool getInput(char& c, size_t iteration) = 0;
-	virtual void draw();
+	virtual void drawMap(); 
+	virtual void drawPlayer();
 	virtual void wait(int ms);
 	virtual void showMenu(bool& started);//function to show the Game menu
 	virtual void changeRoom(roomIndex room);

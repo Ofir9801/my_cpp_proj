@@ -26,7 +26,8 @@ void Game::run() {
 	
 	if (!started) {	return;	}
 	board.resetStats();
-	draw();
+	drawMap();
+	drawPlayer();
 	/*board.drawMap();
 	player1.draw();
 	player2.draw();*/
@@ -68,9 +69,10 @@ void Game::run() {
 								player2.getPosition(), p2Prev, player2);
 		}
 		wait(100);
+		drawPlayer();
 		//check that
-		player1.draw();
-		player2.draw();
+	/*	player1.draw();
+		player2.draw();*/
 		char key;
 		if (getInput(key, gameCycle)) {
 			if (key == ESC) { 
@@ -305,8 +307,11 @@ void Game::reportResultError(const std::string& message, size_t iteration) {
 	(void)_getch();
 }
 
-void Game::draw() {
+void Game::drawMap() {
 	board.drawMap();
+}
+void Game::drawPlayer()
+{
 	player1.draw();
 	player2.draw();
 }
