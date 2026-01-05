@@ -155,6 +155,16 @@ void Player::SetSpringState(int force, Keyboard_bind direction)
 	position.setDirection(direction);
 }
 
+bool Player::ImportantKeyPressed(char c)
+{
+	for (char k : p_keys) {
+		if (std::tolower((unsigned char)k) == std::tolower(c)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 int Player::computeStepsToTake() const {
 	return (springCyclesLeft > 0) ? currentForce : 1;
 }

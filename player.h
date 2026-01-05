@@ -50,6 +50,7 @@ public:
 	int getRoomOpen() const { return static_cast<int>(roomOpen); }
 	//spring handlement
 	void SetSpringState(int force, Keyboard_bind direction);
+	bool ImportantKeyPressed(char c);
 private:
 	//handle player movement
 	int computeStepsToTake() const;

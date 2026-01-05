@@ -1,18 +1,16 @@
 #pragma once
 #include <iostream>
-
-class Event
-
-{
-public:
-	enum EventValue { hitBomb, finished, noResult };
-private:
-	std::pair<size_t, std::string> action;
+#include "utils.h"
+class Event{
+	EventType type;
+	size_t iteration;
 	char playerSign;
 public:
-	Event(size_t iteration, std::string action, char player) :action(iteration,action),playerSign(player){}
-
-
+	Event(size_t iteration, EventType t, char player) :iteration(iteration), type(t), playerSign(player){}
+	std::string toString() const;
+	size_t getIteration()const { return iteration; }
+	EventType getEventType()const { return type; }
+	char getPlayer()const { return playerSign; }
 
 };
 

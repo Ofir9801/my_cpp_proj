@@ -1,27 +1,24 @@
 #pragma once
-
 #include <list>
 #include <string>
+#include "utils.h"
 
 class Results {
-public:
-	enum ResultValue { hitBomb, finished, noResult };
-private:
-	std::list<std::pair<size_t, ResultValue>> results; // pair: iteration, result
+	std::list<Event> results; // pair: iteration, result
 public:
 	static Results loadResults(const std::string& filename);
 	void saveResults(const std::string& filename) const;
-	void addResult(size_t iteration, ResultValue result) {
-		results.push_back({ iteration, result });
+	void addResult(Event e) {
+		results.push_back(e);
 	}
-	std::pair<size_t, ResultValue> popResult() {
-		if (results.empty()) return { 0, Results::noResult };
+	Event popResult() {
+		if (results.empty()) return Event( 0, EventType::NO_EVENT,' ');
 		auto result = results.front();
 		results.pop_front();
 		return result;
 	}
 	bool isFinishedBy(size_t iteration) const {
-		return results.empty() || results.back().first <= iteration;
+		return results.empty() || results.back().getIteration()<= iteration;
 	}
 	size_t getNextBombIteration() const;
 };

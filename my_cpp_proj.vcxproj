@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -135,6 +135,7 @@
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="Results.cpp" />
     <ClCompile Include="Riddle.cpp" />
+    <ClCompile Include="SaveGame.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Spring.cpp" />
     <ClCompile Include="Steps.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="Point.h" />
     <ClInclude Include="Results.h" />
     <ClInclude Include="Riddle.h" />
+    <ClInclude Include="SaveGame.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Spring.h" />
     <ClInclude Include="Steps.h" />

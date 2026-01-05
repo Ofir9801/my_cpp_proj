@@ -4,7 +4,7 @@
 
 class Steps {
 	long randomSeed = 0;
-	std::list<std::pair<size_t, char>> steps; // pair: iteration, step
+	std::list<std::pair<size_t, char>> steps; // pair: iteration, step change to list of events
 public:
 	static Steps loadSteps(const std::string& filename);
 	void saveSteps(const std::string& filename) const;
@@ -25,5 +25,6 @@ public:
 		steps.pop_front();
 		return step;
 	}
+	bool isEmpty() { return steps.empty(); }
 };
 

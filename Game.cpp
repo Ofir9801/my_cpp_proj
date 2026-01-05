@@ -7,30 +7,29 @@
 #include "Screen.h"
 #include <random>
 #include <algorithm>
-#include <chrono>
 #include <cctype> //  for tolower, isdigit
 
 Game::Game() :
-	random_seed(static_cast<long>(std::chrono::system_clock::now().time_since_epoch().count())),
-	board(random_seed),
+	board(0),
 	player1(Point(PLAYER_1_START_X, PLAYER_1_START_Y, objSigns::PLAYER1), keys1, board),
 	player2(Point(PLAYER_2_START_X, PLAYER_2_START_Y, objSigns::PLAYER2), keys2, board) 
-{	
-	steps.setRandomSeed(random_seed);
+{
+	board.setGame(this);
 }
 
 void Game::run() {
 	hideCursor();
-	int gamecycle = 0;
+	gameCycle = 0;
 	bool started = true;
 
 	showMenu(started);
 	
 	if (!started) {	return;	}
 	board.resetStats();
-	board.drawMap();
+	draw();
+	/*board.drawMap();
 	player1.draw();
-	player2.draw();
+	player2.draw();*/
 
 	bool exitGame = true;
 	bool firstMessage = true;
@@ -45,7 +44,8 @@ void Game::run() {
 
 		if (board.currentRoom == roomIndex::VICTORY) {
 			board.showMessage("Press Any key to finish the game");
-			(void)_getch();
+			char c;
+			getInput(c, gameCycle);
 			exitGame = false;
 			continue;
 		}
@@ -67,14 +67,14 @@ void Game::run() {
 			board.updateLighting(player1.getPosition(), p1Prev, player1,
 								player2.getPosition(), p2Prev, player2);
 		}
-
-		Sleep(100);
+		wait(100);
+		//check that
 		player1.draw();
 		player2.draw();
 		char key;
-		if (getInput(key)) {
+		if (getInput(key, gameCycle)) {
 			if (key == ESC) { 
-				handlePause(exitGame, gamecycle);
+				handlePause(exitGame, gameCycle);
 			}
 			else if (isSpecialKey(key)) {
 				(void)_getch(); //ignore special keys like arrows
@@ -85,14 +85,14 @@ void Game::run() {
 			}
 		}
 
-		if(isGameOver()) {
-			handleGameOver(exitGame, gamecycle);
+		if(isGameOver(gameCycle)) {
+			handleGameOver(exitGame, gameCycle);
 			if (!exitGame) { return; }
 			continue;
 		}
 		
 		handleLevelCompletion();
-		gamecycle++;
+		gameCycle++;
 	}
 	cls();
 }
@@ -155,7 +155,12 @@ void Game::changeRoom(roomIndex room){
 		board.showMessage("it is very dark in here, you will need something to light it up");
 }
 
-bool Game::getInput(char& c){
+bool Game::ImportantkeyPressed(char c)
+{
+	return player1.ImportantKeyPressed(c)|| player2.ImportantKeyPressed(c);
+}
+
+bool Game::getInput(char& c, size_t iteration){
 	if (_kbhit()) {
 		c = _getch();
 		return true;
@@ -175,7 +180,7 @@ void Game::SetColorfullGame() {
 	board.colorToggle = true;
 }
 
-void Game::performRestart(int& gameCycle){
+void Game::performRestart(size_t& gameCycle){
 	board.resetStats();
 	board.clearSavedRooms();
 	board.currentRoom = (size_t)roomIndex::MENU;
@@ -186,7 +191,7 @@ void Game::performRestart(int& gameCycle){
 	gameCycle = 0;
 }
 
-void Game::PerformGoToMenu(bool& exitGame, int& gameCycle)
+void Game::PerformGoToMenu(bool& exitGame, size_t& gameCycle)
 {
 	board.clearSavedRooms();
 	board.resetStats();
@@ -202,7 +207,7 @@ void Game::PerformGoToMenu(bool& exitGame, int& gameCycle)
 	}
 }
 
-void Game::handlePause(bool& exitGame, int& gameCycle)
+void Game::handlePause(bool& exitGame, size_t& gameCycle)
 {
 	board.showMessage("PAUSED: ESC-Continue, H-Menu, R-Restart");
 
@@ -227,7 +232,7 @@ void Game::handlePause(bool& exitGame, int& gameCycle)
 	}
 }
 
-void Game::handleGameOver(bool& exitGame, int& gameCycle)
+void Game::handleGameOver(bool& exitGame, size_t& gameCycle)
 {
 	cls();
 	std::cout << board.getFinalMessage() << std::endl;
@@ -236,8 +241,9 @@ void Game::handleGameOver(bool& exitGame, int& gameCycle)
 	std::cout << "Press 'R' to Restart,'H' to go to Main Menu, ESC to exit the game";
 
 	while (true) {
-		if (_kbhit()) {
-			char choice = static_cast<char>(std::tolower(_getch()));
+		char choice;
+		if (getInput(choice,gameCycle)) {
+			choice = std::tolower(choice);
 			if (choice == 'r') {
 				performRestart(gameCycle);
 				break;
@@ -290,6 +296,26 @@ void Game::handleLevelCompletion() {
 		}
 	}
 }
+
+void Game::reportResultError(const std::string& message, size_t iteration) {
+	system("cls");
+	std::cout << message << '\n';
+	std::cout << "Iteration: " << iteration << '\n';
+	std::cout << "Press any key to continue to next screens (if any)" << std::endl;
+	(void)_getch();
+}
+
+void Game::draw() {
+	board.drawMap();
+	player1.draw();
+	player2.draw();
+}
+
+void Game::wait(int ms) {
+	Sleep(ms);
+}
+
+
 
 
 

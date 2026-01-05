@@ -67,6 +67,16 @@ enum class Color {//when colors are enabled, this is how we access colors
 	YELLOW = 14,
 	WHITE = 15
 };
+
+enum class EventType {
+	DOOR_OPEN,
+	BOMB_EXPLODE,
+	RIDDLE_SOLVED,
+	LEVEL_FINISHED,
+	GAME_OVER,
+	NO_EVENT
+};
+
 //constants of basic game handling
 inline constexpr char ESC = 27;
 inline const string EMPTYLINE = "                                                                                ";

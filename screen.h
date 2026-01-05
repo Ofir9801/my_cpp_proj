@@ -12,6 +12,7 @@
 #include <random>
 
 class Player; //forward declaration to avoid circular dependency
+class Game;
 using std::string;
 
 class Screen {
@@ -36,6 +37,8 @@ private:
 	int sharedScore = 0;
 	int MessageTimer = 0;
 	std::mt19937 rng;
+	unsigned int currentSeed;
+	Game* game = nullptr;
 
 	struct RoomState { //to save the state of each room
 		std::vector<string> layout;          
@@ -54,12 +57,15 @@ public:
 	friend class Game;
 	
 	//gamecycle and initialization
-    Screen(unsigned int seed);
+    Screen(unsigned int seed = 0);
     void loadMap(int roomNumber, Point& doorPos); // Loads board from string array
     void loadSprings();
 	void saveRoom();
 	void setGameState(bool state) { gameState = state; }
 	void clearSavedRooms() { savedRooms.clear(); }
+	void setSeed(unsigned int seed);
+	unsigned int getSeed () const { return currentSeed; }
+	void setGame(Game* g) { game = g; }
     // display
     void drawMap();
     void refreshSpringsDisplay(const Point& p1, const Point& p2) const;

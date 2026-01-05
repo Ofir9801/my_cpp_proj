@@ -11,6 +11,8 @@
 #include <string>
 #include <windows.h>
 #include <conio.h>
+#include <chrono>
+#include "Game.h"
 
 using std::cout;
 using std::endl;
@@ -24,7 +26,15 @@ Screen::Screen(unsigned int seed) {
 	RiddlePathWays.clear();
 	getAllFilePaths(RiddlePathWays, RiddlesExtension, RiddlesFolder);
 	currentRoom = static_cast<int>(roomIndex::INSTRUCTIONS);//when start the game the first screen is menu
-	rng.seed(seed);
+	if (seed == 0) {
+		seed = static_cast<long>(std::chrono::system_clock::now().time_since_epoch().count());
+	}
+	setSeed(seed);
+}
+
+void Screen::setSeed(unsigned int seed) {
+	currentSeed = seed;
+	rng.seed(currentSeed);
 }
 
 void Screen::loadMap(int roomNumber, Point& doorPos){
