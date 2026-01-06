@@ -1,5 +1,5 @@
 adv_world.steps format:
-[Random Seed Long]
+[Random Seed] [color toggle flag]    //0 - B&W, 1 - Colored
 [Number of Steps]
 [Iteration] [Char]
 [Iteration] [Char]
