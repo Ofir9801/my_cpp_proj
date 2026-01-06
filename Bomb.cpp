@@ -25,8 +25,9 @@ void Bomb::explode(Screen& board, Player& p1, Player& p2) {
 		}
 	}
 	for (const auto& p : affectedPoints) {
-		board.setChar(p, 'B');//for visual purposes
-
+		if (!board.IsSilent()) {
+			board.setChar(p, 'B');//for visual purposes
+		}
 	}
 	Sleep(300);
 	for (const auto& p : affectedPoints) {

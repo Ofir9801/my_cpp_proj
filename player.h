@@ -22,6 +22,7 @@ class Player
 	Screen& board; //reference to the Game Screen
 	bool handleSpecialObjects(char nextTile, Point nextPos, int force);
 	Keyboard_bind springDir = Keyboard_bind::STAY; //direction of the flight
+	
 public:
 	//ctor
 	Player(const Point& point, const string(&keys), Screen& theScreen) :board(theScreen), position(point), p_keys(keys) {
@@ -31,7 +32,8 @@ public:
 	}
 	//handle player movement
 	void move(); //function to move the Player in the current direction
-	void draw();
+	void drawToScreen();
+	//void draw();
 	void handleKeyPressed(char key_pressed);
 	void reset(Point newPosition);
 	void clearFromScreen();

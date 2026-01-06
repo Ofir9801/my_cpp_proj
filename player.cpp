@@ -5,16 +5,17 @@
 #include <conio.h>
 #include <windows.h>
 
-void Player::draw()
-{
-	{
-		if (board.IsColor()) {
-			char c = position.getChar();
-			position.draw(c, color);
-		}
-		else { position.draw(Color::WHITE); }
-	}
-}
+//void Player::draw()
+//{
+//	if (!board.IsSilent())
+//	{
+//		if (board.IsColor()) {
+//			char c = position.getChar();
+//			position.draw(c, color);
+//		}
+//		else { position.draw(Color::WHITE); }
+//	}
+//}
 
 void Player::handleKeyPressed(char key_pressed) {
 	if (springCyclesLeft > 0) return; //disable changing direction during spring flight
@@ -76,7 +77,11 @@ void Player::dispose()
 					board.setChar(position, c);
 					if (c == objSigns::KEY) {board.DisposeKeyToScreen(this->getChar(), position);}
 					else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
-					position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
+					drawToScreen();
+
+					/*if (!board.IsSilent()) {
+						position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
+					}*/
 					inventory[index] = ' ';
 					return;
 				}
@@ -92,7 +97,10 @@ void Player::dispose()
 			board.setChar(position, c);
 			if (c == objSigns::KEY) {board.DisposeKeyToScreen(this->getChar(), position);}
 			else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
-			position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
+			drawToScreen();
+			/*if (!board.IsSilent()) {
+				position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
+			}*/
 			inventory[index] = ' ';
 			return;
 		}
@@ -107,7 +115,10 @@ void Player::dispose()
 		board.setChar(position, c);
 		if (c == objSigns::KEY) {board.DisposeKeyToScreen(this->getChar(), position);}
 		else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
-		position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
+		drawToScreen();
+		/*if (!board.IsSilent()) {
+			position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
+		}*/
 		inventory[0] = ' ';
 	}
 	else {
@@ -207,7 +218,8 @@ bool Player::takeStep() {
 			}
 		}
 		position = nextCandidate;
-		position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
+		drawToScreen();
+		//position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
 		return false; // can continue
 	}
 }
@@ -265,6 +277,18 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 	return false;
 }
 
+void Player::drawToScreen()
+{
+	if (board.IsSilent()) return;
+	if (board.IsColor()) {
+		// Assuming you have access to getColorForChar or similar logic
+		position.draw(getColorForChar(position.getChar()));
+	}
+	else {
+		position.draw(Color::WHITE);
+	}
+}
+
 void Player::reset(Point newPosition) {
 	position = newPosition;
 	state = true;
@@ -272,7 +296,8 @@ void Player::reset(Point newPosition) {
 	springCyclesLeft = 0;
 	currentForce = 1;
 	finishedLevel = false;
-	draw();
+	drawToScreen();
+	//draw();
 }
 
 bool Player::atDoor(unsigned char nextTile, Point nextPos){

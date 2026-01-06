@@ -7,6 +7,7 @@ AutoGame::AutoGame(bool isSilent) :isSilent(isSilent) {
     results = Results::loadResults(resultsFileName);
     unsigned int fileSeed = steps.getRandomSeed();
     board.setSeed(fileSeed);
+    board.setSilentMode(isSilent);
 
     if (steps.isColorMode()) {
         SetColorfullGame();
@@ -27,9 +28,9 @@ bool AutoGame::getInput(char& c, size_t iteration)
     
 }
 
-void AutoGame::handleGameOver(bool& exitGame, size_t& iterarion)
+void AutoGame::handleGameOver(bool& exitGame)
 {
-    onGameEvent(Event(iterarion, EventType::GAME_OVER, ' ', "GameEnded. Score: " + std::to_string(board.getScore())));
+    onGameEvent(Event(gameCycle, EventType::GAME_OVER, ' ', "GameEnded. Score: " + std::to_string(board.getScore())));
     exitGame = false;
 }
 
@@ -78,13 +79,12 @@ void AutoGame::onGameEvent(const Event& e){
 }
 
 void AutoGame::wait(int ms) {
-    if (!isSilent) Game::wait(ms);
+    if (!isSilent) Game::wait(ms / 2);
 }
 
 void AutoGame::run() {
     Game::run(); // Run the normal game loop
-
-    // AFTER the game loop finishes, check if we missed anything
+    cls();
     if (!results.isEmpty()) {
         reportResultError("Test Failed: Game ended but expected results still remain!", gameCycle);
     }

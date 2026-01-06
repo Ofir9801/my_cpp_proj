@@ -33,6 +33,7 @@ private:
 	bool colorToggle = false;
 	bool isDarkRoom = false;
 	bool gameState = true;
+	bool isSilent = false;
 	int sharedLives = STARTING_LIVES;
 	int sharedScore = 0;
 	int MessageTimer = 0;
@@ -67,6 +68,9 @@ public:
 	unsigned int getSeed () const { return currentSeed; }
 	void setGame(Game* g) { game = g; }
 	Game* getGame(){ return game; }
+	void setSilentMode(bool silent) { isSilent = silent; }
+	bool IsSilent()const { return isSilent; }
+
     // display
     void drawMap();
     void refreshSpringsDisplay(const Point& p1, const Point& p2) const;
@@ -77,7 +81,6 @@ public:
     void showPlayerInfo(const Player& p);
     void showMessage(string msg);
     void clearMessegeArea(bool forceClean = false);
-	
 	// general board functions
     char getCharAt(const Point& p) const { return board[p.getY()][p.getX()]; }
     void setChar(const Point& p, char c);

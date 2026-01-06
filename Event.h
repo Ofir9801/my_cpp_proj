@@ -13,7 +13,7 @@ public:
 	char getPlayer()const { return playerSign; }
 	std::string getPayload() const { return payload; }
 	std::string eventFormat() const {
-		return std::to_string(iteration) + " " + std::to_string(static_cast<int>(type)) + playerSign + " " + payload;
+		return std::to_string(iteration) + " " + std::to_string(static_cast<int>(type)) + " " + playerSign + " " + payload;
 	}
 
 };

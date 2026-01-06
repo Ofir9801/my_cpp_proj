@@ -87,14 +87,15 @@ void Screen::loadMap(int roomNumber, Point& doorPos){
 	else
 		isDarkRoom = false;
 	if (roomNumber == roomIndex::VICTORY && colorToggle) {
-		drawVictoryRoom();
+		if (!isSilent) { drawVictoryRoom();}
 	}
 	else {
-		drawMap();
+		if(!isSilent){ drawMap(); }
+		
 	}
-	if (game) {
+	/*if (game) {
 		game->onGameEvent(Event(game->getIteration(), EventType::ROOM_CHANGE, ' ', "Moved to Room " + std::to_string(roomNumber)));
-	}	
+	}*/	
 }
 
 void Screen::drawMap() {
@@ -177,6 +178,7 @@ string Screen::CreateInventoryDisplay(const Player & p) {
 }
 
 void Screen::showPlayerInfo(const Player& p) {
+	if (isSilent) { return; }
 	objSigns playerChar = (objSigns)p.getChar();
 	string inventory = CreateInventoryDisplay(p);
 	int legendY = roomLegendRows[currentRoom];
@@ -209,17 +211,17 @@ void Screen::setChar(const Point& p, char c) {
 	if (inLegendBounds(legendY, p.getY())) {
 		return;
 	}
-
-	board[p.getY()][p.getX()] = c;
-	gotoxy(p.getX(), p.getY());
-	if (colorToggle) {
-		SetTextColor(getColorForChar(c));
-		cout << c;
-		SetTextColor(Color::WHITE); //reset to default color
-		return;
-	}
-	else
-		cout << c;
+	//if (isSilent) return;
+		board[p.getY()][p.getX()] = c;
+		gotoxy(p.getX(), p.getY());
+		if (colorToggle) {
+			SetTextColor(getColorForChar(c));
+			cout << c;
+			SetTextColor(Color::WHITE); //reset to default color
+			return;
+		}
+		else
+			cout << c;
 }
 void Screen::setChar(const Point& p, objSigns sign) {
 	char c = static_cast<char>(sign);
@@ -250,7 +252,9 @@ void Screen::showInstructionBinds() const
 		cout << (unsigned char)toupper(keys2[i]); //print uppercase
 	}
 }
-void Screen::showMessage(string msg){
+void Screen::showMessage(string msg) {
+	if (isSilent) { return; }
+
 	gotoxy(MESSAGES_POS::MES_X, roomLegendRows[currentRoom] + MESSAGES_POS::MES_Y);
 	string extraSpace(MAX_X - msg.length(), ' ');
 	std::cout << msg <<extraSpace <<std::flush;
@@ -328,11 +332,14 @@ Spring* Screen::getSpringAt(const Point& p){
 	return nullptr;
 }
 void Screen::refreshSpringsDisplay(const Point& p1, const Point& p2) const {
+	
 	for (const auto& s : springs) {
 		bool p1On = s.isPlayerOn(p1);
 		bool p2On = s.isPlayerOn(p2);
 		if (!p1On && !p2On) {
-			s.draw(Point(0, 0),*this, false);
+			if (!isSilent) {
+				s.draw(Point(0, 0), *this, false);
+			}
 		}
 	}
 }

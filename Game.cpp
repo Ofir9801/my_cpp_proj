@@ -28,17 +28,14 @@ void Game::run() {
 	board.resetStats();
 	drawMap();
 	drawPlayer();
-	/*board.drawMap();
-	player1.draw();
-	player2.draw();*/
-
+	
 	bool exitGame = true;
 	bool firstMessage = true;
 
 	while (exitGame) {
 		if (firstMessage) {
 			board.showMessage("Welcome to the Adventure Game!");
-			Sleep(1500);
+			wait(1500);
 			board.clearMessegeArea(true);
 			firstMessage = false;
 		}
@@ -70,9 +67,7 @@ void Game::run() {
 		}
 		wait(100);
 		drawPlayer();
-		//check that
-	/*	player1.draw();
-		player2.draw();*/
+
 		char key;
 		if (getInput(key, gameCycle)) {
 			if (key == ESC) { 
@@ -88,7 +83,7 @@ void Game::run() {
 		}
 
 		if(isGameOver()) {
-			handleGameOver(exitGame, gameCycle);
+			handleGameOver(exitGame);
 			if (!exitGame) { return; }
 			continue;
 		}
@@ -134,6 +129,7 @@ void Game::showMenu(bool& started){
 }
 
 void Game::changeRoom(roomIndex room){
+	onGameEvent(Event(getIteration(), EventType::ROOM_CHANGE, ' ', "Moved to Room " + std::to_string(static_cast<int>(room))));
 	int prevRoom = board.getCurrentRoom();
 	if (prevRoom < roomIndex::VICTORY) {
 		board.saveRoom();
@@ -236,8 +232,8 @@ void Game::handlePause(bool& exitGame)
 
 	}
 }
-// Base class version: no need of iterarion
-void Game::handleGameOver(bool& exitGame,size_t& /*iterarion*/)
+
+void Game::handleGameOver(bool& exitGame)
 {
 	cls();
 	std::cout << board.getFinalMessage() << std::endl;
@@ -312,8 +308,8 @@ void Game::drawMap() {
 }
 void Game::drawPlayer()
 {
-	player1.draw();
-	player2.draw();
+	player1.drawToScreen();
+	player2.drawToScreen();
 }
 
 void Game::wait(int ms) {

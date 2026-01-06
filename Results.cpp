@@ -19,7 +19,7 @@ std::string Results::readResultsFromFile(const std::string& filename, Results& o
 	if (results_file.fail()) return "Error: Invalid format (Size missing)";
 
 	std::string dummy;
-	std::getline(results_file, dummy); // Consume newline
+	std::getline(results_file, dummy);
 
 	for (size_t i = 0; i < size; i++) {
 		size_t iteration;
@@ -27,7 +27,9 @@ std::string Results::readResultsFromFile(const std::string& filename, Results& o
 		char player;
 		std::string payload;
 
-		results_file >> iteration >> typeInt >> player;
+		results_file >> iteration >> typeInt;
+		results_file.get(); 
+		results_file.get(player);
 		if (results_file.fail()) return "Error: Invalid format at entry " + std::to_string(i);
 
 		std::getline(results_file, payload);
@@ -68,7 +70,7 @@ void Results::saveResults(const std::string& filename) const {
 	std::ofstream results_file(filename);
 	results_file << results.size() << std::endl;
 	for (const auto& event : results) {
-		results_file << event.eventFormat();
+		results_file << event.eventFormat()<<std::endl;
 	}
 	results_file.close();
 }

@@ -15,7 +15,7 @@ class AutoGame :public Game
 	std::string stepsFileName;
 	std::string resultsFileName;
 	
-	void handleGameOver(bool& exitGame, size_t& iterarion) override;
+	void handleGameOver(bool& exitGame) override;
 	void getFileNames();
 	
 public:

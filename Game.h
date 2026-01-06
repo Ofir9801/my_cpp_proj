@@ -11,6 +11,7 @@
 
 class Game {
 	bool messageShown = false;
+
 public:
 	Game(); //default constructor to initialize the Game components	
 	virtual ~Game(){}
@@ -26,7 +27,7 @@ private:
 	void performRestart();
 	void PerformGoToMenu(bool& exitGame);
 	virtual void handlePause(bool& exitGame);
-	virtual void handleGameOver(bool& exitGame, size_t& iterarion);
+	virtual void handleGameOver(bool& exitGame);
 	void handleLevelCompletion();
 protected:
 	Screen board;
