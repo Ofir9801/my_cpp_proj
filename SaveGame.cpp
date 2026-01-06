@@ -31,7 +31,7 @@ void SaveGame::setFileNames()
 bool SaveGame::getInput(char& c, size_t iteration)
 {
     if (_kbhit()) {
-        c = _getch();
+        c = static_cast<char>(_getch());
         
         if (ImportantkeyPressed(c)) {
             steps.addStep(iteration, c);

@@ -75,8 +75,8 @@ enum class EventType {
 	RIDDLE_WRONG_ANSWER,
 	ROOM_CHANGE,
 	LIFE_LOST,
-	GAME_OVER,
-	NO_EVENT
+	NO_EVENT,
+	GAME_OVER
 };
 
 //constants of basic game handling

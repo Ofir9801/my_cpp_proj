@@ -161,10 +161,13 @@ bool Game::ImportantkeyPressed(char c)
 {
 	return (c == ESC) || player1.ImportantKeyPressed(c)|| player2.ImportantKeyPressed(c);
 }
+// Base class version: no need of event e
+void Game::onGameEvent(const Event& /*e*/) {}
 
-bool Game::getInput(char& c, size_t iteration){
+// Base class version: no need of iterarion
+bool Game::getInput(char& c, size_t /*iteration*/) {
 	if (_kbhit()) {
-		c = _getch();
+		c =static_cast<char>(_getch());
 		return true;
 	}
 	return false;
@@ -233,8 +236,8 @@ void Game::handlePause(bool& exitGame)
 
 	}
 }
-
-void Game::handleGameOver(bool& exitGame,size_t& iterarion)
+// Base class version: no need of iterarion
+void Game::handleGameOver(bool& exitGame,size_t& /*iterarion*/)
 {
 	cls();
 	std::cout << board.getFinalMessage() << std::endl;
@@ -245,7 +248,7 @@ void Game::handleGameOver(bool& exitGame,size_t& iterarion)
 	while (true) {
 		char choice;
 		if (getInput(choice,gameCycle)) {
-			choice = std::tolower(choice);
+			choice =static_cast<char>(std::tolower(choice));
 			if (choice == 'r') {
 				performRestart();
 				break;

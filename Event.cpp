@@ -9,6 +9,7 @@ std::string Event::toString() const
     case EventType::RIDDLE_SOLVED: typeStr = "RIDDLE_SOLVED"; break;
     case EventType::ROOM_CHANGE: typeStr = "ROOM_CHANGE"; break;
     case EventType::GAME_OVER: typeStr = "GAME_OVER"; break;
-    case EventType::NO_EVENT: typeStr = ""; break;
+    default:typeStr = "";
+        return typeStr;
     }
 }

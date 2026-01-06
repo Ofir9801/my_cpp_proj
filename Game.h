@@ -15,7 +15,7 @@ public:
 	Game(); //default constructor to initialize the Game components	
 	virtual ~Game(){}
 	void run(); //function to run the main Game loop
-	virtual void onGameEvent(const Event& e) {};
+	virtual void onGameEvent(const Event& e);
 	size_t getIteration() const { return gameCycle; }
 private:
 	void updateSwitches();
@@ -33,7 +33,7 @@ protected:
 	Player player1;
 	Player player2;
 	size_t gameCycle = 0;
-	virtual bool getInput(char& c, size_t iteration) = 0;
+	virtual bool getInput(char& c, size_t iteration);
 	virtual void drawMap(); 
 	virtual void drawPlayer();
 	virtual void wait(int ms);
