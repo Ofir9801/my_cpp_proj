@@ -44,8 +44,6 @@ public:
 	bool isExtraInventory() const { return ExtraInventory; }
 	void setExtraInventory(bool val) { ExtraInventory = val; }
 	//get and set player's fields
-	int getLives() const;
-	int getScore() const;
 	void decreaseLife();
 	void increaseScore(int amount);
 	char getChar() const { return position.getChar(); }

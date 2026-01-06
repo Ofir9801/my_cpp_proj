@@ -88,14 +88,11 @@ void Screen::loadMap(int roomNumber, Point& doorPos){
 		isDarkRoom = false;
 	if (roomNumber == roomIndex::VICTORY && colorToggle) {
 		if (!isSilent) { drawVictoryRoom();}
+		//game->onGameEvent(Event(game->getIteration(), EventType::DOOR_OPEN, player, "door opened"))
 	}
 	else {
-		if(!isSilent){ drawMap(); }
-		
+		if(!isSilent){ drawMap(); }	
 	}
-	/*if (game) {
-		game->onGameEvent(Event(game->getIteration(), EventType::ROOM_CHANGE, ' ', "Moved to Room " + std::to_string(roomNumber)));
-	}*/	
 }
 
 void Screen::drawMap() {
@@ -129,8 +126,7 @@ void Screen::drawMap() {
 }
 
 void Screen::drawVictoryRoom() {
-		cls();
-
+	cls();
 	for (int i = 0; i < MAX_Y; i++) {
 		gotoxy(0, i);
 		if (i > 2) {
@@ -199,9 +195,9 @@ void Screen::showPlayerInfo(const Player& p) {
 		break;
 	}
 	gotoxy(INFO_SLOTS::SCORE_START_X, legendY); //print score
-	cout << p.getLives() << std::flush;
+	cout << getLives() << std::flush;
 	gotoxy(INFO_SLOTS::LIVES_START_X, legendY); //print lives
-	cout << p.getScore() << std::flush;
+	cout << getScore() << std::flush;
 }
 
 void Screen::setChar(const Point& p, char c) {

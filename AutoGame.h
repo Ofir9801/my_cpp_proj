@@ -2,8 +2,7 @@
 #include "Game.h"
 #include "Steps.h"
 #include "Results.h"
-
-
+#include "Event.h"
 
 class AutoGame :public Game
 {
@@ -14,6 +13,7 @@ class AutoGame :public Game
 	Results results;
 	std::string stepsFileName;
 	std::string resultsFileName;
+	Event lastEvent;
 	
 	void handleGameOver(bool& exitGame) override;
 	void getFileNames();

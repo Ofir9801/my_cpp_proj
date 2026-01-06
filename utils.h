@@ -76,7 +76,7 @@ enum class EventType {
 	ROOM_CHANGE,
 	LIFE_LOST,
 	NO_EVENT,
-	GAME_OVER
+	GAME_OVER, 
 };
 
 //constants of basic game handling
@@ -104,7 +104,7 @@ inline constexpr int MIN_SCORE = 500;
 inline constexpr int FAKE_DOOR_SCORE = 50;
 inline constexpr int WRONG_ANSWER = 50;
 inline constexpr int SUCCESS_SCORE = 100;
-inline constexpr int STARTING_LIVES = 4;
+inline constexpr int STARTING_LIVES = 1;
 inline int constexpr TIMER_MESSAGE = 15;
 inline int constexpr LEGEND_SIZE = 3;
 inline int roomLegendRows[NUM_ROOMS];

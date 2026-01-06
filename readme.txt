@@ -33,6 +33,9 @@ the file must be:
 	contain the letter L - for legend (must be 3 lines) - notice that the char L must be in most left place in line and in width of maximum 80 chars.
 room design - by the size of 80x22 (legend is 3 lines extra)
 this build according answer from the forum: https://mama.mta.ac.il/mod/forum/discuss.php?d=3446
+- added function to save last game by entering -save when running from cmd
+- added function to auto play last saved game by entering -load when running from cmd
+- for auto play this is extra option, silent mode that will tell the end result only, byentering -load -silent when running from cmd 
 	
 
 

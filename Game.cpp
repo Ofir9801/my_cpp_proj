@@ -43,7 +43,10 @@ void Game::run() {
 		if (board.currentRoom == roomIndex::VICTORY) {
 			board.showMessage("Press Any key to finish the game");
 			char c;
-			getInput(c, gameCycle);
+			while (!getInput(c, gameCycle)) {
+				wait(100);
+				gameCycle++;
+			}
 			exitGame = false;
 			continue;
 		}
@@ -129,7 +132,9 @@ void Game::showMenu(bool& started){
 }
 
 void Game::changeRoom(roomIndex room){
-	onGameEvent(Event(getIteration(), EventType::ROOM_CHANGE, ' ', "Moved to Room " + std::to_string(static_cast<int>(room))));
+	if (room != roomIndex::MENU) {
+		onGameEvent(Event(getIteration(), EventType::ROOM_CHANGE, ' ', "Move to Room " + std::to_string(static_cast<int>(room))));
+	}
 	int prevRoom = board.getCurrentRoom();
 	if (prevRoom < roomIndex::VICTORY) {
 		board.saveRoom();
@@ -235,12 +240,19 @@ void Game::handlePause(bool& exitGame)
 
 void Game::handleGameOver(bool& exitGame)
 {
+	std::string winMsg = "";
 	cls();
 	std::cout << board.getFinalMessage() << std::endl;
 	std::cout <<"Game Over! you lost!"<<std::endl;
 	Sleep(1000);
 	std::cout << "Press 'R' to Restart,'H' to go to Main Menu, ESC to exit the game";
-	onGameEvent(Event(gameCycle, EventType::GAME_OVER, ' ', "GameEnded. Score: " + std::to_string(board.getScore())));
+	if (board.getCurrentRoom() == roomIndex::VICTORY) {
+		winMsg = "The User win the game";
+	}
+	else {
+		winMsg = "The User lost the game";
+	}
+	onGameEvent(Event(gameCycle, EventType::GAME_OVER, ' ', "Game Ended: " + winMsg + ". The score is : " + std::to_string(board.getScore())));
 	while (true) {
 		char choice;
 		if (getInput(choice,gameCycle)) {

@@ -30,7 +30,6 @@ std::string Results::readResultsFromFile(const std::string& filename, Results& o
 		results_file >> iteration >> typeInt;
 		results_file.get();
 		results_file.get(player);
-		
 
 		if (results_file.fail()) break;
 		std::getline(results_file, payload);
@@ -38,8 +37,9 @@ std::string Results::readResultsFromFile(const std::string& filename, Results& o
 		outResults.addResult(Event(iteration, static_cast<EventType>(typeInt), player, payload));
 		actualCount++;
 	}
-	if (expectedSize != actualCount) return "Error: Invalid format - the number of results: " + std::to_string(actualCount) + ", don't match the size: " + std::to_string(expectedSize);
 	results_file.close();
+	
+	if (expectedSize != actualCount) return "Error: Invalid format - the number of results: " + std::to_string(actualCount) + ", don't match the size: " + std::to_string(expectedSize);
 	return ""; 
 }
 
@@ -83,3 +83,10 @@ Event Results::popResult() {
 	results.pop_front();
 	return result;
 }
+
+Event Results::TopResult() const
+{
+	if (results.empty()) return Event(0, EventType::NO_EVENT, ' ');
+	return results.front();
+}
+

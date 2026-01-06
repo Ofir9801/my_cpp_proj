@@ -1,10 +1,5 @@
-9
-0 4  Moved to Room 1
-108 5  Life lost. Lives: 3
-108 1  Bomb had exploded
-147 5  Life lost. Lives: 2
-147 1  Bomb had exploded
-238 5  Life lost. Lives: 1
-238 5  Life lost. Lives: 0
-238 1  Bomb had exploded
-238 7  GameEnded. Score: 0
+4
+0 4   Move to Room 1
+21 5   Life lost. Lives: 0
+21 1   Bomb had exploded
+21 7   Game Ended: The User lost the game. The score is : 0

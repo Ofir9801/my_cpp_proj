@@ -30,7 +30,14 @@ bool AutoGame::getInput(char& c, size_t iteration)
 
 void AutoGame::handleGameOver(bool& exitGame)
 {
-    onGameEvent(Event(gameCycle, EventType::GAME_OVER, ' ', "GameEnded. Score: " + std::to_string(board.getScore())));
+    std::string winMsg = "";
+    if (board.getCurrentRoom() == roomIndex::VICTORY) {
+        winMsg = "The User won the game";
+    }
+    else {
+        winMsg = "The User lost the game";
+    }
+    onGameEvent(Event(gameCycle, EventType::GAME_OVER, ' ', " Game Ended: " + winMsg +". The score is : " + std::to_string(board.getScore())));
     exitGame = false;
 }
 
@@ -62,6 +69,10 @@ void AutoGame::onGameEvent(const Event& e){
         reportResultError("Mismatch!", e.getIteration());
         return;
     }
+    if (results.size() == 1) {
+        lastEvent = results.TopResult();
+    }
+    
     Event expected = results.popResult();
 
     bool mismatch = (expected.getIteration() != e.getIteration()) ||
@@ -69,11 +80,7 @@ void AutoGame::onGameEvent(const Event& e){
                     (expected.getPlayer() != e.getPlayer());
 
     if ( mismatch) {
-        std::string msg = "Mismatch! Expected: ";
-      /*      + std::to_string(expected.getEventType()) +
-            " at " + std::to_string(expected.getIteration()) +
-            " | Got: " + std::to_string(e.getEventType()) +
-            " at " + std::to_string(e.getIteration());*/
+        std::string msg = "Mismatch!";
         reportResultError(msg, e.getIteration());
     }
 }
@@ -94,6 +101,7 @@ void AutoGame::run() {
     else if (!unmatching_result_found) {
         // Only print success if no other errors were found
         std::cout << "Test Passed: Game replay matched perfectly." << std::endl;
+        std::cout << lastEvent.getPayload() << std::endl;
     }
 }
 

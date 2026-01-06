@@ -14,4 +14,6 @@ public:
 	Event popResult();
 	bool isFinishedBy(size_t iteration) const {return results.empty() || results.back().getIteration()<= iteration;}
 	bool isEmpty()const { return results.empty(); }
+	size_t size()const { return results.size(); }
+	Event TopResult()const;
 };

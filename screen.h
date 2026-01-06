@@ -99,7 +99,7 @@ public:
     int getScore() const { return sharedScore; }
     int getLives() const { return sharedLives; }
     void decreaseLife();
-    void resetStats() { sharedLives = 4; sharedScore = 0; }
+    void resetStats() { sharedLives = STARTING_LIVES; sharedScore = 0; }
     // game logic: Doors & Switches
 	bool isDoorOpen(int door_id) const;
     void openDoor(int door_id, char player);
