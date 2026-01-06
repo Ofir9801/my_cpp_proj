@@ -54,8 +54,8 @@ void AutoGame::getFileNames()
 void AutoGame::printList() const
 {
     for (auto& e : mismatchEvents) {
-        std::cout << "Expected: " << e.first.printEvent() << std::endl;
-        std::cout << "Actual: " << e.second.printEvent() << "\n" << std::endl;
+        std::cout << "Expected - " << e.first.printEvent() << std::endl;
+        std::cout << "Actual - " << e.second.printEvent() << "\n" << std::endl;
     }
     
 }
