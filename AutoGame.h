@@ -3,6 +3,7 @@
 #include "Steps.h"
 #include "Results.h"
 #include "Event.h"
+#include <list>
 
 class AutoGame :public Game
 {
@@ -14,10 +15,10 @@ class AutoGame :public Game
 	std::string stepsFileName;
 	std::string resultsFileName;
 	Event lastEvent;
-	
+	std::list<std::pair<Event,Event>> mismatchEvents;
 	void handleGameOver(bool& exitGame) override;
 	void getFileNames();
-	
+	void printList()const;
 public:
 	AutoGame(bool isSilent);
 	bool getInput(char& c, size_t iteration) override;

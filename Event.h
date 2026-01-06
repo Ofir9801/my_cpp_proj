@@ -16,6 +16,9 @@ public:
 	std::string eventFormat() const {
 		return std::to_string(iteration) + " " + std::to_string(static_cast<int>(type)) + " " + playerSign + " " + payload;
 	}
+	std::string printEvent()const {
+		return "Iteration - " + std::to_string(iteration) + ", Event type - " + std::to_string(static_cast<int>(type)) + ", Player - " + playerSign;
+	}
 
 };
 

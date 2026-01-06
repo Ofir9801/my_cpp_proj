@@ -8,7 +8,7 @@ AutoGame::AutoGame(bool isSilent) :isSilent(isSilent) {
     unsigned int fileSeed = steps.getRandomSeed();
     board.setSeed(fileSeed);
     board.setSilentMode(isSilent);
-
+    mismatchEvents.clear();
     if (steps.isColorMode()) {
         SetColorfullGame();
     }
@@ -51,6 +51,15 @@ void AutoGame::getFileNames()
 	if (!fileNames.empty()) { resultsFileName = fileNames[0]; }
 }
 
+void AutoGame::printList() const
+{
+    for (auto& e : mismatchEvents) {
+        std::cout << "Expected: " << e.first.printEvent() << std::endl;
+        std::cout << "Actual: " << e.second.printEvent() << "\n" << std::endl;
+    }
+    
+}
+
 void AutoGame::showMenu(bool& started)
 {
     started = true;
@@ -81,6 +90,9 @@ void AutoGame::onGameEvent(const Event& e){
 
     if ( mismatch) {
         std::string msg = "Mismatch!";
+        mismatchEvents.push_back({ expected,e });
+        unmatching_result_found = true;
+
         reportResultError(msg, e.getIteration());
     }
 }
@@ -102,6 +114,10 @@ void AutoGame::run() {
         // Only print success if no other errors were found
         std::cout << "Test Passed: Game replay matched perfectly." << std::endl;
         std::cout << lastEvent.getPayload() << std::endl;
+    }
+    else {
+        std::cout << "Test Failed, there is few mismatches:" << std::endl;
+        printList();
     }
 }
 
