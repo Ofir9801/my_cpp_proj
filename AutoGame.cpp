@@ -83,8 +83,11 @@ void AutoGame::wait(int ms) {
 }
 
 void AutoGame::run() {
+    if(isSilent){ std::cout << "Test Processing..." << std::flush; }
     Game::run(); // Run the normal game loop
     cls();
+    
+    std::cout << "\r" << std::flush;
     if (!results.isEmpty()) {
         reportResultError("Test Failed: Game ended but expected results still remain!", gameCycle);
     }

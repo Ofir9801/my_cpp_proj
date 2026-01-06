@@ -13,8 +13,7 @@ Steps Steps::loadSteps(const std::string& filename) {
 
 		if (errorMsg.empty()) {
 			return steps; // Success
-		}
-		system("cls");
+		}	
 		std::cout << "########################################################" << std::endl;
 		std::cout << "ERROR LOADING STEPS FILE" << std::endl;
 		std::cout << "########################################################" << std::endl;
@@ -27,6 +26,7 @@ Steps Steps::loadSteps(const std::string& filename) {
 		if (c == ESC) {
 			throw std::runtime_error("Game stopped by user due to missing Steps file.");
 		}
+		system("cls");
 	}
 }
 std::string Steps::readStepsFromFile(const std::string& filename, Steps& outSteps){
@@ -38,24 +38,27 @@ std::string Steps::readStepsFromFile(const std::string& filename, Steps& outStep
 	}
 
 	steps_file >> outSteps.randomSeed;
-	if (steps_file.fail()) return "Error: Invalid format (Seed missing)";
+	if (steps_file.fail()) return "Error: Invalid format - Seed missing";
 
 	int colorFlag = 0;
 	steps_file >> colorFlag;
-	if (steps_file.fail()) return "Error: Invalid format (Color Flag missing)";
+	if (steps_file.fail()) return "Error: Invalid format - Color Flag missing";
 	outSteps.colorMode = (colorFlag == 1);
 
-	size_t size;
-	steps_file >> size;
-	if (steps_file.fail()) return "Error: Invalid format (Size missing)";
+	size_t expectedSize;
+	steps_file >> expectedSize;
+	if (steps_file.fail()) return "Error: Invalid format - Size missing";
 
-	while (!steps_file.eof() && size-- != 0) {
+	size_t actualCount = 0;
+	while (!steps_file.eof()) {
 		size_t iteration;
 		char step;
 		steps_file >> iteration >> step;
 		if (steps_file.fail()) break;
 		outSteps.addStep(iteration, step);
+		actualCount++;
 	}
+	if (expectedSize != actualCount) return "Error: Invalid format - the number of steps: "+ std::to_string(actualCount) + ", don't match the size: " + std::to_string(expectedSize);
 	steps_file.close();
 	return "";
 }

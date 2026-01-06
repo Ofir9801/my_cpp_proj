@@ -211,17 +211,17 @@ void Screen::setChar(const Point& p, char c) {
 	if (inLegendBounds(legendY, p.getY())) {
 		return;
 	}
-	//if (isSilent) return;
-		board[p.getY()][p.getX()] = c;
-		gotoxy(p.getX(), p.getY());
-		if (colorToggle) {
-			SetTextColor(getColorForChar(c));
-			cout << c;
-			SetTextColor(Color::WHITE); //reset to default color
-			return;
-		}
-		else
-			cout << c;
+	board[p.getY()][p.getX()] = c;
+	if (isSilent) return;
+	gotoxy(p.getX(), p.getY());
+	if (colorToggle) {
+		SetTextColor(getColorForChar(c));
+		cout << c;
+		SetTextColor(Color::WHITE); //reset to default color
+		return;
+	}
+	else
+		cout << c;
 }
 void Screen::setChar(const Point& p, objSigns sign) {
 	char c = static_cast<char>(sign);

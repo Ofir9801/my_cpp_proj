@@ -13,31 +13,34 @@ std::string Results::readResultsFromFile(const std::string& filename, Results& o
 	if (!results_file.is_open()) {
 		return "Error: Could not open file [" + filename + "]";
 	}
-
-	size_t size;
-	results_file >> size;
-	if (results_file.fail()) return "Error: Invalid format (Size missing)";
+	size_t actualCount = 0;
+	size_t expectedSize;
+	results_file >> expectedSize;
+	if (results_file.fail()) return "Error: Invalid format - Size missing";
 
 	std::string dummy;
 	std::getline(results_file, dummy);
 
-	for (size_t i = 0; i < size; i++) {
+	while (!results_file.eof()) {
 		size_t iteration;
 		int typeInt;
 		char player;
 		std::string payload;
 
 		results_file >> iteration >> typeInt;
-		results_file.get(); 
+		results_file.get();
 		results_file.get(player);
-		if (results_file.fail()) return "Error: Invalid format at entry " + std::to_string(i);
+		
 
+		if (results_file.fail()) break;
 		std::getline(results_file, payload);
 		if (!payload.empty() && payload[0] == ' ') { payload.erase(0, 1); }
-
 		outResults.addResult(Event(iteration, static_cast<EventType>(typeInt), player, payload));
+		actualCount++;
 	}
-	return ""; // No error
+	if (expectedSize != actualCount) return "Error: Invalid format - the number of results: " + std::to_string(actualCount) + ", don't match the size: " + std::to_string(expectedSize);
+	results_file.close();
+	return ""; 
 }
 
 Results Results::loadResults(const std::string& filename) {
@@ -50,7 +53,6 @@ Results Results::loadResults(const std::string& filename) {
 		if (errorMsg.empty()) {
 			return results; // Success
 		}
-		system("cls");
 		std::cout << "########################################################" << std::endl;
 		std::cout << "ERROR LOADING RESULTS FILE" << std::endl;
 		std::cout << "########################################################" << std::endl;
@@ -63,6 +65,7 @@ Results Results::loadResults(const std::string& filename) {
 		if (c == ESC) {
 			throw std::runtime_error("Game stopped by user due to missing Results file.");
 		}
+		system("cls");
 	}
 }
 
