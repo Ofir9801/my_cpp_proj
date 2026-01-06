@@ -8,7 +8,6 @@ class Event{
 	std::string payload;
 public:
 	Event(size_t iteration, EventType t, char player, std::string extraInfo = "") :iteration(iteration), type(t), playerSign(player), payload(extraInfo) {}
-	std::string toString() const;
 	size_t getIteration()const { return iteration; }
 	EventType getEventType()const { return type; }
 	char getPlayer()const { return playerSign; }

@@ -127,7 +127,6 @@
     <ClCompile Include="AutoGame.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Door.cpp" />
-    <ClCompile Include="Event.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Obstacle.cpp" />

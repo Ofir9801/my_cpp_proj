@@ -6,6 +6,7 @@
 
 class Results {
 	std::list<Event> results; // pair: iteration, result
+	static std::string readResultsFromFile(const std::string& filename, Results& outResults);
 public:
 	static Results loadResults(const std::string& filename);
 	void saveResults(const std::string& filename) const;
