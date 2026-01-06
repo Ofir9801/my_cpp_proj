@@ -25,6 +25,6 @@ public:
 	bool isSolved() const { return solved; };
 	std::string getCorrectAnswer() const { return correctAnswer; };
 	int getCorrectIndex() const { return correctIndex; };
-	bool engage(Player& player);
-	bool engageVaultRiddle();//vault riddle has no options, player must type the answer
+	bool engage(Player& player, std::string& answer);
+	bool engageVaultRiddle(std::string& str);//vault riddle has no options, player must type the answer
 };

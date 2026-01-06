@@ -1,0 +1,13 @@
+adv_world.steps format:
+[Random Seed Long]
+[Number of Steps]
+[Iteration] [Char]
+[Iteration] [Char]
+[Iteration] [Char]
+...
+
+adv-world.result format:
+[Number of Events]
+[Iteration] [EventType Int] [PlayerChar] [Payload String]
+[Iteration] [EventType Int] [PlayerChar] [Payload String]
+...

@@ -5,6 +5,8 @@
 SaveGame::SaveGame() :Game()
 {    
     setFileNames();
+    if (stepsFileName == "") { stepsFileName = "adv - world.steps "; }
+    if (resultsFileName == "") { resultsFileName = "adv - world.result "; }
     unsigned int generatedSeed = board.getSeed();
     steps.setRandomSeed(generatedSeed);
 }

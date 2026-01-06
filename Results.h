@@ -20,5 +20,4 @@ public:
 	bool isFinishedBy(size_t iteration) const {
 		return results.empty() || results.back().getIteration()<= iteration;
 	}
-	size_t getNextBombIteration() const;
 };

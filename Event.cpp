@@ -7,7 +7,8 @@ std::string Event::toString() const
     case EventType::DOOR_OPEN: typeStr = "DOOR_OPEN"; break;
     case EventType::BOMB_EXPLODE: typeStr = "BOMB_EXPLODE"; break;
     case EventType::RIDDLE_SOLVED: typeStr = "RIDDLE_SOLVED"; break;
-    case EventType::LEVEL_FINISHED: typeStr = "LEVEL_FINISHED"; break;
+    case EventType::ROOM_CHANGE: typeStr = "ROOM_CHANGE"; break;
     case EventType::GAME_OVER: typeStr = "GAME_OVER"; break;
+    case EventType::NO_EVENT: typeStr = ""; break;
     }
 }

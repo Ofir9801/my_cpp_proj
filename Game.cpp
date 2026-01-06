@@ -241,7 +241,7 @@ void Game::handleGameOver(bool& exitGame, size_t& gameCycle)
 	std::cout <<"Game Over! you lost!"<<std::endl;
 	Sleep(1000);
 	std::cout << "Press 'R' to Restart,'H' to go to Main Menu, ESC to exit the game";
-
+	onGameEvent(Event(gameCycle, EventType::GAME_OVER, ' ', "GameEnded. Score: " + std::to_string(board.getScore())));
 	while (true) {
 		char choice;
 		if (getInput(choice,gameCycle)) {

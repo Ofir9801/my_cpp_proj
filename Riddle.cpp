@@ -5,7 +5,7 @@
 #include <algorithm>
 
 
-bool Riddle::engage(Player& player){
+bool Riddle::engage(Player& player, std::string& answer){
 	cls();
 	gotoxy(10, 10);
 	std::cout << "RIDDLE TIME!" << std::endl;
@@ -21,6 +21,7 @@ bool Riddle::engage(Player& player){
 			char key = static_cast<char>(_getch());
 			if (key >= '1' && key < '1' + options.size()) {
 				int choiceIndex = key - '1';
+				answer = options[choiceIndex];
 				if (choiceIndex == correctIndex) {
 					player.increaseScore(100);
 					solved = true;
@@ -35,7 +36,7 @@ bool Riddle::engage(Player& player){
 	}
 }
 
-bool Riddle::engageVaultRiddle() {
+bool Riddle::engageVaultRiddle(std::string& str) {
 	cls();
 	gotoxy(10, 10);
 	std::cout << "RIDDLE TIME!" << std::endl;
@@ -50,6 +51,7 @@ bool Riddle::engageVaultRiddle() {
 		std::cin >> answer;
 		validInput = !answer.empty() && std::all_of(answer.begin(), answer.end(), ::isdigit);
 	}
+	str = answer;
 	if (answer == correctAnswer) {
 		solved = true;
 		return true;

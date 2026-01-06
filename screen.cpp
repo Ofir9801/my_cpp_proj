@@ -92,7 +92,9 @@ void Screen::loadMap(int roomNumber, Point& doorPos){
 	else {
 		drawMap();
 	}
-	
+	if (game) {
+		game->onGameEvent(Event(game->getIteration(), EventType::ROOM_CHANGE, ' ', "Moved to Room " + std::to_string(roomNumber)));
+	}	
 }
 
 void Screen::drawMap() {
@@ -510,17 +512,24 @@ int Screen::GetDoorIdByKey (char p) const{
 
 bool Screen::handleRiddle(Point riddlePos, Player& p) {
 	auto it = riddles.find(riddlePos);
+	string answer = "";
 	if (it != riddles.end() && !it->second.isSolved()) {
-		bool solved = riddles[riddlePos].engage(p);
+		bool solved = riddles[riddlePos].engage(p, answer);
 		drawMap(); //redraw the map after riddle engagement
 		if (solved) {
 			string msg = "Correct! + " + std::to_string(SUCCESS_SCORE) + " points!";
 			showMessage(msg);
+			if (game) {
+				game->onGameEvent(Event(game->getIteration(), EventType::RIDDLE_SOLVED, p.getChar(),answer + " - Correct Answer "));
+			}
 			return true;
 		}
 		else {
 			string msg = "WRONG! You lost " + std::to_string(WRONG_ANSWER) + " points!";
 			showMessage(msg);
+			if (game) {
+				game->onGameEvent(Event(game->getIteration(), EventType::RIDDLE_WRONG_ANSWER, p.getChar(),answer + " - Wrong Answer "));
+			}
 			return false;
 		}
 	}
@@ -533,18 +542,25 @@ bool Screen::handleRiddle(Point riddlePos, Player& p) {
 
 bool Screen::handleVaultRiddle(Point riddlePos) {
 	auto it = riddles.find(riddlePos);
+	string answer = "";
 	if (it != riddles.end() && !it->second.isSolved()) {
-		bool solved = riddles[riddlePos].engageVaultRiddle();
+		bool solved = riddles[riddlePos].engageVaultRiddle(answer);
 		drawMap(); //redraw the map after riddle engagement
 		if (solved) {
 			string msg = "Congratulations! You solved the last challenge. Proceed to the final door";
 			setChar(riddlePos, objSigns::EMPTY);
 			showMessage(msg);
+			if (game) {
+				game->onGameEvent(Event(game->getIteration(), EventType::RIDDLE_SOLVED, ' ', answer + " - Correct Answer "));
+			}
 			return true;
 		}
 		else {
 			string msg = "WRONG! Check your answers and come back again";
 			showMessage(msg);
+			if (game) {
+				game->onGameEvent(Event(game->getIteration(), EventType::RIDDLE_WRONG_ANSWER, ' ', answer + " - Wrong Answer "));
+			}
 			return false;
 		}
 	}
@@ -741,6 +757,9 @@ void Screen::updateBombs(Player& p1, Player& p2) {
 			activeBombs[i].explode(*this, p1, p2);
 			setChar(activeBombs[i].getPosition(), ' ');
 			activeBombs.erase(activeBombs.begin() + i);
+			if (game) {
+				game->onGameEvent(Event(game->getIteration(), EventType::BOMB_EXPLODE, ' ', "Bomb had exploded"));
+			}
 		}
 		else {
 			++i;
@@ -750,6 +769,9 @@ void Screen::updateBombs(Player& p1, Player& p2) {
 void Screen::decreaseLife() {
 	if (sharedLives > 0) {
 		sharedLives--;
+		if (game) {
+			game->onGameEvent(Event(game->getIteration(), EventType::LIFE_LOST, ' ', "Life lost. Lives: " + std::to_string(sharedLives)));
+		}
 		showMessage("Life lost, be carefull! Lives left: " + std::to_string(sharedLives));
 	}
 	else

@@ -42,7 +42,8 @@ bool AutoGame::isGameOver(size_t iteration) const
 
 void AutoGame::showMenu(bool& started)
 {
-    changeRoom(/*get from file */ );
+    started = true;
+    changeRoom(roomIndex::ROOM1);
 }
 
 void AutoGame::drawMap() {
@@ -53,13 +54,23 @@ void AutoGame::drawPlayer() {
 }
 
 void AutoGame::onGameEvent(const Event& e){
+    if (results.isEmpty()) {
+        reportResultError("Mismatch!", e.getIteration());
+        return;
+    }
     Event expected = results.popResult();
-    size_t actualIteration = e.getIteration();
-    EventType actualEventType = e.getEventType();
-    char actualPlayer = e.getPlayer();
 
-    if (expected.getIteration() != actualIteration || expected.getEventType() != actualEventType || expected.getPlayer() != actualPlayer) {
-        reportResultError("Mismatch!", actualIteration);
+    bool mismatch = (expected.getIteration() != e.getIteration()) ||
+                    (expected.getEventType() != e.getEventType()) ||
+                    (expected.getPlayer() != e.getPlayer());
+
+    if ( mismatch) {
+        std::string msg = "Mismatch! Expected: ";
+      /*      + std::to_string(expected.getEventType()) +
+            " at " + std::to_string(expected.getIteration()) +
+            " | Got: " + std::to_string(e.getEventType()) +
+            " at " + std::to_string(e.getIteration());*/
+        reportResultError(msg, e.getIteration());
     }
 }
 

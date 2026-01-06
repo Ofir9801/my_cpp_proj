@@ -15,6 +15,8 @@ public:
 	Game(); //default constructor to initialize the Game components	
 	virtual ~Game(){}
 	void run(); //function to run the main Game loop
+	virtual void onGameEvent(const Event& e);
+	size_t getIteration() const { return gameCycle; }
 private:
 	void updateSwitches();
 	bool isSpecialKey(int key) const { return key == 0 || key == 224; } //when keyboard presses special keys like arrows
@@ -27,8 +29,6 @@ private:
 	void handlePause(bool& exitGame, size_t& gameCycle);
 	virtual void handleGameOver(bool& exitGame, size_t& gameCycle);
 	void handleLevelCompletion();
-	size_t getIteration() const { return gameCycle; }
-	virtual void onGameEvent(const Event& e);
 protected:
 	Screen board;
 	Player player1;
