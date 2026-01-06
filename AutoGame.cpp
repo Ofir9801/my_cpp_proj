@@ -7,6 +7,10 @@ AutoGame::AutoGame(bool isSilent) :isSilent(isSilent) {
     results = Results::loadResults(resultsFileName);
     unsigned int fileSeed = steps.getRandomSeed();
     board.setSeed(fileSeed);
+
+    if (steps.isColorMode()) {
+        SetColorfullGame();
+    }
 }
 
 bool AutoGame::getInput(char& c, size_t iteration)
@@ -15,14 +19,18 @@ bool AutoGame::getInput(char& c, size_t iteration)
         c = steps.popStep();
         return true;
     }
+    if (steps.isEmpty()) { //send char = ESC to force the game to pause
+        c = ESC;
+        return true;
+    }
     return false;
     
 }
 
-void AutoGame::handleGameOver(bool& exitGame, size_t& gameCycle)
+void AutoGame::handleGameOver(bool& exitGame, size_t& iterarion)
 {
-    reportResultError("Results file reached finish while game hadn't!", gameCycle);
-    unmatching_result_found = true;
+    onGameEvent(Event(iterarion, EventType::GAME_OVER, ' ', "GameEnded. Score: " + std::to_string(board.getScore())));
+    exitGame = false;
 }
 
 void AutoGame::getFileNames()
@@ -33,11 +41,6 @@ void AutoGame::getFileNames()
 	fileNames.clear();
 	getAllFilePaths(fileNames, ".result");
 	if (!fileNames.empty()) { resultsFileName = fileNames[0]; }
-}
-
-bool AutoGame::isGameOver(size_t iteration) const
-{
-    return !results.isFinishedBy(iteration);
 }
 
 void AutoGame::showMenu(bool& started)
@@ -78,3 +81,20 @@ void AutoGame::wait(int ms) {
     if (!isSilent) Game::wait(ms);
 }
 
+void AutoGame::run() {
+    Game::run(); // Run the normal game loop
+
+    // AFTER the game loop finishes, check if we missed anything
+    if (!results.isEmpty()) {
+        reportResultError("Test Failed: Game ended but expected results still remain!", gameCycle);
+    }
+    else if (!unmatching_result_found) {
+        // Only print success if no other errors were found
+        std::cout << "Test Passed: Game replay matched perfectly." << std::endl;
+    }
+}
+
+void AutoGame::handlePause(bool& exitGame)
+{
+    exitGame = false;
+}

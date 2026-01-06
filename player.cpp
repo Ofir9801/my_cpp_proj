@@ -313,7 +313,7 @@ bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
 	bool RealDoor = board.isRealDoor(doorId);
 	
 	if (hasItem(objSigns::KEY) && keyDoorId == doorId) {
-		board.openDoor(doorId);
+		board.openDoor(doorId, position.getChar());
 		board.DisposeKeyToScreen(this->getChar(), position);
 		RemoveKeyFromInventory(keyDoorId);
 		board.showPlayerInfo(*this);
@@ -357,7 +357,7 @@ bool Player::OpenVaultRoom() {
 
 bool Player::OpenVictoryRoom() {
 	if (board.allRiddlesSolved()) {
-		board.openDoor(static_cast<int>(roomIndex::VICTORY));
+		board.openDoor(static_cast<int>(roomIndex::VICTORY), position.getChar());
 		clearFromScreen();
 		finishedLevel = true;
 		roomOpen = static_cast<int>(roomIndex::VICTORY);

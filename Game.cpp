@@ -76,7 +76,7 @@ void Game::run() {
 		char key;
 		if (getInput(key, gameCycle)) {
 			if (key == ESC) { 
-				handlePause(exitGame, gameCycle);
+				handlePause(exitGame);
 			}
 			else if (isSpecialKey(key)) {
 				(void)_getch(); //ignore special keys like arrows
@@ -87,7 +87,7 @@ void Game::run() {
 			}
 		}
 
-		if(isGameOver(gameCycle)) {
+		if(isGameOver()) {
 			handleGameOver(exitGame, gameCycle);
 			if (!exitGame) { return; }
 			continue;
@@ -159,7 +159,7 @@ void Game::changeRoom(roomIndex room){
 
 bool Game::ImportantkeyPressed(char c)
 {
-	return player1.ImportantKeyPressed(c)|| player2.ImportantKeyPressed(c);
+	return (c == ESC) || player1.ImportantKeyPressed(c)|| player2.ImportantKeyPressed(c);
 }
 
 bool Game::getInput(char& c, size_t iteration){
@@ -182,7 +182,7 @@ void Game::SetColorfullGame() {
 	board.colorToggle = true;
 }
 
-void Game::performRestart(size_t& gameCycle){
+void Game::performRestart(){
 	board.resetStats();
 	board.clearSavedRooms();
 	board.currentRoom = (size_t)roomIndex::MENU;
@@ -193,7 +193,7 @@ void Game::performRestart(size_t& gameCycle){
 	gameCycle = 0;
 }
 
-void Game::PerformGoToMenu(bool& exitGame, size_t& gameCycle)
+void Game::PerformGoToMenu(bool& exitGame)
 {
 	board.clearSavedRooms();
 	board.resetStats();
@@ -209,7 +209,7 @@ void Game::PerformGoToMenu(bool& exitGame, size_t& gameCycle)
 	}
 }
 
-void Game::handlePause(bool& exitGame, size_t& gameCycle)
+void Game::handlePause(bool& exitGame)
 {
 	board.showMessage("PAUSED: ESC-Continue, H-Menu, R-Restart");
 
@@ -221,12 +221,12 @@ void Game::handlePause(bool& exitGame, size_t& gameCycle)
 			break;
 		}
 		else if (choice == 'r') {
-			performRestart(gameCycle);
+			performRestart();
 			break;
 		}
 		else if (choice == 'h') {
 			board.colorToggle = false; //reset color mode when going to menu
-			PerformGoToMenu(exitGame, gameCycle);
+			PerformGoToMenu(exitGame);
 			break;
 		}
 		//choice == 's'
@@ -234,7 +234,7 @@ void Game::handlePause(bool& exitGame, size_t& gameCycle)
 	}
 }
 
-void Game::handleGameOver(bool& exitGame, size_t& gameCycle)
+void Game::handleGameOver(bool& exitGame,size_t& iterarion)
 {
 	cls();
 	std::cout << board.getFinalMessage() << std::endl;
@@ -247,11 +247,11 @@ void Game::handleGameOver(bool& exitGame, size_t& gameCycle)
 		if (getInput(choice,gameCycle)) {
 			choice = std::tolower(choice);
 			if (choice == 'r') {
-				performRestart(gameCycle);
+				performRestart();
 				break;
 			}
 			else if (choice == 'h') {
-				PerformGoToMenu(exitGame, gameCycle);
+				PerformGoToMenu(exitGame);
 				break;
 			}
 			else if (choice == ESC) { // ESC -> Exit the game
@@ -301,10 +301,7 @@ void Game::handleLevelCompletion() {
 
 void Game::reportResultError(const std::string& message, size_t iteration) {
 	system("cls");
-	std::cout << message << '\n';
-	std::cout << "Iteration: " << iteration << '\n';
-	std::cout << "Press any key to continue to next screens (if any)" << std::endl;
-	(void)_getch();
+	std::cout << "TEST FAILED at Iteration " << iteration << ": " << message << std::endl;
 }
 
 void Game::drawMap() {

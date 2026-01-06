@@ -15,9 +15,9 @@ class AutoGame :public Game
 	std::string stepsFileName;
 	std::string resultsFileName;
 	
-	void handleGameOver(bool& exitGame, size_t& gameCycle) override;
+	void handleGameOver(bool& exitGame, size_t& iterarion) override;
 	void getFileNames();
-	bool isGameOver(size_t iteration) const override;
+	
 public:
 	AutoGame(bool isSilent);
 	bool getInput(char& c, size_t iteration) override;
@@ -27,5 +27,7 @@ public:
 	void drawMap()override;
 	void drawPlayer() override;
 	void onGameEvent(const Event& e) override;
+	void run();
+	void handlePause(bool& exitGame) override;
 };
 

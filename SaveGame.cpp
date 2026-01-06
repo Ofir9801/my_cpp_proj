@@ -13,6 +13,7 @@ SaveGame::SaveGame() :Game()
 
 SaveGame::~SaveGame()
 {
+    steps.setColorMode(board.IsColor());
     steps.saveSteps(stepsFileName);
     results.saveResults(resultsFileName);
 }
@@ -31,6 +32,7 @@ bool SaveGame::getInput(char& c, size_t iteration)
 {
     if (_kbhit()) {
         c = _getch();
+        
         if (ImportantkeyPressed(c)) {
             steps.addStep(iteration, c);
         }

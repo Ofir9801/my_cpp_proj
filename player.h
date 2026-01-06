@@ -1,9 +1,11 @@
 #pragma once
 #include "point.h"//using Point class for Player position
 #include <iostream>
+#
 #include <string>
 
 class Screen;//forward declaration to avoid circular dependency
+class Game;
 
 class Player
 {//Player class has many fields to track player's state and characteristics

@@ -66,6 +66,7 @@ public:
 	void setSeed(unsigned int seed);
 	unsigned int getSeed () const { return currentSeed; }
 	void setGame(Game* g) { game = g; }
+	Game* getGame(){ return game; }
     // display
     void drawMap();
     void refreshSpringsDisplay(const Point& p1, const Point& p2) const;
@@ -98,7 +99,7 @@ public:
     void resetStats() { sharedLives = 4; sharedScore = 0; }
     // game logic: Doors & Switches
 	bool isDoorOpen(int door_id) const;
-    void openDoor(int door_id);
+    void openDoor(int door_id, char player);
 	bool getConnectionStatus(int door_id) const;
 	bool isRealDoor(int doorId) const { return doorId >= roomIndex::VAULT && doorId <= roomIndex::VICTORY; }
 	bool SwitchState(int doorId) const;

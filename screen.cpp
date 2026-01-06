@@ -433,11 +433,14 @@ bool Screen::isDoorOpen(int door_id) const{
 	return false;
 }
 
-void Screen::openDoor(int door_id){
+void Screen::openDoor(int door_id, char player){
 	auto it = doors.find(door_id);
 	if (it != doors.end()) {
 		it->second.open();
 		showMessage("Door opened!");
+		if (game) {
+			game->onGameEvent(Event(game->getIteration(), EventType::DOOR_OPEN, player, "door opened"));
+		}
 	}
 }
 

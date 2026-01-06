@@ -15,19 +15,18 @@ public:
 	Game(); //default constructor to initialize the Game components	
 	virtual ~Game(){}
 	void run(); //function to run the main Game loop
-	virtual void onGameEvent(const Event& e);
+	virtual void onGameEvent(const Event& e) {};
 	size_t getIteration() const { return gameCycle; }
 private:
 	void updateSwitches();
 	bool isSpecialKey(int key) const { return key == 0 || key == 224; } //when keyboard presses special keys like arrows
-	void SetColorfullGame();
-	virtual bool isGameOver(size_t iteration) const { return board.getLives() <= 0 || !board.gameState; }
+	bool isGameOver() const { return board.getLives() <= 0 || !board.gameState; }
 	bool isPlayableRoom(roomIndex room) { return !(room == roomIndex::MENU || room == roomIndex::INSTRUCTIONS || room == roomIndex::VICTORY); }
 	bool isPlayableRoom(int room) { return isPlayableRoom(static_cast<roomIndex>(room)); }
-	void performRestart(size_t& gameCycle);
-	void PerformGoToMenu(bool& exitGame, size_t& gameCycle);
-	void handlePause(bool& exitGame, size_t& gameCycle);
-	virtual void handleGameOver(bool& exitGame, size_t& gameCycle);
+	void performRestart();
+	void PerformGoToMenu(bool& exitGame);
+	virtual void handlePause(bool& exitGame);
+	virtual void handleGameOver(bool& exitGame, size_t& iterarion);
 	void handleLevelCompletion();
 protected:
 	Screen board;
@@ -42,5 +41,6 @@ protected:
 	virtual void changeRoom(roomIndex room);
 	bool ImportantkeyPressed(char c);
 	void reportResultError(const std::string& message, size_t iteration);
+	void SetColorfullGame();
 };
 

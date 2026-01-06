@@ -19,7 +19,7 @@ Results Results::loadResults(const std::string& filename) {
 		char player;
 		std::string payload;
 
-		results_file >> iteration >> typeInt, player;
+		results_file >> iteration >> typeInt >> player;
 		std::getline(results_file, payload);
 		if (!payload.empty() && payload[0] == ' ') { payload.erase(0, 1); }
 		results.addResult(Event(iteration, static_cast<EventType>(typeInt), player,payload));
@@ -34,4 +34,10 @@ void Results::saveResults(const std::string& filename) const {
 		results_file << event.eventFormat();
 	}
 	results_file.close();
+}
+Event Results::popResult() {
+	if (results.empty()) return Event(0, EventType::NO_EVENT, ' ');
+	auto result = results.front();
+	results.pop_front();
+	return result;
 }

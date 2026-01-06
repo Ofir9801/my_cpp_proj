@@ -11,7 +11,7 @@ class SaveGame :public Game
 public:
 	SaveGame();
 	~SaveGame();
-	bool getInput(char& c, size_t iteration = 0);
+	bool getInput(char& c, size_t iteration = 0) override;
 	void onGameEvent(const Event& e) override;
 };
 
