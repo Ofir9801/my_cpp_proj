@@ -1046,6 +1046,7 @@ void Screen::setFileName(std::string& file, const int key) const{
 	file = STATE_FOLDER + "/" + "SavedScreen" + roomNumber + STATE_EXTENSION;
 }
 
+//avoid this function and think how to save few states by date stamp
 void Screen::CleanFolder()
 {
 	if (std::filesystem::exists(STATE_FOLDER)) {
