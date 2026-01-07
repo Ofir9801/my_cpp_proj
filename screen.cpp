@@ -89,7 +89,6 @@ void Screen::loadMap(int roomNumber, Point& doorPos){
 		isDarkRoom = false;
 	if (roomNumber == roomIndex::VICTORY && colorToggle) {
 		if (!isSilent) { drawVictoryRoom();}
-		//game->onGameEvent(Event(game->getIteration(), EventType::DOOR_OPEN, player, "door opened"))
 	}
 	else {
 		if(!isSilent){ drawMap(); }	
@@ -273,7 +272,6 @@ void Screen::initializeRoomsArray() {
 void Screen::loadFilesByType(bool type) {
 	string errorMsg;
 	while (true) {
-		//string errorMsg = ReadRoomLayoutFromFile(fileName, room);
 		if (type) //true = read room, false = read riddle
 			errorMsg = ReadRoomFromFile();
 		else
@@ -296,13 +294,13 @@ void Screen::loadFilesByType(bool type) {
 }
 
 Obstacle* Screen::getObstacleAt(const Point& p) {
-	for (auto& obs : obstacles) {
-		if (obs.getPosition() == p) {
-			return &obs;
-		}
-	}
+	auto it = obstacles.find(p);
+	if (it != obstacles.end())
+		return &it->second;
 	return nullptr;
+
 }
+
 
 void Screen::loadSprings() {
 	springs.clear();
@@ -378,7 +376,7 @@ void Screen::loadItems(int doorIdOpen, Point&doorPos) {//enter the items from th
 				switches.push_back(Switch(x, y, true));
 			}
 			else if (c == objSigns::OBSTACLE) {
-				obstacles.push_back(Obstacle(x, y, this));
+				obstacles[Point(x, y)] = Obstacle(x, y, this);
 			}
 			else if (isdigit(static_cast<unsigned char>(c))) {
 				int door_id = c - '0';
@@ -713,6 +711,15 @@ void Screen::deleteSpring(Point position){
 	}
 }
 
+void Screen::deleteRiddle(Point position)
+{
+	auto it = riddles.find(position);
+	if (it != riddles.end()) {
+		riddles.erase(it);
+		showMessage("you maybe need that. think about restart the game");
+	}
+}
+
 void Screen::deleteSwitch(Point position){
 	bool flag = false;
 	std::vector<Switch>::iterator it = switches.begin();
@@ -734,6 +741,14 @@ void Screen::deleteDoor(Point position){
 	if (it != doors.end()) {
 		CheckExplodeNecessaryObject(door_id);
 		doors.erase(it);
+	}
+}
+
+void Screen::deleteObstacle(Point position)
+{
+	auto it = obstacles.find(position);
+	if (it != obstacles.end()) {
+		obstacles.erase(it);
 	}
 }
 
@@ -977,13 +992,13 @@ std::string Screen::loadRoomState(int key, const std::string& filename, int& cur
 		loadVector(file, state.layout);
 		loadVector(file, state.springs);
 		loadVector(file, state.switches);
-		loadVector(file, state.obstacles);
 		loadVector(file, state.activeBombs);
+		loadMapDataStructure(file, state.obstacles);
 		loadMapDataStructure(file, state.riddles);
 		loadMapDataStructure(file, state.keys);
 		loadMapDataStructure(file, state.doors);
 		for (auto& obs : state.obstacles) {
-			obs.setScreen(this);
+			obs.second.setScreen(this);
 		}
 	}
 	catch (const std::ifstream::failure&) { 
@@ -1010,8 +1025,8 @@ void Screen::saveRoomState(const RoomState& state, const std::string& filename, 
 	saveVector(file, state.layout);
 	saveVector(file, state.springs);
 	saveVector(file, state.switches);
-	saveVector(file, state.obstacles);
 	saveVector(file, state.activeBombs);
+	saveMap(file, state.obstacles);
 	saveMap(file, state.riddles);
 	saveMap(file, state.keys);
 	saveMap(file, state.doors);

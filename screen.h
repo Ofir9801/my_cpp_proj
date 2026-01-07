@@ -23,11 +23,12 @@ private:
 	int currentRoom = 0;
 	std::vector<Spring> springs;
 	std::vector<Switch> switches;
-	std::vector<Obstacle> obstacles;
+	//std::vector<Obstacle> obstacles;
 	std::map<int,Door>doors;
 	std::vector<int>doorIDs; //keys to the doors map
 	std::map<Point, Key> keys;
 	std::map<Point, Riddle> riddles;
+	std::map<Point, Obstacle> obstacles;
 	std::vector<Bomb> activeBombs;
 	std::vector<string>RiddlePathWays;
 	bool colorToggle = false;
@@ -46,7 +47,7 @@ private:
 		std::vector<string> layout;          
 		std::vector<Spring> springs;         
 		std::vector<Switch> switches;        
-		std::vector<Obstacle> obstacles;  
+		std::map<Point,Obstacle> obstacles;
 		std::vector<Bomb> activeBombs;
 		std::map<Point, Riddle> riddles;
 		std::map<Point, Key> keys;           
@@ -118,15 +119,18 @@ public:
     void addActiveBomb(const Point& p) { activeBombs.push_back(Bomb(p)); }
     bool isBombAt(const Point& p) const;
 	Obstacle* getObstacleAt(const Point& p);
+	void deleteObstacle(Point position);
     // game logic: Springs & Riddles
     Spring* getSpringAt(const Point& p);
     void deleteSpring(Point position);
+	void deleteRiddle(Point position);
     bool handleRiddle(Point riddlePos, Player& player);
 	bool allRiddlesSolved() const;
 	bool handleVaultRiddle(Point riddlePos);
 	//read and write from Files functions
 	void saveGame() const;
 	int loadGame();
+	
 private:
 	//gamecycle and initialization
 	void initializeRoomsArray();

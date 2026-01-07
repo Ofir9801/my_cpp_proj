@@ -48,25 +48,37 @@ void Bomb::destroyCell(Screen& board, Player& p1, Player& p2, Point target) {
 		handlePlayerHit(p2);
 		playerHit = true;
 	}
-	if (!playerHit){
-		char c = target.getChar();
-		if (c == objSigns::KEY) { 
+	if (!playerHit) {
+		char c = board.getCharAt(target);
+		char replaceChar = ' '; // Default replacement is empty space
+
+		switch (static_cast<objSigns>(c)) {
+		case objSigns::KEY:
 			board.deleteKey(target);
-			board.setChar(target, ' ');
-		}
-		else if (c == objSigns::SPRING) {
+			break;
+		case objSigns::SPRING:
 			board.deleteSpring(target);
-			board.setChar(target, ' ');
-		}
-		else if (c == objSigns::SWITCH_ON || c == objSigns::SWITCH_OFF) {
+			break;
+		case objSigns::SWITCH_ON:
+		case objSigns::SWITCH_OFF:
 			board.deleteSwitch(target);
-			board.setChar(target, ' ');
+			break;
+		case objSigns::OBSTACLE:
+			board.deleteObstacle(target);
+			break;
+		case objSigns::RIDDLE:
+			board.deleteRiddle(target);  
+			break;
+		default:
+			if (isdigit(c)) {
+				board.deleteDoor(target);
+				replaceChar = 'X'; // Doors leave a specific mark
+			}
+			break;
 		}
-		else if (isdigit(c)){
-			board.deleteDoor(target); 
-			board.setChar(target, 'X');
+		if (board.isValid(target) || replaceChar == 'X') {
+			board.setChar(target, replaceChar);
 		}
-		else{ board.setChar(target, ' '); }
 	}
 }
 
