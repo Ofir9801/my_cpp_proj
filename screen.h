@@ -156,4 +156,5 @@ private:
 	std::string loadRoomState(int key, const std::string& filename, int& current); //change to string for error handling
 	void saveRoomState(const RoomState& state, const std::string& filename, const bool first) const;
 	void setFileName(std::string& file, const int key) const;
+	void CleanFolder();
 };

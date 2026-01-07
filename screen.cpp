@@ -935,6 +935,7 @@ void Screen::saveRoom()
 void Screen::saveGame() const
 {
 	std::string file = "";
+	CleanFolder();
 	for(auto& room: savedRooms){
 		setFileName(file, room.first);
 		if (room.first == 1) {saveRoomState(room.second, file, true);}
@@ -1038,20 +1039,23 @@ void Screen::saveRoomState(const RoomState& state, const std::string& filename, 
 }
 
 void Screen::setFileName(std::string& file, const int key) const{
+	std::string roomNumber;
+	if (key < 10) { roomNumber = '0' + std::to_string(key); }
+	else { roomNumber = std::to_string(key); }
 
+	file = STATE_FOLDER + "/" + "SavedScreen" + roomNumber + STATE_EXTENSION;
+}
+
+void Screen::CleanFolder()
+{
 	if (std::filesystem::exists(STATE_FOLDER)) {
 		for (const auto& entry : std::filesystem::directory_iterator(STATE_FOLDER)) {
 			if (entry.path().extension() == STATE_EXTENSION) {
-				    std::filesystem::remove(entry.path());
+				std::filesystem::remove(entry.path());
 			}
 		}
 	}
 	else {
 		std::filesystem::create_directory(STATE_FOLDER);
 	}
-	std::string roomNumber;
-	if (key < 10) { roomNumber = '0' + std::to_string(key); }
-	else { roomNumber = std::to_string(key); }
-
-	file = STATE_FOLDER + "/" + "SavedScreen" + roomNumber + STATE_EXTENSION;
 }
