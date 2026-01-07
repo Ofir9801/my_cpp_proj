@@ -1,7 +1,10 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <vector>
+#include <map>
+#include <type_traits>
 
 using std::string;
 
@@ -121,11 +124,14 @@ inline const string MenuPrefix = "Menu";
 inline const string InstructionsPrefix = "Instructions";
 inline const string VictoryPrefix = "Final";
 inline const string VaultPrefix = "Vault";
-inline const string RoomsFolder = "Rooms";
-inline const string RiddlesFolder = "Riddles";
-inline const string RoomsExtension = ".screen";
-inline const string RiddlesExtension = ".riddle";
+inline const string ROOM_FOLDER = "Rooms";
+inline const string RIDDLES_FOLDER = "Riddles";
+inline const string ROOM_EXTENSION = ".screen";
+inline const string RIDDLES_EXTENSION = ".riddle";
 inline const string LegendPathWay = "Rooms/Legend.legend";
+inline const string STATE_FOLDER = "last_Game_Saved";
+inline const string STATE_EXTENSION = ".state";
+
 
 //utility functions for screen handling
 void gotoxy(int x, int y);
@@ -139,6 +145,7 @@ Color getColorForChar(objSigns sign);
 void ReadLegendFromFile(roomIndex room, int yOffset);
 string ReadRoomFromFile();
 roomIndex getRoomNumber(std::string fileName);
+int getRoomNumberForState(std::string fileName);
 void getAllFilePaths(std::vector<std::string>& vec_to_fill, std::string extension, std::string subFolder="");
 void WriteLineToRoom(roomIndex room, int lineIndex, const std::string& text);
 
@@ -179,4 +186,97 @@ inline int operator+ (MESSAGES_POS p, int offset) { //overload operator <= for e
 }
 inline int operator+ (int offset, MESSAGES_POS p) { //overload operator <= for enum class roomIndex
 	return offset + static_cast<int>(p);
+}
+
+template <typename T>
+void saveVector(std::ofstream& file, const std::vector<T>& vec) {
+	file << vec.size() << "\n";
+	for (const auto& item : vec) {
+		if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>)
+		{
+			item.save(file);
+		}
+		else {
+			file << item << "\n";
+		}
+	}
+} 
+
+template <typename T, typename K>
+void saveMap(std::ofstream& file, const std::map<T,K>& map) {
+	file << map.size() << "\n";
+	for (const auto& pair : map) {
+		if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>)
+		{
+			pair.first.save(file);
+		}
+		else {
+			file << pair.first << "\n";
+		}
+		if constexpr (std::is_class_v<K> && !std::is_same_v<K, std::string>)
+		{
+			pair.second.save(file);
+		}
+		else {
+			file << pair.second << "\n";
+		}
+	}
+}
+
+template <typename T>
+void loadVector(std::ifstream& file, std::vector<T>& vec) {
+	size_t size;
+	file >> size; 
+
+	if constexpr (std::is_same_v<T, std::string>) {
+		file.ignore(); //ignore buffer
+	}
+
+	vec.clear();
+	for (size_t i = 0; i < size; i++) {
+		T item;
+		if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>)
+		{
+			item.load(file);
+		}
+		else if constexpr (std::is_same_v<T, std::string>) {
+			std::getline(file, item);
+			if (!item.empty() && item.back() == '\r') item.pop_back();
+		}
+		else {
+			file >> item;
+		}
+		vec.push_back(item);
+	}
+}
+
+template <typename T, typename K>
+void loadMapDataStructure(std::ifstream& file, std::map<T, K>& map) {
+	size_t size;
+	file >> size;
+	if constexpr (std::is_same_v<T, std::string>) {
+		file.ignore();
+	}
+	map.clear();
+	for (size_t i = 0; i < size; i++ ) {
+		T id;
+		if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>){id.load(file);}
+		else if constexpr (std::is_same_v<T, std::string>) {
+			std::getline(file, id);
+			if (!id.empty() && id.back() == '\r') id.pop_back();
+		}
+		else {file >> id;}
+		if constexpr (!std::is_same_v<T, std::string> && std::is_same_v<K, std::string>) {
+			file.ignore();
+		}
+		K val;
+		if constexpr (std::is_class_v<K> && !std::is_same_v<K, std::string>) {val.load(file);}
+		else if constexpr (std::is_same_v<K, std::string>) {
+			std::getline(file, val);
+			if (!val.empty() && val.back() == '\r') val.pop_back();
+		}
+		else {file >> val;}
+
+		map[id] = val;
+	}
 }

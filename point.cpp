@@ -1,6 +1,6 @@
 #include "Point.h"
 #include "Screen.h"
-
+#include <fstream>
 void Point::draw(char c, Color color)
 {
 	gotoxy(x, y);
@@ -79,4 +79,15 @@ bool Point::InBounds(int max_x, int max_y, int min_x ,int min_y)const {
 	bool inside_Y = y >= min_y && y < max_y;
 
 	return inside_X && inside_Y;
+}
+
+void Point::save(std::ofstream& file) const {
+
+	file << x << " " << y << " " << static_cast<int> (ch) << "\n";
+}
+void  Point::load(std::ifstream& file) {
+	int tempCh;
+	file >> x >> y;
+	file >> tempCh;
+	ch = static_cast<char>(tempCh);
 }

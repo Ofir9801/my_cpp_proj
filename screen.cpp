@@ -10,6 +10,7 @@
 #include <random>
 #include <string>
 #include <windows.h>
+#include <filesystem>
 #include <conio.h>
 #include <chrono>
 #include "Game.h"
@@ -24,7 +25,7 @@ Screen::Screen(unsigned int seed) {
 		board[i].resize(MAX_X, ' ');
 	}
 	RiddlePathWays.clear();
-	getAllFilePaths(RiddlePathWays, RiddlesExtension, RiddlesFolder);
+	getAllFilePaths(RiddlePathWays, RIDDLES_EXTENSION, RIDDLES_FOLDER);
 	currentRoom = static_cast<int>(roomIndex::INSTRUCTIONS);//when start the game the first screen is menu
 	if (seed == 0) {
 		seed = static_cast<long>(std::chrono::system_clock::now().time_since_epoch().count());
@@ -371,13 +372,13 @@ void Screen::loadItems(int doorIdOpen, Point&doorPos) {//enter the items from th
 		for (int x = 0; x < MAX_X; x++) {
 			char c = getCharAt(Point(x, y));
 			if (c == objSigns::SWITCH_OFF) {
-				switches.push_back(Switch(x, y, this, false));
+				switches.push_back(Switch(x, y, false));
 			}
 			else if (c == objSigns::SWITCH_ON) {
-				switches.push_back(Switch(x, y, this, true));
+				switches.push_back(Switch(x, y, true));
 			}
 			else if (c == objSigns::OBSTACLE) {
-				obstacles.push_back(Obstacle(x, y, this, 1));
+				obstacles.push_back(Obstacle(x, y, this));
 			}
 			else if (isdigit(static_cast<unsigned char>(c))) {
 				int door_id = c - '0';
@@ -798,8 +799,7 @@ string Screen::loadRiddles(){
 		{
 			path = fileName;
 			break;
-		}
-			
+		}		
 	}
 
 	while (it != riddles.end()){
@@ -912,4 +912,118 @@ void Screen::saveRoom()
 	savedRooms[currentRoom].activeBombs = activeBombs;
 	savedRooms[currentRoom].riddles = riddles;
 	savedRooms[currentRoom].visited = true;
+}
+
+void Screen::saveGame() const
+{
+	std::string file = "";
+	for(auto& room: savedRooms){
+		setFileName(file, room.first);
+		if (room.first == 0) {saveRoomState(room.second, file, true);}
+		else { saveRoomState(room.second, file, false); }
+	}
+}
+
+int Screen::loadGame()
+{
+	int current = static_cast<int>(roomIndex::INSTRUCTIONS);
+	std::vector<string>filesNames;
+	std::string errorMsg = "";
+	getAllFilePaths(filesNames, STATE_EXTENSION, STATE_FOLDER); //change to const extention and const subfolder. flag
+
+	for (auto& file : filesNames) {
+		while (true) {
+			int key = getRoomNumberForState(file);
+			if (key == -1) {
+				errorMsg = "Error: file isnt by designated format - [" + file + "]" ;
+			}
+			else {
+				errorMsg = loadRoomState(key, file, current);
+			}
+			if (errorMsg.empty())
+				break;
+			cls();
+			std::cout << "########################################################" << std::endl;
+			std::cout << "ERROR LOADING Game" << std::endl;
+			std::cout << "########################################################" << std::endl;
+			std::cout << errorMsg << std::endl << std::endl;
+			std::cout << "1. Fix the file externally." << std::endl;
+			std::cout << "2. Press 'r' to RETRY." << std::endl;
+			std::cout << "3. Press 'ESC' to EXIT Game." << std::endl;
+			char c = static_cast<char>(_getch());
+			if (c == ESC) {
+				throw std::runtime_error("Game stopped by user due to file error");
+			}
+		}
+	}
+	return current;
+}
+
+std::string Screen::loadRoomState(int key, const std::string& filename, int& current)
+{
+	std::ifstream file(filename);
+	if (!file.is_open()) return "Error: Could not open file [" + filename + " ]";
+	
+	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	try {
+		RoomState state = savedRooms[key];
+		if (key == 0) { file >> current; }
+		int flagColor;
+		file >> flagColor;
+		colorToggle = (flagColor == 1);
+		file >> state.visited;
+		file.ignore(); //ignore buffer
+
+		loadVector(file, state.layout);
+		loadVector(file, state.springs);
+		loadVector(file, state.switches);
+		loadVector(file, state.obstacles);
+		loadVector(file, state.activeBombs);
+		loadMapDataStructure(file, state.riddles);
+		loadMapDataStructure(file, state.keys);
+		loadMapDataStructure(file, state.doors);
+	}
+	catch (const std::ifstream::failure&) { 
+		return "Error reading file [" + filename + "]: Unexpected end of file or bad format.";
+	}
+	catch (const std::exception& e) {
+		return std::string("General Error: ") + e.what();
+	}
+	file.close();
+	return "";
+}
+
+void Screen::saveRoomState(const RoomState& state, const std::string& filename, const bool first) const
+{
+	std::ofstream file(filename);
+	if (!file.is_open()) {
+		return;
+	}
+	
+	if(first){ file << currentRoom << "\n"; }
+	file << colorToggle << "\n";
+	file << state.visited << "\n";
+	
+	saveVector(file, state.layout);
+	saveVector(file, state.springs);
+	saveVector(file, state.switches);
+	saveVector(file, state.obstacles);
+	saveVector(file, state.activeBombs);
+	saveMap(file, state.riddles);
+	saveMap(file, state.keys);
+	saveMap(file, state.doors);
+	
+	file.close();
+}
+
+void Screen::setFileName(std::string& file, const int key) const{
+
+	if (!std::filesystem::exists(STATE_FOLDER)) { //create folder if not exist
+		std::filesystem::create_directory(STATE_FOLDER);
+	}
+	std::string roomNumber;
+	if (key < 10) { roomNumber = '0' + std::to_string(key); }
+	else { roomNumber = std::to_string(key); }
+
+	file = STATE_FOLDER + "/" + "SavedScreen" + roomNumber + STATE_EXTENSION;
 }

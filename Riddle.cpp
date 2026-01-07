@@ -3,7 +3,9 @@
 #include <conio.h>
 #include "Utils.h"
 #include <algorithm>
-
+#include <fstream>
+#include <iostream>
+#include <fstream>
 
 bool Riddle::engage(Player& player, std::string& answer){
 	cls();
@@ -57,4 +59,34 @@ bool Riddle::engageVaultRiddle(std::string& str) {
 		return true;
 	}
 	return false;
+}
+
+void Riddle::save(std::ofstream& file) const {
+	file << question << "\n";
+	file << correctIndex << "\n";
+	file << (solved ? 1 : 0) << " ";
+	saveVector(file, options);
+}
+
+void Riddle::load(std::ifstream& file) {
+	file.ignore();
+	std::getline(file,question);
+	if (!question.empty() && question.back() == '\r') question.pop_back();
+
+	file >> correctIndex;
+	bool flag;
+	file >> flag;
+	solved = (flag == 1);
+
+	size_t size;
+	file >> size;
+	file.ignore();
+	options.clear();
+
+	for (size_t i = 0; i < size; i++) {
+		std::string temp;
+		std::getline(file, temp);
+		options.push_back(temp);
+	}
+	correctAnswer = options[correctIndex];
 }

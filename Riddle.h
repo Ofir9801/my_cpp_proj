@@ -27,4 +27,6 @@ public:
 	int getCorrectIndex() const { return correctIndex; };
 	bool engage(Player& player, std::string& answer);
 	bool engageVaultRiddle(std::string& str);//vault riddle has no options, player must type the answer
+	void save(std::ofstream& file) const;
+	void load(std::ifstream& file);
 };

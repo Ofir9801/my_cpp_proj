@@ -23,7 +23,8 @@ Ofir Eren, id: 323958082
 - When the players enter different rooms, they will need to choose which room they want to enter and both players will be in that room. 
 - Now when entering to a new room you spawn to each room from the door you entered also, you may travel back to the room you came from by entering the door you came from.
 
-- the stracture of the riddle txt is: notice that each riddle txt is named according to the room number it belongs to, for example room2riddle.txt and saved in designated folder
+- the stracture of the riddle txt is: notice that each riddle txt is named according to the room number it belongs to, for example room2riddle.txt and saved in designated 
+
 	Riddle: <riddle question>
 	index of correct Answer: <number of the correct answer>
 	4 possible answers:<options[0:3]>

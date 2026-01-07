@@ -42,15 +42,15 @@ private:
 	Game* game = nullptr;
 
 	struct RoomState { //to save the state of each room
+		bool visited = false;
 		std::vector<string> layout;          
 		std::vector<Spring> springs;         
 		std::vector<Switch> switches;        
-		std::vector<Obstacle> obstacles;     
-		std::map<int, Door> doors;           
+		std::vector<Obstacle> obstacles;  
+		std::vector<Bomb> activeBombs;
+		std::map<Point, Riddle> riddles;
 		std::map<Point, Key> keys;           
-		std::vector<Bomb> activeBombs;       
-		std::map<Point, Riddle> riddles;     
-		bool visited = false;                
+		std::map<int, Door> doors;	               
 	};
 	std::map <int,RoomState> savedRooms; //array to hold the state of each room (excluding menu ,instructions and victory)
 	
@@ -70,7 +70,6 @@ public:
 	Game* getGame(){ return game; }
 	void setSilentMode(bool silent) { isSilent = silent; }
 	bool IsSilent()const { return isSilent; }
-
     // display
     void drawMap();
     void refreshSpringsDisplay(const Point& p1, const Point& p2) const;
@@ -99,7 +98,7 @@ public:
     int getScore() const { return sharedScore; }
     int getLives() const { return sharedLives; }
     void decreaseLife();
-    void resetStats() { sharedLives = STARTING_LIVES; sharedScore = 0; }
+	void resetStats() { sharedLives = STARTING_LIVES; sharedScore = 0; }
     // game logic: Doors & Switches
 	bool isDoorOpen(int door_id) const;
     void openDoor(int door_id, char player);
@@ -125,13 +124,16 @@ public:
     bool handleRiddle(Point riddlePos, Player& player);
 	bool allRiddlesSolved() const;
 	bool handleVaultRiddle(Point riddlePos);
+	//read and write from Files functions
+	void saveGame() const;
+	int loadGame();
 private:
 	//gamecycle and initialization
 	void initializeRoomsArray();
 	void linkDoorsToKeysAndSwitches();
 	void loadItems(int doorIdOpen, Point& doorPos);
 	string loadRiddles();
-	//void loadWithRetry(string fileName, roomIndex room);
+	void CheckExplodeNecessaryObject(int doorId);
 	void loadFilesByType(bool type);
 	bool isDestructible(const Point& p)const;
 	bool inLegendBounds(const int legendY, const int y) const;
@@ -146,5 +148,8 @@ private:
 	// game logic: Riddles
 	Riddle ReadRiddleFromFile(const string& filePath, const Point pos, int riddleIndex, string& errorMsg);
 	Riddle ReadVaultRiddleFromFile(const string& filePath, const Point pos, string& errorMsg);
-	void CheckExplodeNecessaryObject(int doorId);
+	//read and write from Files functions
+	std::string loadRoomState(int key, const std::string& filename, int& current); //change to string for error handling
+	void saveRoomState(const RoomState& state, const std::string& filename, const bool first) const;
+	void setFileName(std::string& file, const int key) const;
 };

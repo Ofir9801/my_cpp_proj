@@ -1,14 +1,13 @@
 #pragma once
 #include "Utils.h"
-#include <iostream>
 #include <Windows.h>
 
-class Point //classic Point class for 2D coordinates
+class Point 
 {
-	int x, y;// private fields by default
-	int diff_x = 0; //direction x
-	int diff_y = 0; //direction y
-	char ch; //character to draw
+	int x, y;
+	int diff_x = 0;
+	int diff_y = 0;
+	char ch;
 public:
 	Point(int _x = 0, int _y = 0, char _ch = ' '):x(_x), y(_y), ch(_ch){}//constractor with default values
 	Point(int _x, int _y, objSigns _sign) :Point(_x, _y, static_cast<char>(_sign)) {}//constractor overload for objSigns
@@ -29,5 +28,6 @@ public:
 	bool operator== (const Point& otherPos) const;
 	bool operator < (const Point& other) const; //for using Point as a key in map
 	bool InBounds(int max_x = MAX_X, int max_y = MAX_Y, int min_x = 0, int min_y = 0) const;//making sure point is in bounds of the board
-
+	void save(std::ofstream& file) const;
+	void load(std::ifstream& file);
 };

@@ -12,16 +12,16 @@ class Spring {//Spring class to represent springs on the board
 public:
     Spring(Point start, int len, Keyboard_bind dir)//constractor
         : startPos(start), length(len), pushDirection(dir){ }
-    //int getLength() const { return length; };
-   // void setLength(int l) { length = l; };
-    //Point getPosition() const { return startPos; };
+    Spring():startPos(), length(0), pushDirection(Keyboard_bind::STAY){}
     bool isPlayerOn(const Point& p) const;//function to state if the spring is being stepped
-    //Keyboard_bind getDirection() const { return pushDirection; }
 	void draw(const Point& playerPos, const Screen& board ,bool active = false)const ;//function to draw the functioning of the spring on the board
     void interact(Player& p, const Screen& board);
     bool handleExplosion(const Point& hitPos,Screen& board);
     bool isPointOn(const Point& p) const;
     static Spring* CreateFromMap(const Screen& board, int x, int y, bool(&processed)[MAX_Y][MAX_X]);
+    void save(std::ofstream& file) const;
+    void load(std::ifstream& file);
+
 private:
     int getSegmentIndex(const Point& p) const;
     int calculateForce(const Point& playerPos) const;//function to calculate the correct force granted

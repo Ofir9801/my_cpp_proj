@@ -1,6 +1,8 @@
 ﻿#include "Spring.h"
 #include "Screen.h"
 #include <cmath>
+#include <ostream>
+#include <fstream>
 
 int Spring::getSegmentIndex(const Point& p) const
 {
@@ -134,4 +136,21 @@ Spring* Spring::CreateFromMap(const Screen& board, int x, int y, bool(&processed
         return new Spring(currentStart, length, dir);
     }
     return nullptr;
+}
+
+void Spring::save(std::ofstream& file) const
+{
+    startPos.save(file);
+    file << length << "\n";
+    file << static_cast<int>(pushDirection) << "\n";
+}
+
+void Spring::load(std::ifstream& file)
+{
+    startPos.load(file);
+    file.ignore();
+    file >> length;
+    int dir;
+    file >> dir;
+    pushDirection = static_cast<Keyboard_bind>(dir);
 }

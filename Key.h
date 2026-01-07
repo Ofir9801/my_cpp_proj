@@ -22,4 +22,6 @@ public:
         position.setX(newPos.getX());
         position.setY(newPos.getY());
     }
+    void save(std::ofstream& file) const;
+    void load(std::ifstream& file);
 };

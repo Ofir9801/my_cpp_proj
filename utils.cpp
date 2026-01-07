@@ -62,7 +62,7 @@ Color getColorForChar(objSigns sign){
 
 string ReadRoomFromFile() {
 	std::vector<std::string> roomFilePaths;
-	getAllFilePaths(roomFilePaths, RoomsExtension, RoomsFolder); //change to const
+	getAllFilePaths(roomFilePaths, ROOM_EXTENSION, ROOM_FOLDER);
 
 	if (roomFilePaths.empty())
 		return "Error: no files in directory that given";
@@ -180,6 +180,22 @@ roomIndex getRoomNumber(std::string fileName) {
 	if (filename_prefix == VaultPrefix)
 		return roomIndex::VAULT;
 	throw std::runtime_error("Error: "+ fileName+" isn't written by the guidelines");
+}
+
+int getRoomNumberForState(std::string fileName)
+{
+	std::string filename_prefix = std::filesystem::path(fileName).stem().string();
+	std::string lastTwoChars = "";
+	int roomNum = -1;
+	if (filename_prefix.length() > 2) {
+		lastTwoChars = filename_prefix.substr(filename_prefix.length() - 2);
+		if (std::isdigit(lastTwoChars[0])) {
+			roomNum = (lastTwoChars[0] - '0') * 10 + (lastTwoChars[1] - '0');
+		}
+	}
+	if (roomNum > 0)
+		return roomNum;
+	return -1;
 }
 
 void WriteLineToRoom(roomIndex room, int lineIndex, const std::string& text) {

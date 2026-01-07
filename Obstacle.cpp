@@ -2,6 +2,8 @@
 #include "Obstacle.h"
 #include "Screen.h"
 #include <vector>
+#include <iostream>
+#include <fstream>
 
 void Obstacle::collectGroup(Point p, std::vector<Obstacle*>& group) {
 	for (const auto& existing : group) {//if its already collected, no need to add again
@@ -63,4 +65,12 @@ bool Obstacle::push(int force, Keyboard_bind dir) {
         board->setChar(newPos, objSigns::OBSTACLE);
     }
     return true;
+}
+
+void Obstacle::save(std::ofstream& file) const {
+    position.save(file);
+}
+void Obstacle::load(std::ifstream& file) {
+    position.load(file);
+    file.ignore();
 }

@@ -3,6 +3,8 @@
 #include "Player.h"
 #include "Utils.h"
 #include <windows.h>
+#include <iostream>
+#include <fstream>
 #include <algorithm> // for std::max, std::abs
 
 void Bomb::explode(Screen& board, Player& p1, Player& p2) {
@@ -107,4 +109,19 @@ bool Bomb::isShielded(Screen& board, Point bombPos, Point targetPos) const{//bon
 		if (board.isWall(p)) return true; // true if a wall is found
 	}
 	return false;
+}
+
+void Bomb::save(std::ofstream& file) const {
+	position.save(file);
+	file << timer << " ";
+	file << (active ? 1 : 0) << "\n";
+}
+
+void Bomb::load(std::ifstream& file) {
+	position.load(file);
+	file.ignore();
+	file >> timer;
+	bool flag;
+	file >> flag;
+	active = (flag == 1);
 }

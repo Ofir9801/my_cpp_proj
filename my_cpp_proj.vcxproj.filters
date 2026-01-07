@@ -17,6 +17,7 @@
     <ClCompile Include="Results.cpp" />
     <ClCompile Include="AutoGame.cpp" />
     <ClCompile Include="SaveGame.cpp" />
+    <ClCompile Include="Key.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bomb.h" />
@@ -40,5 +41,24 @@
   <ItemGroup>
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
+    <None Include="adv - world.steps" />
+    <None Include="adv - world.result" />
+    <None Include="Rooms\Final.screen" />
+    <None Include="Rooms\Instructions.screen" />
+    <None Include="Rooms\Legend.legend" />
+    <None Include="Rooms\Menu.screen" />
+    <None Include="Rooms\Room01.screen" />
+    <None Include="Rooms\Room02.screen" />
+    <None Include="Rooms\Room03.screen" />
+    <None Include="Rooms\Vault.screen" />
+    <None Include="Riddles\Riddles02.riddle" />
+    <None Include="Riddles\Riddles01.riddle" />
+    <None Include="Riddles\Riddles03.riddle" />
+    <None Include="Riddles\Vault.riddle" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="readme.txt" />
+    <Text Include="files_format.txt" />
+    <Text Include="bonus.txt" />
   </ItemGroup>
 </Project>

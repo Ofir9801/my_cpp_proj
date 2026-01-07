@@ -20,16 +20,14 @@ Game::Game() :
 void Game::run() {
 	hideCursor();
 	gameCycle = 0;
-	bool started = true;
+	bool exitGame = true;
 
-	showMenu(started);
-	
-	if (!started) {	return;	}
+	showMenu(exitGame);
 	board.resetStats();
 	drawMap();
 	drawPlayer();
 	
-	bool exitGame = true;
+	
 	bool firstMessage = true;
 
 	while (exitGame) {
@@ -97,7 +95,8 @@ void Game::run() {
 	cls();
 }
 
-void Game::showMenu(bool& started){
+void Game::showMenu(bool& exitGame){
+
 	changeRoom(roomIndex::MENU);
 	bool inMenu = true;
 	int a;
@@ -114,6 +113,21 @@ void Game::showMenu(bool& started){
 				changeRoom(roomIndex::ROOM1);
 				inMenu = false;
 				break;
+			case '3': {
+					int room = board.loadGame();
+					if (room != roomIndex::INSTRUCTIONS) {
+						changeRoom(static_cast<roomIndex>(room));
+						inMenu = false;
+					}
+					else {
+						std::string msg = "there is no saved game in memory";
+						const int X_coord = MAX_X / 2 - static_cast<int>(msg.size()) / 2;
+						const int y_coord = MAX_Y / 2;
+						gotoxy(X_coord, y_coord);
+						std::cout << msg << std::endl;
+					}
+					break;
+				}
 			case '8':
 				changeRoom(roomIndex::INSTRUCTIONS);
 				board.showInstructionBinds();
@@ -121,11 +135,9 @@ void Game::showMenu(bool& started){
 				changeRoom(roomIndex::MENU);
 				break;
 			case '9':
-				started = false;
+				exitGame = false;
 				inMenu = false;
 				break;
-			//case '3'
-				//function to read save data
 			}
 		}
 	}
@@ -178,6 +190,9 @@ void Game::updateSwitches() {
 	for (auto& s : board.switches) {
 		bool isPressed = s.isAt(player1.getPosition()) || s.isAt(player2.getPosition());
 		s.update(isPressed);
+		Point position = s.getPosition();
+		board.setChar(position, position.getChar());
+		board.showMessage(s.getIsOn()? "Switch is ON" : "Switch is OFF");
 		}
 }
 
@@ -215,7 +230,7 @@ void Game::PerformGoToMenu(bool& exitGame)
 
 void Game::handlePause(bool& exitGame)
 {
-	board.showMessage("PAUSED: ESC-Continue, H-Menu, R-Restart");
+	board.showMessage("PAUSED: ESC-Continue, H-Menu, R-Restart, S-Save game");
 
 	while (true) {
 		char choice = static_cast<char>(std::tolower(_getch()));
@@ -233,7 +248,13 @@ void Game::handlePause(bool& exitGame)
 			PerformGoToMenu(exitGame);
 			break;
 		}
-		//choice == 's'
+		else if (choice == 's') {
+			board.saveRoom();
+			board.saveGame();
+			board.colorToggle = false;
+			PerformGoToMenu(exitGame);
+			break;
+		}
 
 	}
 }
