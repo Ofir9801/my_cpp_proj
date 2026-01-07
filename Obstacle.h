@@ -13,6 +13,7 @@ public:
 	Point getPosition() const { return position; }
 	void save(std::ofstream& file) const;
 	void load(std::ifstream& file);
+	void setScreen(Screen* newBoard) { board = newBoard; }
 private:
 	void collectGroup(Point p, std::vector<Obstacle*>& group);// recursive function to gather connected obstacles
 	void setPosition(const Point& p) { position = p; }

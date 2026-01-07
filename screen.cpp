@@ -919,7 +919,7 @@ void Screen::saveGame() const
 	std::string file = "";
 	for(auto& room: savedRooms){
 		setFileName(file, room.first);
-		if (room.first == 0) {saveRoomState(room.second, file, true);}
+		if (room.first == 1) {saveRoomState(room.second, file, true);}
 		else { saveRoomState(room.second, file, false); }
 	}
 }
@@ -966,8 +966,8 @@ std::string Screen::loadRoomState(int key, const std::string& filename, int& cur
 	
 	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 	try {
-		RoomState state = savedRooms[key];
-		if (key == 0) { file >> current; }
+		RoomState& state = savedRooms[key];
+		if (key == 1) { file >> current; }
 		int flagColor;
 		file >> flagColor;
 		colorToggle = (flagColor == 1);
@@ -982,6 +982,9 @@ std::string Screen::loadRoomState(int key, const std::string& filename, int& cur
 		loadMapDataStructure(file, state.riddles);
 		loadMapDataStructure(file, state.keys);
 		loadMapDataStructure(file, state.doors);
+		for (auto& obs : state.obstacles) {
+			obs.setScreen(this);
+		}
 	}
 	catch (const std::ifstream::failure&) { 
 		return "Error reading file [" + filename + "]: Unexpected end of file or bad format.";

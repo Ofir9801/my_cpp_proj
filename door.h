@@ -15,4 +15,6 @@ public:
 	bool getIsOpen() const { return isOpen; }
 	bool getConnection() const { return connection; }
 	void setConnection(bool conn) { connection = conn; }
+	void save(std::ofstream& file) const;
+	void load(std::ifstream& file);
 };
