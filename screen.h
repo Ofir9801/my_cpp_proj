@@ -30,7 +30,7 @@ private:
 	std::map<Point, Riddle> riddles;
 	std::map<Point, Obstacle> obstacles;
 	std::vector<Bomb> activeBombs;
-	std::vector<string>RiddlePathWays;
+	//std::vector<string>RiddlePathWays;
 	bool colorToggle = false;
 	bool isDarkRoom = false;
 	bool gameState = true;

@@ -24,8 +24,8 @@ Screen::Screen(unsigned int seed) {
 	for (int i = 0; i < MAX_Y; i++) {
 		board[i].resize(MAX_X, ' ');
 	}
-	RiddlePathWays.clear();
-	getAllFilePaths(RiddlePathWays, RIDDLES_EXTENSION, RIDDLES_FOLDER);
+	//RiddlePathWays.clear();
+	
 	currentRoom = static_cast<int>(roomIndex::INSTRUCTIONS);//when start the game the first screen is menu
 	if (seed == 0) {
 		seed = static_cast<long>(std::chrono::system_clock::now().time_since_epoch().count());
@@ -805,9 +805,12 @@ void Screen::decreaseLife() {
 }
 
 string Screen::loadRiddles(){
+	std::vector<string>RiddlePathWays;
 	auto it = riddles.begin();
 	int counter = 0;
 	string path;
+	
+	getAllFilePaths(RiddlePathWays, RIDDLES_EXTENSION, RIDDLES_FOLDER);
 	for (auto& fileName: RiddlePathWays)
 	{
 		if (getRoomNumber(fileName) == currentRoom)
@@ -1036,7 +1039,14 @@ void Screen::saveRoomState(const RoomState& state, const std::string& filename, 
 
 void Screen::setFileName(std::string& file, const int key) const{
 
-	if (!std::filesystem::exists(STATE_FOLDER)) { //create folder if not exist
+	if (std::filesystem::exists(STATE_FOLDER)) {
+		for (const auto& entry : std::filesystem::directory_iterator(STATE_FOLDER)) {
+			if (entry.path().extension() == STATE_EXTENSION) {
+				    std::filesystem::remove(entry.path());
+			}
+		}
+	}
+	else {
 		std::filesystem::create_directory(STATE_FOLDER);
 	}
 	std::string roomNumber;
