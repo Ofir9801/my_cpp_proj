@@ -5,18 +5,6 @@
 #include <conio.h>
 #include <windows.h>
 
-//void Player::draw()
-//{
-//	if (!board.IsSilent())
-//	{
-//		if (board.IsColor()) {
-//			char c = position.getChar();
-//			position.draw(c, color);
-//		}
-//		else { position.draw(Color::WHITE); }
-//	}
-//}
-
 void Player::handleKeyPressed(char key_pressed) {
 	if (springCyclesLeft > 0) return; //disable changing direction during spring flight
 	size_t index = 0;
@@ -98,9 +86,6 @@ void Player::dispose()
 			if (c == objSigns::KEY) {board.DisposeKeyToScreen(this->getChar(), position);}
 			else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
 			drawToScreen();
-			/*if (!board.IsSilent()) {
-				position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
-			}*/
 			inventory[index] = ' ';
 			return;
 		}
@@ -116,9 +101,6 @@ void Player::dispose()
 		if (c == objSigns::KEY) {board.DisposeKeyToScreen(this->getChar(), position);}
 		else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
 		drawToScreen();
-		/*if (!board.IsSilent()) {
-			position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
-		}*/
 		inventory[0] = ' ';
 	}
 	else {
@@ -219,7 +201,6 @@ bool Player::takeStep() {
 		}
 		position = nextCandidate;
 		drawToScreen();
-		//position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
 		return false; // can continue
 	}
 }
