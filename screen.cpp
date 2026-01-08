@@ -465,6 +465,19 @@ bool Screen::SwitchState(int doorId) const{
 	return false;
 }
 
+void Screen::handleSwitches(const Point& p1, const Point& p2)
+{
+	for (auto& s : switches) {
+		bool isPresed = s.isAt(p1) || s.isAt(p2);
+
+		if (s.update(isPresed)) {
+			Point pos = s.getPosition();
+			setChar(pos, pos.getChar());
+			showMessage(s.getIsOn() ? "Switch is ON" : "Switch is OFF");
+		}
+	}
+}
+
 void Screen::addKeyToInventory(Point position, char p){
 	auto it = keys.find(position);
 	if (it != keys.end()) {
@@ -722,7 +735,14 @@ void Screen::deleteSwitch(Point position){
 	while (it != switches.end() && !flag) {
 		if (it->getPosition() == position)
 		{
-			CheckExplodeNecessaryObject(it->getTargetDoorId());
+			int door_id = it->getTargetDoorId();
+			if (isRealDoor(door_id)) { //explode real door
+				auto door_it = doors.find(door_id);
+				if(door_it != doors.end() && !door_it->second.getIsOpen()) // check if the door already open
+				finalMessage = "you blew up a necessary object for your progress. you lost the game!";
+				gameState = false;
+				Sleep(300);
+			}
 			it = switches.erase(it);
 			flag = true;
 		}
@@ -1088,7 +1108,12 @@ std::string Screen::loadRoomState(int key, const std::string& filename, int& cur
 	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 	try {
 		RoomState& state = savedRooms[key];
-		if (key == 1) { file >> current; }
+		if (key == 1) { 
+			file >> current; 
+			file >> sharedLives;
+			file >> sharedScore;
+			
+		}
 		int flagColor;
 		file >> flagColor;
 		colorToggle = (flagColor == 1);
@@ -1124,7 +1149,11 @@ void Screen::saveRoomState(const RoomState& state, const std::string& filename, 
 		return;
 	}
 	
-	if(first){ file << currentRoom << "\n"; }
+	if(first){ 
+		file << currentRoom << "\n";
+		file << sharedLives << "\n"; 
+		file << sharedScore << "\n";
+	}
 	file << colorToggle << "\n";
 	file << state.visited << "\n";
 	

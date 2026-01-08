@@ -19,7 +19,6 @@ public:
 	virtual void onGameEvent(const Event& e);
 	size_t getIteration() const { return gameCycle; }
 private:
-	void updateSwitches();
 	bool isSpecialKey(int key) const { return key == 0 || key == 224; } //when keyboard presses special keys like arrows
 	bool isGameOver() const { return board.getLives() <= 0 || !board.gameState; }
 	bool isPlayableRoom(roomIndex room) { return !(room == roomIndex::MENU || room == roomIndex::INSTRUCTIONS || room == roomIndex::VICTORY); }
@@ -43,5 +42,6 @@ protected:
 	bool ImportantkeyPressed(char c);
 	void reportResultError(const std::string& message, size_t iteration);
 	void SetColorfullGame();
+	virtual bool isSaveLoadAllowed() const { return true; }
 };
 

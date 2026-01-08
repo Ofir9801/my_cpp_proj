@@ -13,5 +13,6 @@ public:
 	~SaveGame();
 	bool getInput(char& c, size_t iteration = 0) override;
 	void onGameEvent(const Event& e) override;
+	bool isSaveLoadAllowed() const override { return false; }
 };
 

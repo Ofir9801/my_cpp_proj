@@ -14,7 +14,7 @@ public:
         : position(x, y, objSigns::SWITCH_OFF), isOn(initialState), targetDoorId(targetDoorId) {
     }    
     Switch():position(), isOn(false), wasToggled(false){}
-    void update(bool isPressed);
+    bool update(bool isPressed);
     Point getPosition()const { return position; };
     void setTargetDoorId(int doorId) { targetDoorId = doorId; }
     int getTargetDoorId() const {return targetDoorId;}

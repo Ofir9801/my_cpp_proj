@@ -52,7 +52,7 @@ void Game::run() {
 		Point p1Prev = player1.getPosition();
 		Point p2Prev = player2.getPosition();
 
-		updateSwitches();
+		board.handleSwitches(p1Prev, p2Prev);
 		board.updateBombs(player1, player2);
 		board.showPlayerInfo(player1);
 		board.showPlayerInfo(player2);
@@ -114,6 +114,17 @@ void Game::showMenu(bool& exitGame){
 				inMenu = false;
 				break;
 			case '3': {
+				if (!isSaveLoadAllowed()) {
+					std::string msg = "Loading games is disabled in Recording Mode (-save)";
+					const int X_coord = MAX_X / 2 - static_cast<int>(msg.size()) / 2;
+					const int y_coord = MAX_Y / 2;
+					gotoxy(X_coord, y_coord);
+					std::cout << msg << std::endl;
+					wait(2000); 
+					board.drawMap();  
+					break;
+
+				}
 				std::string selectedFile = board.selectSaveFile();
 
 				if (selectedFile.empty()) {
@@ -142,8 +153,20 @@ void Game::showMenu(bool& exitGame){
 					}
 				}
 				break;
+
 			}
 			case '7':
+				if (!isSaveLoadAllowed())
+				{
+					std::string msg = "Clear memory is disabled in Recording Mode (-save)";
+					const int X_coord = MAX_X / 2 - static_cast<int>(msg.size()) / 2;
+					const int y_coord = MAX_Y / 2;
+					gotoxy(X_coord, y_coord);
+					std::cout << msg << std::endl;
+					wait(2000);
+					board.drawMap();
+					break;
+				}
 				board.cleanSavedGames();
 				board.drawMap();
 				break;
@@ -203,16 +226,6 @@ bool Game::getInput(char& c, size_t /*iteration*/) {
 		return true;
 	}
 	return false;
-}
-
-void Game::updateSwitches() {
-	for (auto& s : board.switches) {
-		bool isPressed = s.isAt(player1.getPosition()) || s.isAt(player2.getPosition());
-		s.update(isPressed);
-		Point position = s.getPosition();
-		board.setChar(position, position.getChar());
-		board.showMessage(s.getIsOn()? "Switch is ON" : "Switch is OFF");
-		}
 }
 
 // Enable color mode in the game

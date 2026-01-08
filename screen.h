@@ -107,6 +107,7 @@ public:
 	bool getConnectionStatus(int door_id) const;
 	bool isRealDoor(int doorId) const { return doorId >= roomIndex::VAULT && doorId <= roomIndex::VICTORY; }
 	bool SwitchState(int doorId) const;
+	void handleSwitches(const Point& p1, const Point& p2);
 	int GetDoorIdByKey(char p) const;
     void deleteDoor(Point position);
     void deleteSwitch(Point position);

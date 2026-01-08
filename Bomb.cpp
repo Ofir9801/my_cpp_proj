@@ -49,7 +49,7 @@ void Bomb::destroyCell(Screen& board, Player& p1, Player& p2, Point target) {
 		playerHit = true;
 	}
 	if (!playerHit) {
-		char c = board.getCharAt(target);
+		char c = target.getChar();
 		char replaceChar = ' '; // Default replacement is empty space
 
 		switch (static_cast<objSigns>(c)) {

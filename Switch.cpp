@@ -8,15 +8,18 @@ void Switch::toggle() {
 	position.setChar(newSymbol);
 }
 
-void Switch::update(bool isPressed) {
+bool Switch::update(bool isPressed) {
+	bool stateChanged = false;
 	if (isPressed) {
 		if (!wasToggled) {
 			toggle();
 			wasToggled = true;
+			stateChanged = true;
 		}
 	}
 	else
 		wasToggled = false;
+	return stateChanged;
 }
 
 void Switch::save(std::ofstream& file) const {
