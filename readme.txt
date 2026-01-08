@@ -23,21 +23,21 @@ Ofir Eren, id: 323958082
 - When the players enter different rooms, they will need to choose which room they want to enter and both players will be in that room. 
 - Now when entering to a new room you spawn to each room from the door you entered also, you may travel back to the room you came from by entering the door you came from.
 
-- the stracture of the riddle txt is: notice that each riddle txt is named according to the room number it belongs to, for example room2riddle.txt and saved in designated 
+- The stracture of the riddle txt is: notice that each riddle txt is named according to the room number it belongs to, for example room2riddle.txt and saved in designated 
 
 	Riddle: <riddle question>
 	index of correct Answer: <number of the correct answer>
 	4 possible answers:<options[0:3]>
 
--when designing new room you must saved it in Rooms folder, and the name need to RoomXX.screen. the XX reprsent the number of room like Room01.screen
+- When designing new room you must saved it in Rooms folder, and the name need to RoomXX.screen. the XX reprsent the number of room like Room01.screen
 the file must be:
 	contain the letter L - for legend (must be 3 lines) - notice that the char L must be in most left place in line and in width of maximum 80 chars.
-room design - by the size of 80x22 (legend is 3 lines extra)
+Room design - by the size of 80x22 (legend is 3 lines extra)
 this build according answer from the forum: https://mama.mta.ac.il/mod/forum/discuss.php?d=3446
-- added function to save last game by entering -save when running from cmd
-- added function to auto play last saved game by entering -load when running from cmd
-- for auto play this is extra option, silent mode that will tell the end result only, byentering -load -silent when running from cmd 
-	
+- Added function to save last game by entering -save when running from cmd
+- Added function to auto play last saved game by entering -load when running from cmd
+- For auto play this is extra option, silent mode that will tell the end result only, by entering -load -silent when running from cmd or terminal.
+- We added more exceptions to make sure the program won't crash.	
 
 
 
