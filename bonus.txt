@@ -16,6 +16,6 @@ doors - dark grey
 -We made it possible to acquire a second inventory slot for both players after answering every riddle in room number 2.
 -If an important part of the game explodes because of the bomb, the game will alert the player and shut itself down.
 - User also may use ESC + R to restart.
-- add option to save game by pressing s on pause
-when entering the game we add option to load saved game by pressing 3 and then choose the requested game.
-it will show list of saved games by time stamp and will be limit to 10 saved games. after 10 saves the next one will override the oldest save
+- Added option to save game by pressing 'S' on pause.
+-When entering the game we add option to load saved game by pressing 3 and then choose the requested game.
+It will show list of saved games by time stamp and will be limit to 10 saved games. after 10 saves the next one will override the oldest save.
