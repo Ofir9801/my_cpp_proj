@@ -105,7 +105,7 @@ void Game::showMenu(bool& exitGame){
 			int key = _getch();
 			switch (key) {
 			case '1':
-				changeRoom(roomIndex::ROOM1);
+				changeRoom(roomIndex::ROOM2);
 				inMenu = false;
 				break;
 			case '2':
@@ -115,7 +115,7 @@ void Game::showMenu(bool& exitGame){
 				break;
 			case '3': {
 				if (!isSaveLoadAllowed()) {
-					std::string msg = "Loading games is disabled in Recording Mode (-save)";
+					std::string msg = "Loading saved games is disabled in Recording Mode (-save)";
 					const int X_coord = MAX_X / 2 - static_cast<int>(msg.size()) / 2;
 					const int y_coord = MAX_Y / 2;
 					gotoxy(X_coord, y_coord);

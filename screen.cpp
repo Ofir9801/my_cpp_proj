@@ -735,14 +735,7 @@ void Screen::deleteSwitch(Point position){
 	while (it != switches.end() && !flag) {
 		if (it->getPosition() == position)
 		{
-			int door_id = it->getTargetDoorId();
-			if (isRealDoor(door_id)) { //explode real door
-				auto door_it = doors.find(door_id);
-				if(door_it != doors.end() && !door_it->second.getIsOpen()) // check if the door already open
-				finalMessage = "you blew up a necessary object for your progress. you lost the game!";
-				gameState = false;
-				Sleep(300);
-			}
+			CheckExplodeNecessaryObject(it->getTargetDoorId());
 			it = switches.erase(it);
 			flag = true;
 		}

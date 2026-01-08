@@ -37,8 +37,10 @@ this build according answer from the forum: https://mama.mta.ac.il/mod/forum/dis
 - Added function to save last game by entering -save when running from cmd
 - Added function to auto play last saved game by entering -load when running from cmd
 - For auto play this is extra option, silent mode that will tell the end result only, by entering -load -silent when running from cmd or terminal.
-- We added more exceptions to make sure the program won't crash.	
-- We implemented new materials learned in class, such as templates and containers.
+- We added more exceptions to make sure the program won't crash and it will focused the user about the problem and give him the option the fix and reload game
+- add option to saved up to 10 games and run from last point saved. in menu you can enter them by pressing '3' and then choose the requested checkpoint
+- in game when pause the game you can hit the 's' button to save game
+- notice that when on -save mode, the user can't lunch previous games and only fresh ones
 
 
 

@@ -17,5 +17,7 @@ doors - dark grey
 -If an important part of the game explodes because of the bomb, the game will alert the player and shut itself down.
 - User also may use ESC + R to restart.
 - Added option to save game by pressing 'S' on pause.
--When entering the game we add option to load saved game by pressing 3 and then choose the requested game.
-It will show list of saved games by time stamp and will be limit to 10 saved games. after 10 saves the next one will override the oldest save.
+- When entering the game we add option to load saved game by pressing '3' and then choose the requested game.
+- It will show list of saved games by time stamp and will be limited to 10 saved games. after 10 saves the next one will override the oldest save.
+- (the 10 games limits is because we let the user choose by line number)
+- notice that when game on -save mode, the user cant load previous games and need to start new one.
