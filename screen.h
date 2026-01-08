@@ -9,6 +9,7 @@
 #include "Bomb.h"
 #include <vector>
 #include <map>
+#include <filesystem>
 #include <random>
 
 class Player; //forward declaration to avoid circular dependency
@@ -20,6 +21,7 @@ private:
 	string board[MAX_Y];
 	string* Rooms[NUM_ROOMS];
 	string finalMessage = "";
+	string currentSaveDirectory = "";
 	int currentRoom = 0;
 	std::vector<Spring> springs;
 	std::vector<Switch> switches;
@@ -99,7 +101,7 @@ public:
     int getScore() const { return sharedScore; }
     int getLives() const { return sharedLives; }
     void decreaseLife();
-	void resetStats() { sharedLives = STARTING_LIVES; sharedScore = 0; }
+	void resetStats() { sharedLives = STARTING_LIVES; sharedScore = 0; currentSaveDirectory = ""; }
     // game logic: Doors & Switches
 	bool isDoorOpen(int door_id) const;
     void openDoor(int door_id, char player);
@@ -128,8 +130,9 @@ public:
 	bool allRiddlesSolved() const;
 	bool handleVaultRiddle(Point riddlePos);
 	//read and write from Files functions
-	void saveGame() const;
-	int loadGame();
+	void saveGame();
+	int loadGame(const std::string& file = "");
+	std::string selectSaveFile();
 	
 private:
 	//gamecycle and initialization
@@ -155,6 +158,7 @@ private:
 	//read and write from Files functions
 	std::string loadRoomState(int key, const std::string& filename, int& current); //change to string for error handling
 	void saveRoomState(const RoomState& state, const std::string& filename, const bool first) const;
-	void setFileName(std::string& file, const int key) const;
-	void CleanFolder();
+	void setFileName(std::string& file, const int key, const std::string& folderPath) const;
+	std::string getCurrentTimeStamp()const;
+	std::string formatTime(std::filesystem::file_time_type ftime)const;
 };

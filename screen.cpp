@@ -1,8 +1,5 @@
-﻿#include "Bomb.h"
+﻿#include "Screen.h"
 #include "Player.h"
-#include "Riddle.h"
-#include "Screen.h"
-#include "Spring.h"
 #include "Utils.h"
 #include <algorithm>
 #include <fstream>
@@ -10,7 +7,6 @@
 #include <random>
 #include <string>
 #include <windows.h>
-#include <filesystem>
 #include <conio.h>
 #include <chrono>
 #include "Game.h"
@@ -932,25 +928,66 @@ void Screen::saveRoom()
 	savedRooms[currentRoom].visited = true;
 }
 
-void Screen::saveGame() const
+void Screen::saveGame() 
 {
+	const std::string rootSaves = STATE_FOLDER;
+	if (!std::filesystem::exists(rootSaves)) {
+		std::filesystem::create_directory(rootSaves);
+	}
+
+	if (!currentSaveDirectory.empty() && std::filesystem::exists(currentSaveDirectory)) {
+		std::filesystem::remove_all(currentSaveDirectory); // Deletes folder and all files inside
+	}
+	else { //check if there is more than 10 files and if so erase the oldest one
+		std::vector<std::filesystem::path> existingSaves;
+		for (const auto& entry : std::filesystem::directory_iterator(rootSaves)) {
+			if (entry.is_directory()) {
+				existingSaves.push_back(entry.path());
+			}
+		}
+		if (existingSaves.size() >= 10) {
+			auto oldest = existingSaves.end();
+			std::filesystem::file_time_type oldestTime = std::filesystem::file_time_type::max();
+
+			for (auto it = existingSaves.begin(); it != existingSaves.end(); ++it) {
+				auto lastWrite = std::filesystem::last_write_time(*it);
+				if (lastWrite < oldestTime) {
+					oldestTime = lastWrite;
+					oldest = it;
+				}
+			}
+
+			if (oldest != existingSaves.end()) {
+				std::filesystem::remove_all(*oldest);
+			}
+		}
+	}
+
+	std::string currentSaveName = getCurrentTimeStamp();
+	std::string fullSavePath = rootSaves + "/" + currentSaveName;
+	std::filesystem::create_directory(fullSavePath);
+
+	currentSaveDirectory = fullSavePath;
+
 	std::string file = "";
-	CleanFolder();
 	for(auto& room: savedRooms){
-		setFileName(file, room.first);
+		setFileName(file, room.first, fullSavePath);
 		if (room.first == 1) {saveRoomState(room.second, file, true);}
 		else { saveRoomState(room.second, file, false); }
 	}
 }
 
-int Screen::loadGame()
+int Screen::loadGame(const std::string& folderPath)
 {
 	int current = static_cast<int>(roomIndex::INSTRUCTIONS);
-	std::vector<string>filesNames;
+	std::vector<string>filesInFolder;
 	std::string errorMsg = "";
-	getAllFilePaths(filesNames, STATE_EXTENSION, STATE_FOLDER); //change to const extention and const subfolder. flag
+	if (folderPath.empty()) return current;
+	currentSaveDirectory = folderPath;
+	savedRooms.clear();
+	getAllFilePaths(filesInFolder, STATE_EXTENSION, folderPath);
 
-	for (auto& file : filesNames) {
+	for (auto& file : filesInFolder) {
 		while (true) {
 			int key = getRoomNumberForState(file);
 			if (key == -1) {
@@ -976,6 +1013,69 @@ int Screen::loadGame()
 		}
 	}
 	return current;
+}
+
+std::string Screen::selectSaveFile()
+{
+	struct SaveFileEntry { //sort saving files
+		std::string filename;
+		std::filesystem::file_time_type timestamp;
+	};
+
+	std::vector<SaveFileEntry> saves;
+	std::string rootFolder = STATE_FOLDER;
+
+	if (!std::filesystem::exists(rootFolder)) {
+		return "";
+	}
+
+	for (const auto& entry : std::filesystem::directory_iterator(rootFolder)) {
+		if (entry.is_directory()) { 
+			saves.push_back({ entry.path().string(), entry.last_write_time() });
+		}
+	}
+
+	if (saves.empty()) {
+		return "";
+	}
+
+	std::sort(saves.begin(), saves.end(), [](const SaveFileEntry& a, const SaveFileEntry& b) {return a.timestamp > b.timestamp;});
+
+	
+	system("cls"); 
+	std::cout << "Select a Saved Game:\n";
+	std::cout << "--------------------\n";
+
+	for (size_t i = 0; i < saves.size() && i < 10; ++i) {
+		std::string displayName = std::filesystem::path(saves[i].filename).filename().string();
+		if (i == 9) {
+			std::cout << "0. " << displayName << "  (" << formatTime(saves[i].timestamp) << ")\n";
+		}
+		else {
+			std::cout << (i + 1) << ". " << displayName << "  (" << formatTime(saves[i].timestamp) << ")\n";
+		}
+	}
+	std::cout << "ESC. Cancel\n";
+
+	
+	while (true) {
+		if (_kbhit()) {
+			char key = static_cast<char>(_getch());
+			if (key == ESC) return ""; // ESC
+			if (isdigit(key)) {
+				size_t index;
+				if (key == '0') {
+					index = 9;
+				}
+				else {
+					index = key - '1';
+				}
+				if (index < saves.size()) {
+					return saves[index].filename;
+				}
+			}
+		}
+	}
 }
 
 std::string Screen::loadRoomState(int key, const std::string& filename, int& current)
@@ -1038,25 +1138,34 @@ void Screen::saveRoomState(const RoomState& state, const std::string& filename, 
 	file.close();
 }
 
-void Screen::setFileName(std::string& file, const int key) const{
-	std::string roomNumber;
-	if (key < 10) { roomNumber = '0' + std::to_string(key); }
-	else { roomNumber = std::to_string(key); }
 
-	file = STATE_FOLDER + "/" + "SavedScreen" + roomNumber + STATE_EXTENSION;
+
+void Screen::setFileName(std::string& file, const int key, const std::string& folderPath) const{
+	std::string roomNumber = (key < 10) ? "0" + std::to_string(key) : std::to_string(key);
+	file = folderPath + "/" + "SavedScreen" + roomNumber + STATE_EXTENSION;
+}
+std::string Screen::getCurrentTimeStamp() const //use gemini for get time stamp
+{
+	auto now = std::chrono::system_clock::now();
+	std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+	
+	std::tm timeInfo;
+	localtime_s(&timeInfo, &now_c);
+	
+	std::stringstream ss;
+	ss << std::put_time(&timeInfo, "Save_%Y-%m-%d_%H-%M-%S");
+	return ss.str();
 }
 
-//avoid this function and think how to save few states by date stamp
-void Screen::CleanFolder()
+std::string Screen::formatTime(std::filesystem::file_time_type ftime) const //use gemini for get time format
 {
-	if (std::filesystem::exists(STATE_FOLDER)) {
-		for (const auto& entry : std::filesystem::directory_iterator(STATE_FOLDER)) {
-			if (entry.path().extension() == STATE_EXTENSION) {
-				std::filesystem::remove(entry.path());
-			}
-		}
-	}
-	else {
-		std::filesystem::create_directory(STATE_FOLDER);
-	}
+	auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(ftime - std::filesystem::file_time_type::clock::now() + std::chrono::system_clock::now());
+
+	std::time_t tt = std::chrono::system_clock::to_time_t(sctp);
+
+	std::tm tm;
+	localtime_s(&tm,&tt);
+	std::stringstream ss;
+	ss << std::put_time(&tm, "%d/%m/%y %H:%M");
+	return ss.str();
 }

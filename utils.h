@@ -129,7 +129,7 @@ inline const string RIDDLES_FOLDER = "Riddles";
 inline const string ROOM_EXTENSION = ".screen";
 inline const string RIDDLES_EXTENSION = ".riddle";
 inline const string LegendPathWay = "Rooms/Legend.legend";
-inline const string STATE_FOLDER = "last_Game_Saved";
+inline const string STATE_FOLDER = "SavedGames";
 inline const string STATE_EXTENSION = ".state";
 
 

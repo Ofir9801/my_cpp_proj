@@ -114,20 +114,32 @@ void Game::showMenu(bool& exitGame){
 				inMenu = false;
 				break;
 			case '3': {
-					int room = board.loadGame();
+				std::string selectedFile = board.selectSaveFile();
+
+				if (selectedFile.empty()) {
+					board.drawMap();
+					std::string msg = "No saved files in memory";
+					const int X_coord = MAX_X / 2 - static_cast<int>(msg.size()) / 2;
+					const int y_coord = MAX_Y / 2;
+					gotoxy(X_coord, y_coord);
+					std::cout << msg << std::endl;
+				}
+				else {
+					int room = board.loadGame(selectedFile);
 					if (room != roomIndex::INSTRUCTIONS) {
 						changeRoom(static_cast<roomIndex>(room));
 						inMenu = false;
 					}
 					else {
-						std::string msg = "there is no saved game in memory";
+						std::string msg = "Error: File corrupted or could not open.";
 						const int X_coord = MAX_X / 2 - static_cast<int>(msg.size()) / 2;
 						const int y_coord = MAX_Y / 2;
 						gotoxy(X_coord, y_coord);
 						std::cout << msg << std::endl;
 					}
-					break;
 				}
+				break;
+			}
 			case '8':
 				changeRoom(roomIndex::INSTRUCTIONS);
 				board.showInstructionBinds();
