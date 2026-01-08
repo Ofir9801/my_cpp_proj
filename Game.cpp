@@ -124,6 +124,9 @@ void Game::showMenu(bool& exitGame){
 					gotoxy(X_coord, y_coord);
 					std::cout << msg << std::endl;
 				}
+				else if (selectedFile == "ESC") {
+					board.drawMap();
+				}
 				else {
 					int room = board.loadGame(selectedFile);
 					if (room != roomIndex::INSTRUCTIONS) {
@@ -140,6 +143,10 @@ void Game::showMenu(bool& exitGame){
 				}
 				break;
 			}
+			case '7':
+				board.cleanSavedGames();
+				board.drawMap();
+				break;
 			case '8':
 				changeRoom(roomIndex::INSTRUCTIONS);
 				board.showInstructionBinds();

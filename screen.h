@@ -133,6 +133,7 @@ public:
 	void saveGame();
 	int loadGame(const std::string& file = "");
 	std::string selectSaveFile();
+	void cleanSavedGames();
 	
 private:
 	//gamecycle and initialization

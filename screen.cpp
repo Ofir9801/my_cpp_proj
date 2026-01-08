@@ -947,7 +947,7 @@ void Screen::saveGame()
 		}
 		if (existingSaves.size() >= 10) {
 			auto oldest = existingSaves.end();
-			std::filesystem::file_time_type oldestTime = std::filesystem::file_time_type::max();
+			std::filesystem::file_time_type oldestTime = (std::filesystem::file_time_type::max)();
 
 			for (auto it = existingSaves.begin(); it != existingSaves.end(); ++it) {
 				auto lastWrite = std::filesystem::last_write_time(*it);
@@ -1078,6 +1078,8 @@ std::string Screen::selectSaveFile()
 	}
 }
 
+
+
 std::string Screen::loadRoomState(int key, const std::string& filename, int& current)
 {
 	std::ifstream file(filename);
@@ -1168,4 +1170,40 @@ std::string Screen::formatTime(std::filesystem::file_time_type ftime) const //us
 	std::stringstream ss;
 	ss << std::put_time(&tm, "%d/%m/%y %H:%M");
 	return ss.str();
+}
+void Screen::cleanSavedGames()
+{
+	std::string rootFolder = STATE_FOLDER;
+
+	if (!std::filesystem::exists(rootFolder) || std::filesystem::is_empty(rootFolder)) {
+		system("cls");
+		std::cout << "No saved games found to delete.\n";
+		Sleep(1500);
+		return;
+	}
+
+	system("cls");
+	std::cout << "!!! WARNING !!!\n";
+	std::cout << "You are about to delete ALL saved games.\n";
+	std::cout << "This action cannot be undone.\n\n";
+	std::cout << "Are you sure? (y/n): ";
+
+	char confirm =static_cast<char>( _getch());
+	if (tolower(confirm) == 'y') {
+
+		try {
+			std::filesystem::remove_all(rootFolder);
+			std::filesystem::create_directory(rootFolder);
+			currentSaveDirectory = "";
+
+			std::cout << "\n\nAll saved games deleted successfully.\n";
+		}
+		catch (const std::exception& e) {
+			std::cout << "\n\nError deleting files: " << e.what() << "\n";
+		}
+	}
+	else {
+		std::cout << "\nOperation Cancelled.\n";
+		Sleep(500);
+	}
 }
