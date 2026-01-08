@@ -27,6 +27,7 @@ void Obstacle::collectGroup(Point p, std::vector<Obstacle*>& group) {
 }
 
 bool Obstacle::push(int force, Keyboard_bind dir) {
+    Screen* safeBoard = this->board;
     std::vector<Obstacle*> group;
     collectGroup(this->position, group);
     if (force < group.size()) return false; // checking if weight allows push
@@ -41,8 +42,8 @@ bool Obstacle::push(int force, Keyboard_bind dir) {
     for (const auto* obs : group) {
         Point p = obs->getPosition();
         Point target(p.getX() + dx, p.getY() + dy,' ');
-        if (!board->isValid(target) || board->isWall(target)) { return false; }
-        char targetChar = board->getCharAt(target);
+        if (!safeBoard->isValid(target) || safeBoard->isWall(target)) { return false; }
+        char targetChar = safeBoard->getCharAt(target);
         if (targetChar != ' ') {
             bool isSelfGroup = false;
             for (auto* internal : group) {
@@ -54,15 +55,22 @@ bool Obstacle::push(int force, Keyboard_bind dir) {
             if (!isSelfGroup) return false;
         }
     }
-    for (auto* obs : group) {
-        board->setChar(obs->getPosition(), ' ');
-    }
-    for (auto* obs : group) {
-        Point p = obs->getPosition();
-        Point newPos(p.getX() + dx, p.getY() + dy,' ');
+    std::vector<Obstacle> tempGroup;
+    tempGroup.reserve(group.size());
 
-        obs->setPosition(newPos);
-        board->setChar(newPos, objSigns::OBSTACLE);
+    for (auto* obs : group) {
+        safeBoard->setChar(obs->getPosition(), ' ');
+        tempGroup.push_back(*obs);
+        safeBoard->obstacles.erase(obs->getPosition());
+    }
+
+    for (auto& obs : tempGroup) {
+        Point oldPos = obs.getPosition();
+        Point newPos(oldPos.getX() + dx, oldPos.getY() + dy, ' ');
+        obs.setPosition(newPos);
+        obs.setScreen(safeBoard);
+        safeBoard->obstacles[newPos] = obs;
+        safeBoard->setChar(newPos, objSigns::OBSTACLE);
     }
     return true;
 }

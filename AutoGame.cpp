@@ -49,6 +49,7 @@ void AutoGame::getFileNames()
 	fileNames.clear();
 	getAllFilePaths(fileNames, ".result");
 	if (!fileNames.empty()) { resultsFileName = fileNames[0]; }
+
 }
 
 void AutoGame::printList() const

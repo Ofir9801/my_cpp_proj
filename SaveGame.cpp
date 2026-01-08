@@ -43,5 +43,6 @@ bool SaveGame::getInput(char& c, size_t iteration)
 
 void SaveGame::onGameEvent(const Event& e) {
     results.addResult(e);
+
 }
 

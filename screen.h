@@ -25,14 +25,12 @@ private:
 	int currentRoom = 0;
 	std::vector<Spring> springs;
 	std::vector<Switch> switches;
-	//std::vector<Obstacle> obstacles;
 	std::map<int,Door>doors;
 	std::vector<int>doorIDs; //keys to the doors map
 	std::map<Point, Key> keys;
 	std::map<Point, Riddle> riddles;
 	std::map<Point, Obstacle> obstacles;
 	std::vector<Bomb> activeBombs;
-	//std::vector<string>RiddlePathWays;
 	bool colorToggle = false;
 	bool isDarkRoom = false;
 	bool gameState = true;
@@ -43,6 +41,7 @@ private:
 	std::mt19937 rng;
 	unsigned int currentSeed;
 	Game* game = nullptr;
+	friend class Obstacle;
 
 	struct RoomState { //to save the state of each room
 		bool visited = false;
