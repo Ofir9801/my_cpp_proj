@@ -38,7 +38,7 @@ this build according answer from the forum: https://mama.mta.ac.il/mod/forum/dis
 - Added function to auto play last saved game by entering -load when running from cmd
 - For auto play this is extra option, silent mode that will tell the end result only, by entering -load -silent when running from cmd or terminal.
 - We added more exceptions to make sure the program won't crash.	
-
+- We implemented new materials learned in class, such as templates and containers.
 
 
 
