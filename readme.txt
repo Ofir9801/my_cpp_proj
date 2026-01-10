@@ -2,47 +2,48 @@ Names of the students:
 Liran Malka, id: 211626783
 Ofir Eren, id: 323958082
 
-- We based the color addition on the video of keren Kalif that you add to the assignment
-- We used ai tools - gemini by google and copilot by Microsoft that was integrated with git. we used it mostly to efficient our program structure and readability.
-- We changed the key binds for players for more comfortable using, now it is:
-	player 1: right - D, down - S, up - W, left - A, stay - E, dispose - Q
-	player 2: right - L, down - K, up - i, left - J, stay - O, dispose - U
-- In case of the bomb destroying a required item to continue the game(like essential door or key), the game will alert the user and end the game.
-- In this exercise we linked the door number to the room number and there so for entry room 2 from room 1, you need to open door with the digit 2.
-- Every switch is linked to spefic door by his Id so only one switch can open its linked door.
-- In a room that there are switches in it, you need to turn on the designated switch that linked to the door and also unlock with a key. the player will get messages through the game that will help him understand what he need to do.
-- Make sure the keyboard is set to english otherwise you won't be able to move.
-- The room design is based on the assumption that there is equal numbers of switches and keys to the number of doors.
-- We made it so you can advance to EACH room from EACH room by entering the door with the room's number, for example. door 2 always lead to room 2.
-- Room 3 is the dark one. Player 1 is spawned next to a torch and the second player's torch is blocked. Player 1 needs to plant a bomb to assist player 2 to reach his torch. This room is very challenging as its filled with walls and obstacles.
-- The riddles remain after on screen after answering correctly and bumping into it states the correct answer, for vault purposes.
-- We made a 'Vault' room as the 4th room with difficult challenge to solve - exploding many obstacles and solving one last great riddle to finish the challenge.
-- this is unique riddle that requires players to collect 3 digits from the previous rooms(riddle answers) and combine them to one final answer.
-  * If you are having a tough time answering, the correct answer is '132'.
-- By completing all the riddles in room 2, the player get another inventory slot as a reward. if they want to dispose one item they will get message to choose which item to dispose.(press 1 or 2)
-- When the players enter different rooms, they will need to choose which room they want to enter and both players will be in that room. 
-- Now when entering to a new room you spawn to each room from the door you entered also, you may travel back to the room you came from by entering the door you came from.
+ - Color Implementation: We based the color implementation on Keren Kalif's video, which was provided with the assignment.
+ - AI Tools: We utilized AI tools (Google Gemini and Microsoft Copilot integrated with Git) primarily to optimize our program structure and improve code readability.
+ - Controls: We updated the player keybindings for better usability. The current controls are:
+Player 1: Right (D), Down (S), Up (W), Left (A), Stay (E), Dispose (Q)
+Player 2: Right (L), Down (K), Up (I), Left (J), Stay (O), Dispose (U)
 
-- The stracture of the riddle txt is: notice that each riddle txt is named according to the room number it belongs to, for example room2riddle.txt and saved in designated 
+- Input Language: Please ensure your keyboard input language is set to English; otherwise, movement controls will not function.
+- Game Over Logic: If a bomb destroys an item required to progress (such as an essential door or key), the game will alert the user and terminate.
 
-	Riddle: <riddle question>
-	index of correct Answer: <number of the correct answer>
-	4 possible answers:<options[0:3]>
+Game Mechanics & Room Design:
+- Door Logic: In this exercise, we linked door numbers to room numbers. For example, to enter Room 2 from Room 1, you must open the door marked with the digit '2'.
+- Switches: Every switch is linked to a specific door via its ID; therefore, a specific switch can only open its corresponding door.
+- Switch/Key Puzzle: In rooms containing switches, players must activate the designated switch linked to the door and unlock it with a key. In-game messages will guide the player on the required actions.
+- Design Assumption: The room design assumes an equal number of switches and keys relative to the number of doors.
+- Navigation: We implemented a system where entering a specific door number always leads to the corresponding room number (e.g., Door 2 always leads to Room 2).
+- Room 3 (The Dark Room): Room 3 is designed as a "dark room" maze. Player 1 spawns next to a torch, but the second torch is blocked. the players must plant a bomb for reaching the second torch.
+- Riddle Persistence: Solved riddles remain on screen. Bumping into a solved riddle displays the answer again to assist players with the Vault Room.
+- Room 4 (The Vault): We created a "Vault" room as a final challenge. It involves destroying multiple obstacles and solving a unique "Master Riddle." This riddle requires players to combine three digits (answers from riddles in previous rooms) into a final code.
+	Hint: If you are having trouble answering, the correct code is '132'.
+- Inventory Reward: Completing all riddles in Room 2 rewards the players with an extra inventory slot. If players need to discard an item, a prompt will ask them to select which item to remove.
+- Room Transitions: When transitioning between rooms, both players move to the selected room together. Players spawn at the location of the door they entered through. You can return to the previous room by entering the door you just came from.
 
-- When designing new room you must saved it in Rooms folder, and the name need to RoomXX.screen. the XX reprsent the number of room like Room01.screen
-the file must be:
-	contain the letter L - for legend (must be 3 lines) - notice that the char L must be in most left place in line and in width of maximum 80 chars.
-Room design - by the size of 80x22 (legend is 3 lines extra)
-this build according answer from the forum: https://mama.mta.ac.il/mod/forum/discuss.php?d=3446
-- Added function to save last game by entering -save when running from cmd
-- Added function to auto play last saved game by entering -load when running from cmd
-- For auto play this is extra option, silent mode that will tell the end result only, by entering -load -silent when running from cmd or terminal.
-- We added more exceptions to make sure the program won't crash and it will focused the user about the problem and give him the option the fix and reload game
-- add option to saved up to 10 games and run from last point saved. in menu you can enter them by pressing '3' and then choose the requested checkpoint
-- in game when pause the game you can hit the 's' button to save game
-- notice that when on -save mode, the user can't lunch previous games and only fresh ones
+File Structures & Formats:
+- Riddle File Structure:
 
+Riddle: <riddle question>
+Index of correct Answer: <number of the correct answer>
+4 possible answers: <options[0:3]>
+(Note: Each riddle file is named according to its room number, e.g., Riddles02.riddle, and must be saved in the designated folder.)
 
+Room Design Files:
+- New room designs must be saved in the Rooms folder using the naming convention RoomXX.screen (where XX represents the room number, e.g., Room01.screen).
+- The file must contain the letter 'L' for the Legend (must be 3 lines). The 'L' character must be in the leftmost position of the line.
+- Map size: 80x22 (plus 3 extra lines for the legend).
+- This structure follows the guidelines discussed in the forum: https://mama.mta.ac.il/mod/forum/discuss.php?d=3446
 
-
-
+Save & Load Features:
+- Save Recording: Added a function to save the game recording by entering -save when running from the command line.
+- Load Recording: Added a function to replay the last saved game by entering -load from the command line.
+- Silent Mode: Added a "Silent Mode" for auto-play (shows end result only) by entering -load -silent from the terminal.
+- Exceptions: We implemented robust exception handling to prevent crashes. The program identifies specific errors, alerts the user, and allows them to fix the issue and reload the game.
+- Save Slots: Added the option to save up to 10 distinct game states.
+- To Load: In the menu, press '3' to load a specific checkpoint.
+- To Save: During gameplay, pause the game and press 's'.
+Note: When running in -save mode, the user cannot launch previous games; only new games can be started.

@@ -1,4 +1,4 @@
-In this exercise we enabled color mode. we kept the original option(black and white) as key bind 1 at the menu and for color mode you need to press 2 in the menu.
+In this exercise we enabled color mode. we kept the original option (black and white) as key bind 1 at the menu and for color mode you need to press 2 in the menu.
 We did only text color and not background color for better visualization.
 the color theme is:
 players - cyan
@@ -8,16 +8,18 @@ spring - magenta
 switch: on - green, off - red
 doors - dark grey
 
--We changed the switch so that every time the player is hovering above the switch it change his state in opposite to the possibility that when the switch turn on by the player it stay on the whole time.
--We did that every game isnt similar to previous one by randomize the keys and switches that in every game they linked to different door. 
--We made it possible to move back and forth from rooms. now there is no 'actual' room order, but the dark room is number 3 because it's the most difficult one.
--We made a 'vault' room as stated in readme.txt of challenging path and a riddle.
--Walls shield players and objects. in room 1 you must explode a wall to answer a riddle and gain score, but the riddle is adjacent to a wall, but will not explode.
--We made it possible to acquire a second inventory slot for both players after answering every riddle in room number 2.
--If an important part of the game explodes because of the bomb, the game will alert the player and shut itself down.
+- We changed the switch so that every time the player is hovering above the switch it change his state in opposite to the possibility that when the switch turn on by the player it stay on the whole time.
+- We did that every game isnt similar to previous one by randomize the keys and switches that in every game they linked to different door. 
+- We made it possible to move back and forth from rooms. now there is no 'actual' room order.
+- We made a 'vault' room as stated in readme.txt of challenging path and a riddle. only way to enter the vault is from room 1 with minimum score of 500 points
+- Walls shield players and objects.
+- We made it possible to acquire a second inventory slot for both players after answering every riddle in room number 2.
+- when player try to dispose item when he obtains two items, he will get notification that he need to choose which item to dispose.
+- If an important part of the game explodes because of the bomb, the game will alert the player and shut itself down.
 - User also may use ESC + R to restart.
 - Added option to save game by pressing 'S' on pause.
 - When entering the game we add option to load saved game by pressing '3' and then choose the requested game.
-- It will show list of saved games by time stamp and will be limited to 10 saved games. after 10 saves the next one will override the oldest save.
-- (the 10 games limits is because we let the user choose by line number)
-- notice that when game on -save mode, the user cant load previous games and need to start new one.
+- It will show list of saved games sorted by time stamp and will be limited to 10 saved games. after 10 saves the next one will override the oldest save.
+(the 10 games limits is because we let the user choose by line number)
+- added option to clear memory by pressing 7 on menu screen, meaning delete any saved games he have. if the user will choose that he will get alert to make he intended to do this action
+- notice that when game on -save mode, the user cant load previous games and need to start fresh new game.
