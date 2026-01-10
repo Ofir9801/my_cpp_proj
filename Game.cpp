@@ -277,6 +277,7 @@ void Game::handlePause(bool& exitGame)
 		}
 		else if (choice == 'h') {
 			board.colorToggle = false; //reset color mode when going to menu
+			board.setSaveDirectory("");
 			PerformGoToMenu(exitGame);
 			break;
 		}

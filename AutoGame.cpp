@@ -92,7 +92,6 @@ void AutoGame::onGameEvent(const Event& e){
     if ( mismatch) {
         std::string msg = "Mismatch!";
         mismatchEvents.push_back({ expected,e });
-        unmatching_result_found = true;
 
         reportResultError(msg, e.getIteration());
     }
@@ -111,7 +110,7 @@ void AutoGame::run() {
     if (!results.isEmpty()) {
         reportResultError("Test Failed: Game ended but expected results still remain!", gameCycle);
     }
-    else if (!unmatching_result_found) {
+    else if (mismatchEvents.empty()){
         // Only print success if no other errors were found
         std::cout << "Test Passed: Game replay matched perfectly." << std::endl;
         std::cout << lastEvent.getPayload() << std::endl;

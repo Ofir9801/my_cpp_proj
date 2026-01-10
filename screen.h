@@ -134,6 +134,7 @@ public:
 	int loadGame(const std::string& file = "");
 	std::string selectSaveFile();
 	void cleanSavedGames();
+	void setSaveDirectory(string dir) { currentSaveDirectory = dir; }
 	
 private:
 	//gamecycle and initialization
