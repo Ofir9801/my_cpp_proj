@@ -93,7 +93,7 @@ inline constexpr int MAX_X = 80;
 inline constexpr int MAX_Y = 25;
 inline constexpr int INVENTORY_SIZE = 2; //Player can hold up to one item
 inline constexpr int NUM_KEYS = 6; //number of possible movement Keys
-inline constexpr int NUM_ROOMS = 7; //number of rooms in the Game
+//inline constexpr int NUM_ROOMS = 7; //number of rooms in the Game
 inline constexpr int LIGHT_RADIUS_TORCH = 7;
 inline constexpr int LIGHT_RADIUS_DEFAULT = 2;
 inline constexpr int EXPLODE_BOMB_TIME = 15;
@@ -110,15 +110,16 @@ inline constexpr int SUCCESS_SCORE = 100;
 inline constexpr int STARTING_LIVES = 4;
 inline int constexpr TIMER_MESSAGE = 15;
 inline int constexpr LEGEND_SIZE = 3;
-inline int roomLegendRows[NUM_ROOMS];
+//inline int roomLegendRows[];
+inline std::map<roomIndex,int> roomLegendRows;
 
-inline string Room1[MAX_Y];
-inline string Room2[MAX_Y];
-inline string Room3[MAX_Y];
-inline string Vault[MAX_Y];
-inline string EndingScreen[MAX_Y];
-inline string Menu[MAX_Y];
-inline string Instructions[MAX_Y];
+//inline string Room1[MAX_Y];
+//inline string Room2[MAX_Y];
+//inline string Room3[MAX_Y];
+//inline string Vault[MAX_Y];
+//inline string EndingScreen[MAX_Y];
+//inline string Menu[MAX_Y];
+//inline string Instructions[MAX_Y];
 
 inline const string MenuPrefix = "Menu";
 inline const string InstructionsPrefix = "Instructions";
@@ -142,12 +143,11 @@ void SetTextColor(Color color);
 Color getColorForChar(char c);
 Color getColorForChar(objSigns sign);
 //file reading functions
-void ReadLegendFromFile(roomIndex room, int yOffset);
-string ReadRoomFromFile();
+void ReadLegendFromFile(std::vector<string>& roomFile, size_t lPos, int currentLine);
+std::vector<string> ReadRoomFromFile(const string& fileName);
 roomIndex getRoomNumber(std::string fileName);
 int getRoomNumberForState(std::string fileName);
 void getAllFilePaths(std::vector<std::string>& vec_to_fill, std::string extension, std::string subFolder="");
-void WriteLineToRoom(roomIndex room, int lineIndex, const std::string& text);
 
 inline void gotoxy(INFO_SLOTS x, INFO_SLOTS y) { gotoxy(static_cast<int>(x), static_cast<int>(y)); }
 inline void gotoxy(INFO_SLOTS x, int y) { gotoxy(static_cast<int>(x), y); }

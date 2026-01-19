@@ -60,85 +60,70 @@ Color getColorForChar(objSigns sign){
 	return getColorForChar(static_cast<char>(sign));
 }
 
-string ReadRoomFromFile() {
-	std::vector<std::string> roomFilePaths;
-	getAllFilePaths(roomFilePaths, ROOM_EXTENSION, ROOM_FOLDER);
-
-	if (roomFilePaths.empty())
-		return "Error: no files in directory that given";
-
-	for (const auto& fullPath : roomFilePaths) {
-		std::ifstream inFile(fullPath);
-		if (!inFile.is_open()) {
-			return "Error: Could not open file [" + fullPath + " ]";
-		}
-		roomIndex room;
-		try {
-			room = getRoomNumber(fullPath);
-		}
-		catch (const std::exception& e) {
-			return std::string(e.what());
-		}
-
-		roomLegendRows[static_cast<int>(room)] = -1;
-		int legendLocation = -1;
-		string templine;
-		bool gameRoom = isGameRoom(room);
-
-		for (int i = 0; i < MAX_Y; i++) {
-			if (!std::getline(inFile, templine)) {
-				templine = "";
-			}
-
-			if (gameRoom) {
-				size_t lPos = templine.find('L');
-				if (lPos != string::npos) {
-					if (lPos != 0)  return "Error in [" + fullPath + "] line " + std::to_string(i + 1) + ": Legend marker 'L' must be the start of the line";
-					if (templine.length() > MAX_X) return "Error in[" + fullPath + "] line " + std::to_string(i + 1) + ": Legend line is too long(max " + std::to_string(MAX_X) + " chars)";
-
-					legendLocation = i;
-					roomLegendRows[static_cast<int>(room)] = i;
-					i += LEGEND_SIZE - 1;
-					continue;
-				}
-			}
-
-			templine.resize(MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
-			WriteLineToRoom(room, i, templine);
-		}
-
-		inFile.close();
-
-		if (gameRoom) {
-			if (legendLocation != -1) {
-				try {
-					ReadLegendFromFile(room, legendLocation);
-				}
-				catch (const std::runtime_error& e) {
-					return "Error reading legend for [" + LegendPathWay + "]: " + string(e.what());
-				}
-			}
-			else
-				return "Error: L (represent for legend) is missing in [" + fullPath + "]";
-		}
+std::vector<string> ReadRoomFromFile(const string& fileName, int& legendLoc) {
+	std::vector<string> roomFile;
+	std::ifstream inFile(fileName);
+	if (!inFile.is_open()) {
+		roomFile.push_back("Error: Could not open file [" + fileName + " ]");
+		return roomFile;
 	}
-	return "";
-}
 
-void ReadLegendFromFile(roomIndex room, int yOffset) {
+	string templine;
+
+	for (int i = 0; i < MAX_Y; i++) {
+		if (!std::getline(inFile, templine)) {
+			templine = "";
+		}
+		size_t lPos = templine.find('L');
+		if (lPos != string::npos) { //find in line the letter L that represent the legend
+			legendLoc = i;
+			//validation legend here
+
+
+			/*try {
+				ReadLegendFromFile(roomFile,lPos, i);
+				addLegend = true;
+			}
+			catch (const std::runtime_error& e) {
+				roomFile.clear();
+				roomFile.push_back("Error reading legend for [" + fileName + "]: " + string(e.what()));
+				return roomFile;
+			}
+			i += roomFile.size() - prevSize;
+			continue;
+		}*/
+		templine.resize(MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
+		roomFile.push_back(templine);			
+	}
+	inFile.close();
+
+	/*if (gameRoom && !addLegend) {
+		roomFile.clear();
+		roomFile.push_back("Error: L (represent for legend) is missing in [" + fileName + "]");
+		return roomFile;
+	}*/
+	return roomFile;
+}
+	
+void ReadLegendFromFile(std::vector<string>& roomFile, size_t lPos, int currentLine) {
 	std::ifstream inFile(LegendPathWay);
+	if (lPos != 0) {
+		throw "In line " + std::to_string(currentLine + 1) + ": Legend marker 'L' must be the start of the line";
+	}
 	if (!inFile.is_open())
 		throw std::runtime_error("Something wrong with the file Legend.txt");
 
 	string templine;
 	int linesRead = 0;
 	while (linesRead < LEGEND_SIZE && std::getline(inFile,templine)){
-		templine.resize(MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
-		int currentLine = yOffset + linesRead;
-		WriteLineToRoom(room, currentLine, templine);
+		if (templine.length() > MAX_X) {
+			throw "In line " + std::to_string(linesRead + currentLine + 1) + ": Legend line is too long(max " + std::to_string(MAX_X) + " chars)";
+		}
+		templine.resize(MAX_X, ' ');//if the line is shorter then MAX_X, it add space bars to fill the missing places
+		roomFile.push_back(templine);
 		linesRead++;
 	}
-	if (inFile >> templine) //Check if the legend file contains more lines than the defined limi
+	if (inFile >> templine) //Check if the legend file contains more lines than the defined limit
 		throw std::runtime_error("The legend size exceeds the maximum defined lines: "+std::to_string(LEGEND_SIZE)+" lines");
 	inFile.close();
 }
@@ -160,17 +145,15 @@ void getAllFilePaths(std::vector<std::string>& vec_to_fill, std::string extensio
 roomIndex getRoomNumber(std::string fileName) {
 	std::string filename_prefix = std::filesystem::path(fileName).stem().string();
 	std::string lastTwoChars = "";
+
 	if (filename_prefix.length() > 2) {
 		lastTwoChars = filename_prefix.substr(filename_prefix.length() - 2);
 		if (std::isdigit(lastTwoChars[0])) {
 			int roomNum = (lastTwoChars[0] - '0') * 10 + (lastTwoChars[1] - '0');
-			switch (roomNum) {
-				case 1:return roomIndex::ROOM1;
-				case 2:return roomIndex::ROOM2;
-				case 3:return roomIndex::ROOM3;
-			}
+			return static_cast<roomIndex> (roomNum);
 		}
 	}
+
 	if (filename_prefix == MenuPrefix)
 		return roomIndex::MENU;
 	if (filename_prefix == InstructionsPrefix)
@@ -179,6 +162,7 @@ roomIndex getRoomNumber(std::string fileName) {
 		return roomIndex::VICTORY;
 	if (filename_prefix == VaultPrefix)
 		return roomIndex::VAULT;
+
 	throw std::runtime_error("Error: "+ fileName+" isn't written by the guidelines");
 }
 
@@ -198,16 +182,3 @@ int getRoomNumberForState(std::string fileName)
 	return -1;
 }
 
-void WriteLineToRoom(roomIndex room, int lineIndex, const std::string& text) {
-	if (lineIndex < 0 || lineIndex >= MAX_Y) return;
-
-	switch (room) {
-	case roomIndex::MENU: Menu[lineIndex] = text; break;
-	case roomIndex::INSTRUCTIONS: Instructions[lineIndex] = text; break;
-	case roomIndex::ROOM1: Room1[lineIndex] = text; break;
-	case roomIndex::ROOM2: Room2[lineIndex] = text; break;
-	case roomIndex::ROOM3: Room3[lineIndex] = text; break;
-	case roomIndex::VAULT: Vault[lineIndex] = text; break;
-	case roomIndex::VICTORY: EndingScreen[lineIndex] = text; break;
-	}
-}

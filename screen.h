@@ -19,7 +19,8 @@ using std::string;
 class Screen {
 private:
 	string board[MAX_Y];
-	string* Rooms[NUM_ROOMS];
+	std::map<roomIndex,std::vector<string>> Rooms;
+	//string* Rooms[NUM_ROOMS];
 	string finalMessage = "";
 	string currentSaveDirectory = "";
 	int currentRoom = 0;

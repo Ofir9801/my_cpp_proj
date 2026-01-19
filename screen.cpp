@@ -20,7 +20,7 @@ Screen::Screen(unsigned int seed) {
 	for (int i = 0; i < MAX_Y; i++) {
 		board[i].resize(MAX_X, ' ');
 	}
-	//RiddlePathWays.clear();
+	
 	
 	currentRoom = static_cast<int>(roomIndex::INSTRUCTIONS);//when start the game the first screen is menu
 	if (seed == 0) {
@@ -255,36 +255,67 @@ void Screen::showMessage(string msg) {
 
 void Screen::initializeRoomsArray() {
 	loadFilesByType(true);
-
-	Rooms[static_cast<int>(roomIndex::MENU)] = Menu;
+	
+	/*Rooms[static_cast<int>(roomIndex::MENU)] = Menu;
 	Rooms[static_cast<int>(roomIndex::INSTRUCTIONS)] = Instructions;
 	Rooms[static_cast<int>(roomIndex::ROOM1)] = Room1;
 	Rooms[static_cast<int>(roomIndex::ROOM2)] = Room2;
 	Rooms[static_cast<int>(roomIndex::ROOM3)] = Room3;
 	Rooms[static_cast<int>(roomIndex::VAULT)] = Vault;
-	Rooms[static_cast<int>(roomIndex::VICTORY)] = EndingScreen;
+	Rooms[static_cast<int>(roomIndex::VICTORY)] = EndingScreen;*/
 }
 
 void Screen::loadFilesByType(bool type) {
 	string errorMsg;
-	while (true) {
+	bool valid = true;
+	while (valid) {
 		if (type) //true = read room, false = read riddle
-			errorMsg = ReadRoomFromFile();
-		else
+		{
+			std::vector<std::string> roomFilePaths;
+			getAllFilePaths(roomFilePaths, ROOM_EXTENSION, ROOM_FOLDER);
+			if (roomFilePaths.empty())
+				errorMsg = "Error: no files in directory that given";
+			for (const auto& fullPath : roomFilePaths) {
+				int legendLocation = -1;
+				std::vector<string> temp = ReadRoomFromFile(fullPath,legendLocation);
+				if (temp.size() == 1) {
+					errorMsg = temp[0];
+					break;
+				}
+				roomIndex roomNum;
+				try {
+					roomNum = getRoomNumber(fullPath);
+					ReadLegendFromFile(temp, legendLocation, i);
+
+
+					Rooms[roomNum] = temp;
+
+
+					roomLegendRows[roomNum] = legendLocation;
+				}
+				catch (const std::exception& e) {
+					errorMsg = std::string(e.what());
+					break;
+				}
+			}
+			valid = false;
+		}
+		else {
 			errorMsg = loadRiddles();
-		if (errorMsg.empty())
-			break;
-		cls();
-		std::cout << "########################################################" << std::endl;
-		std::cout << "ERROR LOADING Game" << std::endl;
-		std::cout << "########################################################" << std::endl;
-		std::cout << errorMsg << std::endl << std::endl;
-		std::cout << "1. Fix the file externally." << std::endl;
-		std::cout << "2. Press 'r' to RETRY." << std::endl;
-		std::cout << "3. Press 'ESC' to EXIT Game." << std::endl;
-		char c = static_cast<char>(_getch());
-		if (c == ESC) {
-			throw std::runtime_error("Game stopped by user due to file error");
+		}
+		if (!errorMsg.empty()) {
+			cls();
+			std::cout << "########################################################" << std::endl;
+			std::cout << "ERROR LOADING Game" << std::endl;
+			std::cout << "########################################################" << std::endl;
+			std::cout << errorMsg << std::endl << std::endl;
+			std::cout << "1. Fix the file externally." << std::endl;
+			std::cout << "2. Press 'r' to RETRY." << std::endl;
+			std::cout << "3. Press 'ESC' to EXIT Game." << std::endl;
+			char c = static_cast<char>(_getch());
+			if (c == ESC) {
+				throw std::runtime_error("Game stopped by user due to file error");
+			}
 		}
 	}
 }
@@ -296,7 +327,6 @@ Obstacle* Screen::getObstacleAt(const Point& p) {
 	return nullptr;
 
 }
-
 
 void Screen::loadSprings() {
 	springs.clear();
@@ -314,6 +344,7 @@ void Screen::loadSprings() {
 		}
 	}
 }
+
 Spring* Screen::getSpringAt(const Point& p){
 	for (auto& s : springs) {
 		if (s.isPlayerOn(p)) {
