@@ -25,6 +25,7 @@ private:
 	map<int, vector<string>> Rooms;
 	map <int, RoomState> savedRooms; //array to hold the state of each room (excluding menu ,instructions and victory)
 	map <int, bool> roomDarkStatus; //to hold if the room is dark or not
+	map<int, bool>roomExtraInventory;
 	map<int, int> roomLegendRows;
 	map<int, Door>doors;
 	map<Point, Key> keys;
@@ -68,6 +69,7 @@ public:
 	Game* getGame() { return game; }
 	void setSilentMode(bool silent) { isSilent = silent; }
 	bool IsSilent()const { return isSilent; }
+	bool IsExtraInventory();
 	// display
 	void drawMap();
 	void refreshSpringsDisplay(const Point& p1, const Point& p2) const;

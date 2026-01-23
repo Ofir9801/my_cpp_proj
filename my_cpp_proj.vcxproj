@@ -175,6 +175,9 @@
     <None Include="Riddles\Riddles02.riddle" />
     <None Include="Riddles\Riddles03.riddle" />
     <None Include="Riddles\Vault.riddle" />
+    <None Include="Rooms\adv-world01.screen" />
+    <None Include="Rooms\adv-world02.screen" />
+    <None Include="Rooms\adv-world03.screen" />
     <None Include="Rooms\Final.screen" />
     <None Include="Rooms\Instructions.screen" />
     <None Include="Rooms\Legend.legend" />
@@ -186,6 +189,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="bonus.txt" />
+    <Text Include="Ex2_Fixes.txt" />
     <Text Include="files_format.txt" />
     <Text Include="readme.txt" />
   </ItemGroup>

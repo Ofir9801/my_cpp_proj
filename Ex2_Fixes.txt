@@ -1,0 +1,34 @@
+as we want to make sure our project is according the guidlines that given us by our tutor we submit fix for Ex2.
+
+1.incorrect screen filename format:
+	we change the room names according the guidlines to adv-worldXX.
+	noted that special rooms like menu will be still the same.
+
+2.there's apparently no way to configure darkness of room (for using torch) in screen files:
+	we added the ability to add the letter D for game file for mark it is dark room, as example we show room 3 as dark one
+
+3.as stated in your instructions, switches' and keys' connections to doors are randomized, which does not allow for their configuration in screen files:
+	we look at the guidlines and there is no place that says the connection of doors to keys and switch are must be by room designer therfor we didn't change our code for that. 
+	never the less we think that randomize the connections between this objects make the game more hard and unpredictble to user who plays it.
+
+4. riddles which appear on screen are picked from riddle file by order of appearance (a limiting implementation choice):
+	we didn't change the code for that, we think that this order is better for room designer that just need to match the numbers of riddles to the amount of question signs in room, 
+	and no need to calculate which position exactly the sign ? is located
+
+5.program crashes when no screen files are present in the working directory:
+	fix that bug and now when no screen files in the dedicated folder it alert the user and let him the oppertunity to fix it and run again without build the project again from scratch.
+
+6. springs do not support lateral movement; () change to STAY key (documented):
+	springs now support latteral movement as you can see in room 2.
+
+7.obstacle of size 2 or more cannot be moved by using combined strength of two players:
+	we fixed that and now it calculate the force that both players push together
+
+8. Need to support any number of rooms:
+	we change the structure of our code to support dynamic adding of screen files.
+
+9. screen file identifiers are hardcoded - game should support adding additional screen files or changing names of existing files without editing code (if name of "Room01.screen" is changed game does not start):
+	related to last thing about dynamicly adding rooms
+
+10.use named constants / enum instead of literals (Game::showMenu, Bomb::destroyCell etc.):
+	we use more of enum classes to get rid of "magical numbers" or "magical chars"

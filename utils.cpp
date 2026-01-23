@@ -91,6 +91,11 @@ RoomData ReadRoomFromFile(const string& fileName,bool exceptLegend) {
 				result.isDark = true;
 				continue; //skip this line
 			}
+			if (!templine.empty() && templine[0] == 'E') {
+				result.isExtraInventory = true;
+				continue;
+			}
+
 			size_t lPos = templine.find('L');
 			if (lPos != string::npos) { //legend found
 				if (lPos != 0) { //legend marker not at start of line

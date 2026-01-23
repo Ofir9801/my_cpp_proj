@@ -110,7 +110,7 @@ void Game::showMenu(bool& exitGame){
 			case MenuKeys::COLOR_MODE:
 				SetColorfullGame();
 				board.resetStats();
-				changeRoom(1);
+				changeRoom(2);
 				inMenu = false;
 				break;
 			case MenuKeys::LOAD_GAME: {
@@ -327,8 +327,7 @@ void Game::handleGameOver(bool& exitGame)
 }
 
 void Game::handleLevelCompletion() {
-	if (!messageShown &&board.getCurrentRoom() == 2)
-	{
+	if (!messageShown && board.IsExtraInventory()){
 		if (board.allRiddlesSolved()){
 			board.showMessage("All riddles in this room have been solved. you both get extra inventory space!");
 			player1.setExtraInventory(true);

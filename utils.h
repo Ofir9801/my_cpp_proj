@@ -98,6 +98,7 @@ struct RoomData {
 	vector<string> layout;
 	int legendLoc = -1;
 	bool isDark = false;
+	bool isExtraInventory = false;
 	string errorMsg = "";
 };
 

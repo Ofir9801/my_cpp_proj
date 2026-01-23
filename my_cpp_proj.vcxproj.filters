@@ -60,10 +60,14 @@
     <None Include="Riddles\Riddles01.riddle" />
     <None Include="Riddles\Riddles03.riddle" />
     <None Include="Riddles\Vault.riddle" />
+    <None Include="Rooms\adv-world01.screen" />
+    <None Include="Rooms\adv-world02.screen" />
+    <None Include="Rooms\adv-world03.screen" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
     <Text Include="files_format.txt" />
     <Text Include="bonus.txt" />
+    <Text Include="Ex2_Fixes.txt" />
   </ItemGroup>
 </Project>

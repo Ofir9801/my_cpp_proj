@@ -92,6 +92,13 @@ void Screen::loadMap(int roomNumber, Point& doorPos){
 	}
 }
 
+bool Screen::IsExtraInventory()
+{
+	if (roomExtraInventory.find(currentRoom) != roomExtraInventory.end())
+		return roomExtraInventory[currentRoom];
+	return false;
+}
+
 void Screen::drawMap() {
 	cls(); //clear the console
 	const int legendY = getLegendY();
@@ -294,6 +301,7 @@ string Screen::loadAllRooms() {
 			Rooms[roomNum] = data.layout;
 			roomLegendRows[roomNum] = data.legendLoc;
 			roomDarkStatus[roomNum] = data.isDark;
+			roomExtraInventory[roomNum] = data.isExtraInventory;
 		}
 		catch (const std::exception& e) {
 			return "Error processing [" + fullPath + "]: " + e.what();

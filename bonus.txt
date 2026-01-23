@@ -13,7 +13,8 @@ doors - dark grey
 - We made it possible to move back and forth from rooms. now there is no 'actual' room order.
 - We made a 'vault' room as stated in readme.txt of challenging path and a riddle. only way to enter the vault is from room 1 with minimum score of 500 points
 - Walls shield players and objects.
-- We made it possible to acquire a second inventory slot for both players after answering every riddle in room number 2.
+- We made it possible to acquire a second inventory slot for both players after answering every riddle in room
+  (we chose room number 2 for example, it can be every room you will design by adding the letter E to the start of the file)
 - when player try to dispose item when he obtains two items, he will get notification that he need to choose which item to dispose.
 - If an important part of the game explodes because of the bomb, the game will alert the player and shut itself down.
 - User also may use ESC + R to restart.
