@@ -15,6 +15,7 @@ Game::Game() :
 	player2(Point(PLAYER_2_START_X, PLAYER_2_START_Y, objSigns::PLAYER2), keys2, board) 
 {
 	board.setGame(this);
+	board.setPlayers(&player1, &player2);
 }
 
 void Game::run() {
@@ -23,10 +24,8 @@ void Game::run() {
 	bool exitGame = true;
 
 	showMenu(exitGame);
-	board.resetStats();
 	drawMap();
 	drawPlayer();
-	
 	
 	bool firstMessage = true;
 
@@ -99,21 +98,22 @@ void Game::showMenu(bool& exitGame){
 
 	changeRoom(static_cast<int>( roomIndex::MENU));
 	bool inMenu = true;
-	int a;
 	while (inMenu) {
 		if (_kbhit()) {
-			int key = _getch();
-			switch (key) {
-			case '1':
+			char key = static_cast<char>(_getch());
+			switch (static_cast<MenuKeys>(key)) {
+			case MenuKeys::START_GAME_BW:
+				board.resetStats();
 				changeRoom(1);
 				inMenu = false;
 				break;
-			case '2':
+			case MenuKeys::COLOR_MODE:
 				SetColorfullGame();
-				changeRoom(3);
+				board.resetStats();
+				changeRoom(1);
 				inMenu = false;
 				break;
-			case '3': {
+			case MenuKeys::LOAD_GAME: {
 				if (!isSaveLoadAllowed()) {
 					std::string msg = "Loading saved games is disabled in Recording Mode (-save)";
 					const int X_coord = MAX_X / 2 - static_cast<int>(msg.size()) / 2;
@@ -124,7 +124,7 @@ void Game::showMenu(bool& exitGame){
 					board.drawMap();  
 					break;
 				}
-				std::string selectedFile = board.selectSaveFile();
+				std::string selectedFile = board.selectSavedFile();
 
 				if (selectedFile.empty()) {
 					board.drawMap();
@@ -140,6 +140,7 @@ void Game::showMenu(bool& exitGame){
 				else {
 					int room = board.loadGame(selectedFile);
 					if (room != roomIndex::INSTRUCTIONS) {
+						board.currentRoom = static_cast<int>(roomIndex::MENU);
 						changeRoom(room);
 						inMenu = false;
 					}
@@ -154,7 +155,7 @@ void Game::showMenu(bool& exitGame){
 				break;
 
 			}
-			case '7':
+			case MenuKeys::DELETE_SAVED_GAME :
 				if (!isSaveLoadAllowed())
 				{
 					std::string msg = "Clear memory is disabled in Recording Mode (-save)";
@@ -169,13 +170,13 @@ void Game::showMenu(bool& exitGame){
 				board.cleanSavedGames();
 				board.drawMap();
 				break;
-			case '8':
+			case MenuKeys::INSTRUCTIONS:
 				changeRoom(static_cast<int>(roomIndex::INSTRUCTIONS));
 				board.showInstructionBinds();
-				a = _getch();
+				(void)_getch();
 				changeRoom(static_cast<int>(roomIndex::MENU));
 				break;
-			case '9':
+			case MenuKeys::EXIT_GAME:
 				exitGame = false;
 				inMenu = false;
 				break;
@@ -267,29 +268,26 @@ void Game::handlePause(bool& exitGame)
 
 	while (true) {
 		char choice = static_cast<char>(std::tolower(_getch()));
-		if (choice == ESC) {
+		switch (static_cast<PauseKeys>(choice)) {
+		case PauseKeys::CONTINUE_GAME:
 			board.showMessage(EMPTYLINE);
 			board.drawMap();
-			break;
-		}
-		else if (choice == 'r') {
+			return;
+		case PauseKeys::RESTART_GAME:
 			performRestart();
-			break;
-		}
-		else if (choice == 'h') {
+			return;
+		case PauseKeys::MENU:
 			board.colorToggle = false; //reset color mode when going to menu
 			board.setSaveDirectory("");
 			PerformGoToMenu(exitGame);
-			break;
-		}
-		else if (choice == 's') {
+			return;
+		case PauseKeys::SAVE_GAME:
 			board.saveRoom();
 			board.saveGame();
 			board.colorToggle = false;
 			PerformGoToMenu(exitGame);
-			break;
+			return;
 		}
-
 	}
 }
 

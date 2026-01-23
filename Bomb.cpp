@@ -28,10 +28,10 @@ void Bomb::explode(Screen& board, Player& p1, Player& p2) {
 	}
 	for (const auto& p : affectedPoints) {
 		if (!board.IsSilent()) {
-			board.setChar(p, 'B');//for visual purposes
+			board.setChar(p, BOMB_VISUAL);//for visual purposes
 		}
 	}
-	Sleep(300);
+	Sleep(EXPLOSION_DELAY_MS);
 	for (const auto& p : affectedPoints) {
 		destroyCell(board, p1, p2, p);
 	}
@@ -50,7 +50,7 @@ void Bomb::destroyCell(Screen& board, Player& p1, Player& p2, Point target) {
 	}
 	if (!playerHit) {
 		char c = target.getChar();
-		char replaceChar = ' '; // Default replacement is empty space
+		char replaceChar = static_cast<char>( objSigns::EMPTY); // Default replacement is empty space
 
 		switch (static_cast<objSigns>(c)) {
 		case objSigns::KEY:
@@ -72,11 +72,11 @@ void Bomb::destroyCell(Screen& board, Player& p1, Player& p2, Point target) {
 		default:
 			if (isdigit(c)) {
 				board.deleteDoor(target);
-				replaceChar = 'X'; // Doors leave a specific mark
+				replaceChar = FAKE_DOOR_CHAR; // Doors leave a specific mark
 			}
 			break;
 		}
-		if (board.isValid(target) || replaceChar == 'X') {
+		if (board.isValid(target) || replaceChar == FAKE_DOOR_CHAR) {
 			board.setChar(target, replaceChar);
 		}
 	}

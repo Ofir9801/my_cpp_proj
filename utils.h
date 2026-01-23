@@ -18,6 +18,21 @@ enum class INFO_SLOTS {//for players' display info
 	PLAYER_SIGN_Y = 0,
 	PLAYER_INV_Y = 1
 };
+enum class MenuKeys : char {
+	START_GAME_BW = '1',
+	COLOR_MODE = '2',
+	LOAD_GAME = '3',
+	DELETE_SAVED_GAME = '7',
+	INSTRUCTIONS = '8',
+	EXIT_GAME = '9'
+};
+enum class PauseKeys: char {
+	CONTINUE_GAME = 27,
+	MENU = 'h',
+	RESTART_GAME = 'r',
+	SAVE_GAME = 's'
+};
+
 enum class MESSAGES_POS {//for message display area
 	MES_X = 0,
 	MES_Y = 2 
@@ -111,8 +126,13 @@ inline constexpr int FAKE_DOOR_SCORE = 50;
 inline constexpr int WRONG_ANSWER = 50;
 inline constexpr int SUCCESS_SCORE = 100;
 inline constexpr int STARTING_LIVES = 4;
-inline int constexpr TIMER_MESSAGE = 15;
-inline int constexpr LEGEND_SIZE = 3;
+inline constexpr int TIMER_MESSAGE = 15;
+inline constexpr int LEGEND_SIZE = 3;
+inline constexpr int MAX_SAVED_SLOTS = 10;
+inline constexpr int EXPLOSION_DELAY_MS = 300;
+
+inline constexpr char BOMB_VISUAL = 'B';
+inline constexpr char FAKE_DOOR_CHAR = 'X';
 
 inline const string MenuPrefix = "Menu";
 inline const string InstructionsPrefix = "Instructions";

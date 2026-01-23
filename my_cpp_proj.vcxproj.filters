@@ -18,6 +18,8 @@
     <ClCompile Include="AutoGame.cpp" />
     <ClCompile Include="SaveGame.cpp" />
     <ClCompile Include="Key.cpp" />
+    <ClCompile Include="FileManager.cpp" />
+    <ClCompile Include="LightingSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bomb.h" />
@@ -37,6 +39,9 @@
     <ClInclude Include="Event.h" />
     <ClInclude Include="AutoGame.h" />
     <ClInclude Include="SaveGame.h" />
+    <ClInclude Include="FileManager.h" />
+    <ClInclude Include="LightingSystem.h" />
+    <ClInclude Include="roomState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitattributes" />

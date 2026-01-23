@@ -25,12 +25,12 @@ bool Riddle::engage(Player& player, std::string& answer){
 				int choiceIndex = key - '1';
 				answer = options[choiceIndex];
 				if (choiceIndex == correctIndex) {
-					player.increaseScore(100);
+					player.increaseScore(SUCCESS_SCORE);
 					solved = true;
 					return true; 
 				}
 				else {
-					player.increaseScore(-50);
+					player.increaseScore(-WRONG_ANSWER);
 					return false;
 				}
 			}

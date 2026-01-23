@@ -10,11 +10,13 @@
 #include <conio.h>
 #include <chrono>
 #include "Game.h"
+#include "FileManager.h"
+#include "LightingSystem.h"
 
 using std::cout, std::endl;
 
-Screen::Screen(unsigned int seed) {
-	initializeRooms();
+Screen::Screen(unsigned int seed) : lighting(this) {
+	attemptFunctionWithRetry([this]() {return this->loadAllRooms(); });
 	currentRoom = static_cast<int>(roomIndex::MENU);//when start the game the first screen is menu
 	if (seed == 0) {
 		seed = static_cast<long>(std::chrono::system_clock::now().time_since_epoch().count());
@@ -30,7 +32,7 @@ void Screen::setSeed(unsigned int seed) {
 void Screen::loadMap(int roomNumber, Point& doorPos){
 	int lastRoom = currentRoom;
 	currentRoom = roomNumber;
-	const int legendY = roomLegendRows[currentRoom];
+	const int legendY = getLegendY();
 
 	if (savedRooms.find(roomNumber)!=savedRooms.end()) { //load saved state
 		for (int i = 0; i < MAX_Y; i++) {
@@ -78,9 +80,9 @@ void Screen::loadMap(int roomNumber, Point& doorPos){
 		
 	}
 	if (roomDarkStatus.find(roomNumber)!=roomDarkStatus.end())
-		isDarkRoom = roomDarkStatus[roomNumber];
+		lighting.setDarkRoom(roomDarkStatus[roomNumber]);
 	else
-		isDarkRoom = false;
+		lighting.setDarkRoom(false);
 
 	if (roomNumber == roomIndex::VICTORY && colorToggle) {
 		if (!isSilent) { drawVictoryRoom();}
@@ -92,8 +94,8 @@ void Screen::loadMap(int roomNumber, Point& doorPos){
 
 void Screen::drawMap() {
 	cls(); //clear the console
-	const int legendY = roomLegendRows[currentRoom];
-	if (isDarkRoom) {
+	const int legendY = getLegendY();
+	if (lighting.IsDark()) {
 		if (legendY != -1) {
 			for (int i = 0; i < LEGEND_SIZE; i++) {
 				gotoxy(0, legendY + i);
@@ -145,14 +147,14 @@ void Screen::drawVictoryRoom() {
 }
 
 bool Screen::isWall(const Point& p) const {
-	int legendY = roomLegendRows.at(currentRoom);
+	int legendY = getLegendY();
 
 	if (inLegendBounds(legendY, p.getY())) {
 		return true;
 	}
 
 	char c = getCharAt(p);
-	return c == '-' || c == '|' || c == 'X';
+	return c == '-' || c == '|' || c == FAKE_DOOR_CHAR;
 }
 
 string Screen::CreateInventoryDisplay(const Player & p) {
@@ -172,7 +174,7 @@ void Screen::showPlayerInfo(const Player& p) {
 	if (isSilent) { return; }
 	objSigns playerChar = (objSigns)p.getChar();
 	string inventory = CreateInventoryDisplay(p);
-	int legendY = roomLegendRows[currentRoom];
+	int legendY = getLegendY();
 	if (legendY == -1) { return; }
 
 	switch (playerChar) {
@@ -198,7 +200,7 @@ void Screen::showPlayerInfo(const Player& p) {
 void Screen::setChar(const Point& p, char c) {
 	if (!p.InBounds())
 		return;
-	int legendY = roomLegendRows[currentRoom];
+	int legendY = getLegendY();
 	if (inLegendBounds(legendY, p.getY())) {
 		return;
 	}
@@ -250,10 +252,6 @@ void Screen::showMessage(string msg) {
 	string extraSpace(MAX_X - msg.length(), ' ');
 	cout << msg <<extraSpace <<std::flush;
 	MessageTimer = TIMER_MESSAGE;
-}
-
-void Screen::initializeRooms() {
-	attemptFunctionWithRetry([this]() {return this->loadAllRooms(); });
 }
 
 void Screen::attemptFunctionWithRetry(std::function<string()> func) {
@@ -351,7 +349,6 @@ Obstacle* Screen::getObstacleAt(const Point& p) {
 	if (it != obstacles.end())
 		return &it->second;
 	return nullptr;
-
 }
 
 void Screen::loadSprings() {
@@ -416,7 +413,7 @@ void Screen::loadItems(int doorIdOpen, Point&doorPos) {//enter the items from th
 	keys.clear();
 	riddles.clear();
 
-	int legendY = roomLegendRows[currentRoom];
+	int legendY = getLegendY();
 	for (int y = 0; y < MAX_Y; y++) { 
 		if (inLegendBounds(legendY,y)) { //skip legend lines from scanning
 			continue;
@@ -644,69 +641,20 @@ bool Screen::handleVaultRiddle(Point riddlePos) {
 	return false;
 }
 
-void Screen::updateLighting(const Point& p1, const Point& p1Prev, const Player& player1, const Point& p2, const Point& p2Prev, const Player& player2)
-{
-	int r1 = player1.hasItem(objSigns::TORCH) ? LIGHT_RADIUS_TORCH : LIGHT_RADIUS_DEFAULT;
-	int r2 = player2.hasItem(objSigns::TORCH) ? LIGHT_RADIUS_TORCH : LIGHT_RADIUS_DEFAULT;
-
-	//erase old area
-	ProcessLightning(p1Prev.getX(), p1Prev.getY(), LIGHT_RADIUS_TORCH, true,p1,p2,r1,r2);
-	ProcessLightning(p2Prev.getX(), p2Prev.getY(), LIGHT_RADIUS_TORCH, true,p1,p2,r1,r2);
-
-	ProcessLightning(p1.getX(), p1.getY(), r1, false, p1, p2, r1, r2);
-	ProcessLightning(p2.getX(), p2.getY(), r2, false, p1, p2, r1, r2);
-
-}
-
 bool Screen::BoxDistance(int x, int y, const Point& p, int radius) const {
 	int dx =std::abs(x - p.getX()); //calculate the distance between two points by x
 	int dy = std::abs(y - p.getY()); //calculate the distance between two points by y
 	return dx <= radius && dy <= radius;
 	//return (dx * dx + dy * dy) <= (radius * radius); //true if the given point is in player's light radius
 }
-bool Screen::RoundDistance(int x, int y, const Point& p, int radius) const {
-	int dx = x - p.getX(); //calculate the distance between two points by x
-	int dy = y - p.getY(); //calculate the distance between two points by y
-	return (dx * dx + dy * dy) <= (radius * radius); //true if the given point is in player's light radius
-}
 
-
-void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point& p1,const Point& p2, const int r1, const int r2) {
-	int legendY = roomLegendRows[currentRoom];
-	for (int y = cy - radius; y <= cy + radius; y++) {
-		for (int x = cx - radius; x <= cx + radius; x++) {
-			if (x < 0 || x >= MAX_X || y < 0 || y >= MAX_Y)
-				continue;
-			if (inLegendBounds(legendY, y)) {
-				continue;
-			}
-			bool inRange = RoundDistance(x, y, Point(cx, cy), radius); //check if point in distance
-
-			if (inRange) {
-				if (erase) {
-					if (!RoundDistance(x, y, p1, r1) && !RoundDistance(x, y, p2, r2)) {
-						gotoxy(x, y);
-						cout << ' ';
-					}
-				}
-				else{
-					if ((x == p1.getX() && y == p1.getY()) || (x == p2.getX() && y == p2.getY())){
-						continue;
-					}
-					gotoxy(x, y);
-					char c = board[y][x];
-					if (colorToggle) {
-						SetTextColor(getColorForChar(c));
-						cout << c;
-						SetTextColor(Color::WHITE);
-					}
-					else {
-						cout << c;
-					}
-				}
-			}
-		}
+int Screen::getLegendY() const
+{
+	auto it = roomLegendRows.find(currentRoom);
+	if (it != roomLegendRows.end()) {
+		return it->second;
 	}
+	return -1;
 }
 
 bool Screen::isValid(const Point& p) const{ 
@@ -725,7 +673,7 @@ bool Screen::isDestructible(const Point& p) const
 	const int py = p.getY();
 
 	//check if point is in legend
-	int legendY = roomLegendRows.at(currentRoom);
+	int legendY = getLegendY();
 	if (inLegendBounds(legendY, py)) {
 		return false;
 	}
@@ -819,6 +767,51 @@ void Screen::deleteObstacle(Point position)
 	if (it != obstacles.end()) {
 		obstacles.erase(it);
 	}
+}
+
+bool Screen::isSameObstacleGroup(Point p1, Point p2){
+	Obstacle* obs1 = getObstacleAt(p1);
+	Obstacle* obs2 = getObstacleAt(p2);
+
+	//if one of the obstacles doesn't exist
+	if (!obs1 || !obs2) return false;
+
+	// if both points are the same
+	if (p1 == p2) return true;
+
+	// use the first obstacle to collect its group
+	std::vector<Obstacle*> group;
+	obs1->collectGroup(p1, group);
+
+	//chcek if the second obstacle is in the same group
+	for (const auto* obs : group) {
+		if (obs->getPosition() == p2) {
+			return true;
+		}
+	}
+	return false;
+}
+
+int Screen::getAssistForce(Point obstaclePos, Keyboard_bind pushDir, const Player* whoIsAsking) {
+	//identify the partner player
+	Player* partner = (whoIsAsking == player1) ? player2 : player1;
+	if (!partner) return 0;
+
+	//chcek if the partner is pushing in the same direction
+	if (partner->getDirection() != pushDir) return 0;
+
+	//get the partner position
+	Point partnerPos = partner->getPosition();
+	Point partnerTargetPos = partnerPos;
+	partnerTargetPos.setDirection(pushDir);
+	partnerTargetPos.move();
+	
+	//check if the target position is the same obstacle group as the original obstacle
+	if (isSameObstacleGroup(obstaclePos, partnerTargetPos)) {
+		//return the partner's force
+		return partner->getForce();
+	}
+	return 0;
 }
 
 void Screen::CheckExplodeNecessaryObject(int doorId) {
@@ -965,271 +958,54 @@ void Screen::saveRoom()
 	savedRooms[currentRoom].visited = true;
 }
 
-void Screen::saveGame() 
+string Screen::selectSavedFile()
 {
-	const string rootSaves = STATE_FOLDER;
-	if (!std::filesystem::exists(rootSaves)) {
-		std::filesystem::create_directory(rootSaves);
-	}
-
-	if (!currentSaveDirectory.empty() && std::filesystem::exists(currentSaveDirectory)) {
-		std::filesystem::remove_all(currentSaveDirectory); // Deletes folder and all files inside
-	}
-	else { //check if there is more than 10 files and if so erase the oldest one
-		vector<std::filesystem::path> existingSaves;
-		for (const auto& entry : std::filesystem::directory_iterator(rootSaves)) {
-			if (entry.is_directory()) {
-				existingSaves.push_back(entry.path());
-			}
-		}
-		if (existingSaves.size() >= 10) {
-			auto oldest = existingSaves.end();
-			std::filesystem::file_time_type oldestTime = (std::filesystem::file_time_type::max)();
-
-			for (auto it = existingSaves.begin(); it != existingSaves.end(); ++it) {
-				auto lastWrite = std::filesystem::last_write_time(*it);
-				if (lastWrite < oldestTime) {
-					oldestTime = lastWrite;
-					oldest = it;
-				}
-			}
-
-			if (oldest != existingSaves.end()) {
-				std::filesystem::remove_all(*oldest);
-			}
-		}
-	}
-
-	string currentSaveName = getCurrentTimeStamp();
-	string fullSavePath = rootSaves + "/" + currentSaveName;
-	std::filesystem::create_directory(fullSavePath);
-
-	currentSaveDirectory = fullSavePath;
-
-	string file = "";
-	for(auto& room: savedRooms){
-		setFileName(file, room.first, fullSavePath);
-		if (room.first == 1) {saveRoomState(room.second, file, true);}
-		else { saveRoomState(room.second, file, false); }
-	}
-}
-
-int Screen::loadGame(const string& folderPath)
-{
-	int current = static_cast<int>(roomIndex::INSTRUCTIONS);
-	vector<string>filesInFolder;
-	string errorMsg = "";
-	if (folderPath.empty()) return current;
-	currentSaveDirectory = folderPath;
-	savedRooms.clear();
-	getAllFilePaths(filesInFolder, STATE_EXTENSION, folderPath);
-
-	for (auto& file : filesInFolder) {
-		while (true) {
-			int key = getRoomNumber(file);
-			if (key == -1) {
-				errorMsg = "Error: file isnt by designated format - [" + file + "]" ;
-			}
-			else {
-				errorMsg = loadRoomState(key, file, current);
-			}
-			if (errorMsg.empty())
-				break;
-			cls();
-			cout << "########################################################" << std::endl;
-			cout << "ERROR LOADING Game" << std::endl;
-			cout << "########################################################" << std::endl;
-			cout << errorMsg << std::endl << std::endl;
-			cout << "1. Fix the file externally." << std::endl;
-			cout << "2. Press 'r' to RETRY." << std::endl;
-			cout << "3. Press 'ESC' to EXIT Game." << std::endl;
-			char c = static_cast<char>(_getch());
-			if (c == ESC) {
-				throw std::runtime_error("Game stopped by user due to file error");
-			}
-		}
-	}
-	return current;
-}
-
-string Screen::selectSaveFile()
-{
-	struct SaveFileEntry { //sort saving files
-		string filename;
-		std::filesystem::file_time_type timestamp;
-	};
-
-	vector<SaveFileEntry> saves;
-	string rootFolder = STATE_FOLDER;
-
-	if (!std::filesystem::exists(rootFolder)) {
-		return "";
-	}
-
-	for (const auto& entry : std::filesystem::directory_iterator(rootFolder)) {
-		if (entry.is_directory()) { 
-			saves.push_back({ entry.path().string(), entry.last_write_time() });
-		}
-	}
-
+	auto saves = FileManager::getSavedGamesList();
 	if (saves.empty()) {
 		return "";
 	}
 
-	std::sort(saves.begin(), saves.end(), [](const SaveFileEntry& a, const SaveFileEntry& b) {return a.timestamp > b.timestamp;});
-
-	
-	system("cls"); 
+	cls();
 	cout << "Select a Saved Game:\n";
 	cout << "--------------------\n";
 
-	for (size_t i = 0; i < saves.size() && i < 10; ++i) {
-		string displayName = std::filesystem::path(saves[i].filename).filename().string();
-		if (i == 9) {
-			cout << "0. " << displayName << "  (" << formatTime(saves[i].timestamp) << ")\n";
-		}
-		else {
-			cout << (i + 1) << ". " << displayName << "  (" << formatTime(saves[i].timestamp) << ")\n";
-		}
+	for (size_t i = 0; i < saves.size() && i < MAX_SAVED_SLOTS; ++i) {
+		string line = (i == MAX_SAVED_SLOTS - 1) ? "0." : std::to_string(i + 1) + ". ";
+		cout << line << saves[i].displayName << "  (" << saves[i].timestampStr << ")\n";
 	}
 	cout << "ESC. Cancel\n";
 
-	
 	while (true) {
 		if (_kbhit()) {
 			char key = static_cast<char>(_getch());
-			if (key == ESC) return ""; // ESC
+			if (key == ESC) return "";
 			if (isdigit(key)) {
-				size_t index;
-				if (key == '0') {
-					index = 9;
-				}
-				else {
-					index = key - '1';
-				}
+				size_t index = (key == '0') ? 9 : (key - '1');
 				if (index < saves.size()) {
-					return saves[index].filename;
+					return saves[index].folderName;
 				}
 			}
 		}
 	}
 }
 
-
-
-string Screen::loadRoomState(int key, const string& filename, int& current)
+void Screen::saveGame()
 {
-	std::ifstream file(filename);
-	if (!file.is_open()) return "Error: Could not open file [" + filename + " ]";
-	
-	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	try {
-		RoomState& state = savedRooms[key];
-		if (key == 1) { 
-			file >> current; 
-			file >> sharedLives;
-			file >> sharedScore;
-			
-		}
-		int flagColor;
-		file >> flagColor;
-		colorToggle = (flagColor == 1);
-		file >> state.visited;
-		file.ignore(); //ignore buffer
-
-		loadVector(file, state.layout);
-		loadVector(file, state.springs);
-		loadVector(file, state.switches);
-		loadVector(file, state.activeBombs);
-		loadMapDataStructure(file, state.obstacles);
-		loadMapDataStructure(file, state.riddles);
-		loadMapDataStructure(file, state.keys);
-		loadMapDataStructure(file, state.doors);
-		for (auto& obs : state.obstacles) {
-			obs.second.setScreen(this);
-		}
-	}
-	catch (const std::ifstream::failure&) { 
-		return "Error reading file [" + filename + "]: Unexpected end of file or bad format.";
-	}
-	catch (const std::exception& e) {
-		return string("General Error: ") + e.what();
-	}
-	file.close();
-	return "";
+	currentSaveDirectory = FileManager::saveGame(savedRooms, sharedLives, sharedScore, currentRoom, colorToggle, currentSaveDirectory);
 }
 
-void Screen::saveRoomState(const RoomState& state, const string& filename, const bool first) const
+int Screen::loadGame(const string& folderPath)
 {
-	std::ofstream file(filename);
-	if (!file.is_open()) {
-		return;
-	}
-	
-	if(first){ 
-		file << currentRoom << "\n";
-		file << sharedLives << "\n"; 
-		file << sharedScore << "\n";
-	}
-	file << colorToggle << "\n";
-	file << state.visited << "\n";
-	
-	saveVector(file, state.layout);
-	saveVector(file, state.springs);
-	saveVector(file, state.switches);
-	saveVector(file, state.activeBombs);
-	saveMap(file, state.obstacles);
-	saveMap(file, state.riddles);
-	saveMap(file, state.keys);
-	saveMap(file, state.doors);
-	
-	file.close();
+	currentSaveDirectory = folderPath;
+	savedRooms.clear();
+	//check this
+	attemptFunctionWithRetry([this, folderPath]() {return FileManager::loadGame(savedRooms, sharedLives, sharedScore, folderPath, currentRoom, colorToggle, this);});
+	return currentRoom;
 }
 
-
-
-void Screen::setFileName(string& file, const int key, const string& folderPath) const{
-	string roomNumber = (key < 10) ? "0" + std::to_string(key) : std::to_string(key);
-	file = folderPath + "/" + "SavedScreen" + roomNumber + STATE_EXTENSION;
-}
-
-string Screen::getCurrentTimeStamp() const //use gemini for get time stamp
-{
-	auto now = std::chrono::system_clock::now();
-	std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-	
-	std::tm timeInfo;
-	localtime_s(&timeInfo, &now_c);
-	
-	std::stringstream ss;
-	ss << std::put_time(&timeInfo, "Save_%Y-%m-%d_%H-%M-%S");
-	return ss.str();
-}
-
-string Screen::formatTime(std::filesystem::file_time_type ftime) const //use gemini for get time format
-{
-	auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(ftime - std::filesystem::file_time_type::clock::now() + std::chrono::system_clock::now());
-
-	std::time_t tt = std::chrono::system_clock::to_time_t(sctp);
-
-	std::tm tm;
-	localtime_s(&tm,&tt);
-	std::stringstream ss;
-	ss << std::put_time(&tm, "%d/%m/%y %H:%M");
-	return ss.str();
-}
 
 void Screen::cleanSavedGames()
 {
-	string rootFolder = STATE_FOLDER;
-
-	if (!std::filesystem::exists(rootFolder) || std::filesystem::is_empty(rootFolder)) {
-		system("cls");
-		cout << "No saved games found to delete.\n";
-		Sleep(1500);
-		return;
-	}
-
 	system("cls");
 	cout << "!!! WARNING !!!\n";
 	cout << "You are about to delete ALL saved games.\n";
@@ -1240,10 +1016,7 @@ void Screen::cleanSavedGames()
 	if (tolower(confirm) == 'y') {
 
 		try {
-			std::filesystem::remove_all(rootFolder);
-			std::filesystem::create_directory(rootFolder);
-			currentSaveDirectory = "";
-
+			FileManager::cleanSavedGames();
 			cout << "\n\nAll saved games deleted successfully.\n";
 		}
 		catch (const std::exception& e) {
@@ -1255,3 +1028,5 @@ void Screen::cleanSavedGames()
 		Sleep(500);
 	}
 }
+
+

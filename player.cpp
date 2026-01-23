@@ -66,10 +66,6 @@ void Player::dispose()
 					if (c == objSigns::KEY) {board.DisposeKeyToScreen(this->getChar(), position);}
 					else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
 					drawToScreen();
-
-					/*if (!board.IsSilent()) {
-						position.draw(board.IsColor() ? getColorForChar(position.getChar()) : Color::WHITE);
-					}*/
 					inventory[index] = ' ';
 					return;
 				}
@@ -189,7 +185,9 @@ bool Player::takeStep() {
 			currentForce = 1;
 		}
 		position = originalPos;
-		position.setDirection(Keyboard_bind::STAY);
+		if (nextTile != objSigns::OBSTACLE) {
+			position.setDirection(Keyboard_bind::STAY);
+		}
 		return true; // stop further steps
 	}
 	else { // success: move to nextCandidate
@@ -249,8 +247,12 @@ bool Player::handleSpecialObjects(char nextTile, Point nextPos, int force) {//fu
 		
 	if (nextTile == objSigns::OBSTACLE) {
 		Keyboard_bind pushDir = (springCyclesLeft > 0) ? springDir : position.getDirectionEnum();
+		int myForce = force;
+		int partnerForce = board.getAssistForce(nextPos, pushDir, this);
+		int totalForce = myForce + partnerForce;
+
 		Obstacle* obs = board.getObstacleAt(nextPos);
-		if (obs && obs->push(force, pushDir)) {
+		if (obs && obs->push(totalForce, pushDir)) {
 			return false;
 		}
 		return true;
@@ -278,7 +280,6 @@ void Player::reset(Point newPosition) {
 	currentForce = 1;
 	finishedLevel = false;
 	drawToScreen();
-	//draw();
 }
 
 bool Player::atDoor(unsigned char nextTile, Point nextPos){
@@ -334,7 +335,7 @@ bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
 			return false;
 		}
 		else { //fake door
-			board.setChar(nextPos, 'X');
+			board.setChar(nextPos, FAKE_DOOR_CHAR);
 			string msg = "It's a dead end, you get " + std::to_string(FAKE_DOOR_SCORE) + " points for trying";
 			board.showMessage(msg);
 			board.addScore(FAKE_DOOR_SCORE);

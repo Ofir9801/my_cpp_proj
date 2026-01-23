@@ -20,7 +20,6 @@ class Player
 	char inventory[INVENTORY_SIZE + 1]; 
 	bool ExtraInventory = false; //flag to indicate if player has extra inventory slot
 	Screen& board; //reference to the Game Screen
-	bool handleSpecialObjects(char nextTile, Point nextPos, int force);
 	Keyboard_bind springDir = Keyboard_bind::STAY; //direction of the flight
 	
 public:
@@ -33,7 +32,9 @@ public:
 	//handle player movement
 	void move(); //function to move the Player in the current direction
 	void drawToScreen();
-	//void draw();
+	void stay();
+	Keyboard_bind getDirection() const { return position.getDirectionEnum(); }
+	int getForce() const { return (springCyclesLeft > 0) ? currentForce : 1; }
 	void handleKeyPressed(char key_pressed);
 	void reset(Point newPosition);
 	void clearFromScreen();
@@ -63,6 +64,7 @@ private:
 	void dispose();
 	void RemoveKeyFromInventory(int keyDoorId);
 	//interaction with other objects
+	bool handleSpecialObjects(char nextTile, Point nextPos, int force);
 	bool atDoor(unsigned char nextTile, Point nextPos);
 	bool OpenDoorWithKey(int doorId, Point nextPos);
 	bool OpenVaultRoom();

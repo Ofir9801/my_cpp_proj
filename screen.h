@@ -6,7 +6,9 @@
 #include "Door.h"
 #include "Key.h"
 #include "Riddle.h"
+#include "LightingSystem.h"
 #include "Bomb.h"
+#include "roomState.h"
 #include <vector>
 #include <map>
 #include <filesystem>
@@ -20,84 +22,78 @@ using std::string, std::vector, std::map;
 class Screen {
 private:
 	string board[MAX_Y];
-	map<int,vector<string>> Rooms;
-	string finalMessage = "";
-	string currentSaveDirectory = "";
-	int currentRoom = 0;
-	vector<Spring> springs;
-	vector<Switch> switches;
-	map<int,Door>doors;
-	vector<int>doorIDs; //keys to the doors map
+	map<int, vector<string>> Rooms;
+	map <int, RoomState> savedRooms; //array to hold the state of each room (excluding menu ,instructions and victory)
+	map <int, bool> roomDarkStatus; //to hold if the room is dark or not
+	map<int, int> roomLegendRows;
+	map<int, Door>doors;
 	map<Point, Key> keys;
 	map<Point, Riddle> riddles;
 	map<Point, Obstacle> obstacles;
+	vector<Spring> springs;
+	vector<Switch> switches;
+	vector<int>doorIDs; //keys to the doors map
 	vector<Bomb> activeBombs;
+	Game* game = nullptr;
+	Player* player1 = nullptr;
+	Player* player2 = nullptr;
+	LightingSystem lighting;
+	string finalMessage = "";
+	string currentSaveDirectory = "";
+
+	std::mt19937 rng;
 	bool colorToggle = false;
-	bool isDarkRoom = false;
 	bool gameState = true;
 	bool isSilent = false;
+	unsigned int currentSeed;
+	int currentRoom = 0;
 	int sharedLives = STARTING_LIVES;
 	int sharedScore = 0;
 	int MessageTimer = 0;
-	std::mt19937 rng;
-	unsigned int currentSeed;
-	Game* game = nullptr;
-	friend class Obstacle;
 
-	struct RoomState { //to save the state of each room
-		bool visited = false;
-		vector<string> layout;          
-		vector<Spring> springs;         
-		vector<Switch> switches;        
-		map<Point,Obstacle> obstacles;
-		vector<Bomb> activeBombs;
-		map<Point, Riddle> riddles;
-		map<Point, Key> keys;           
-		map<int, Door> doors;	               
-	};
-	map <int,RoomState> savedRooms; //array to hold the state of each room (excluding menu ,instructions and victory)
-	map <int, bool> roomDarkStatus; //to hold if the room is dark or not
-	map<int, int> roomLegendRows;
-	
 public:
 	friend class Game;
-	
+	friend class Obstacle;
 	//gamecycle and initialization
-    Screen(unsigned int seed = 0);
-    void loadMap(int roomNumber, Point& doorPos); // Loads board from string array
-    void loadSprings();
+	Screen(unsigned int seed = 0);
+	void loadMap(int roomNumber, Point& doorPos); // Loads board from string array
+	void loadSprings();
 	void saveRoom();
 	void setGameState(bool state) { gameState = state; }
 	void clearSavedRooms() { savedRooms.clear(); }
 	void setSeed(unsigned int seed);
-	unsigned int getSeed () const { return currentSeed; }
+	unsigned int getSeed() const { return currentSeed; }
 	void setGame(Game* g) { game = g; }
-	Game* getGame(){ return game; }
+	void setPlayers(Player* p1, Player* p2) { player1 = p1; player2 = p2; }
+	Game* getGame() { return game; }
 	void setSilentMode(bool silent) { isSilent = silent; }
 	bool IsSilent()const { return isSilent; }
-    // display
-    void drawMap();
-    void refreshSpringsDisplay(const Point& p1, const Point& p2) const;
-    void showInstructionBinds() const;
-    bool IsColor() const { return colorToggle; }
+	// display
+	void drawMap();
+	void refreshSpringsDisplay(const Point& p1, const Point& p2) const;
+	void showInstructionBinds() const;
+	bool IsColor() const { return colorToggle; }
 	string getFinalMessage() { return finalMessage; }
-    // UI
-    void showPlayerInfo(const Player& p);
-    void showMessage(string msg);
-    void clearMessegeArea(bool forceClean = false);
+	// UI
+	void showPlayerInfo(const Player& p);
+	void showMessage(string msg);
+	void clearMessegeArea(bool forceClean = false);
 	// general board functions
-    char getCharAt(const Point& p) const { return board[p.getY()][p.getX()]; }
-    void setChar(const Point& p, char c);
+	char getCharAt(const Point& p) const { return board[p.getY()][p.getX()]; }
+	void setChar(const Point& p, char c);
 	void setChar(const Point& p, objSigns sign);
-    bool isWall(const Point& p) const;
-    bool isValid(const Point& p) const;
-    int getCurrentRoom() const { return currentRoom; }
-    // lighting system
-    bool isDark() const { return isDarkRoom; }
-    void updateLighting(const Point& p1, const Point& p1Prev, const Player& player1,
-						const Point& p2, const Point& p2Prev, const Player& player2);
+	bool isWall(const Point& p) const;
+	bool isValid(const Point& p) const;
+	int getCurrentRoom() const { return currentRoom; }
 	bool BoxDistance(int x, int y, const Point& p, int radius) const;
-	bool RoundDistance(int x, int y, const Point& p, int radius) const;
+	int getLegendY() const;
+	bool inLegendBounds(const int legendY, const int y) const;
+	//lighting system
+	bool isDark() const { return lighting.IsDark(); }
+	void updateLighting(const Point& p1, const Point& p1Prev, const Player& currentPlayer1,
+		const Point& p2, const Point& p2Prev, const Player& currentPlayer2) {
+		lighting.updateLighting(p1, p1Prev, currentPlayer1, p2, p2Prev, currentPlayer2);
+	}
     // game state score & lives
     void addScore(int amount) { sharedScore += amount; }
     int getScore() const { return sharedScore; }
@@ -125,6 +121,8 @@ public:
     bool isBombAt(const Point& p) const;
 	Obstacle* getObstacleAt(const Point& p);
 	void deleteObstacle(Point position);
+	int getAssistForce(Point obstaclePos, Keyboard_bind dir, const Player* whoIsAsking);
+	bool isSameObstacleGroup(Point p1,Point p2);
     // game logic: Springs & Riddles
     Spring* getSpringAt(const Point& p);
     void deleteSpring(Point position);
@@ -133,15 +131,14 @@ public:
 	bool allRiddlesSolved() const;
 	bool handleVaultRiddle(Point riddlePos);
 	//read and write from Files functions
+	string selectSavedFile();
 	void saveGame();
-	int loadGame(const string& file = "");
-	string selectSaveFile();
+	int loadGame(const string& filepath = "");
 	void cleanSavedGames();
 	void setSaveDirectory(string dir) { currentSaveDirectory = dir; }
 	
 private:
 	//gamecycle and initialization
-	void initializeRooms();
 	void linkDoorsToKeysAndSwitches();
 	void loadItems(int doorIdOpen, Point& doorPos);
 	string loadAllRooms();
@@ -149,24 +146,15 @@ private:
 	void attemptFunctionWithRetry(std::function<string()> func); //use ai
 	void CheckExplodeNecessaryObject(int doorId);
 	bool isDestructible(const Point& p)const;
-	bool inLegendBounds(const int legendY, const int y) const;
 	// display
 	void drawVictoryRoom();
 	// UI
 	string CreateInventoryDisplay(const Player& p);
-	// lighting system
-	void ProcessLightning(int cx, int cy, int radius, bool erase, const Point& p1, const Point& p2, const int r1, const int r2);
 	// game logic:Switches
 	void setConnection(int door_id);
 	// game logic: Riddles
 	Riddle ReadRiddleFromFile(const string& filePath, const Point pos, int riddleIndex, string& errorMsg);
 	Riddle ReadVaultRiddleFromFile(const string& filePath, const Point pos, string& errorMsg);
-	//read and write from Files functions
-	string loadRoomState(int key, const string& filename, int& current); 
-	void saveRoomState(const RoomState& state, const string& filename, const bool first) const;
-	void setFileName(string& file, const int key, const string& folderPath) const;
-	string getCurrentTimeStamp()const;
-	string formatTime(std::filesystem::file_time_type ftime)const;
 	//helpers
 	int normalizeDoorId(int doorId) const {return (doorId == 9) ? 0 : doorId;}
 	bool isGameRoom(int roomNum) { return roomNum >= 0; }

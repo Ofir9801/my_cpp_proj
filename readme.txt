@@ -18,6 +18,7 @@ Game Mechanics & Room Design:
 - Design Assumption: The room design assumes an equal number of switches and keys relative to the number of doors.
 - Navigation: We implemented a system where entering a specific door number always leads to the corresponding room number (e.g., Door 2 always leads to Room 2).
 - Room 3 (The Dark Room): Room 3 is designed as a "dark room" maze. Player 1 spawns next to a torch, but the second torch is blocked. the players must plant a bomb for reaching the second torch.
+(you can set every room as dark, we choose room 3 for example)
 - Riddle Persistence: Solved riddles remain on screen. Bumping into a solved riddle displays the answer again to assist players with the Vault Room.
 - Room 4 (The Vault): We created a "Vault" room as a final challenge. It involves destroying multiple obstacles and solving a unique "Master Riddle." This riddle requires players to combine three digits (answers from riddles in previous rooms) into a final code.
 	Hint: If you are having trouble answering, the correct code is '132'.
