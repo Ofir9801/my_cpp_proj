@@ -33,8 +33,9 @@ Index of correct Answer: <number of the correct answer>
 (Note: Each riddle file is named according to its room number, e.g., Riddles02.riddle, and must be saved in the designated folder.)
 
 Room Design Files:
-- New room designs must be saved in the Rooms folder using the naming convention RoomXX.screen (where XX represents the room number, e.g., Room01.screen).
+- New room designs must be saved in the Rooms folder using the naming convention adv-worldXX.screen (where XX represents the room number, e.g., adv-world03.screen).
 - The file must contain the letter 'L' for the Legend (must be 3 lines). The 'L' character must be in the leftmost position of the line.
+- if you want to set the room as a dark room, include the character 'D' in the leftmost position of the line in the start of the file (before the 'L' line).
 - Map size: 80x22 (plus 3 extra lines for the legend).
 - This structure follows the guidelines discussed in the forum: https://mama.mta.ac.il/mod/forum/discuss.php?d=3446
 

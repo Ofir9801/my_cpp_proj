@@ -11,18 +11,11 @@
 #include <chrono>
 #include "Game.h"
 
-using std::cout;
-using std::endl;
-using std::string;
+using std::cout, std::endl;
 
 Screen::Screen(unsigned int seed) {
-	initializeRoomsArray();
-	for (int i = 0; i < MAX_Y; i++) {
-		board[i].resize(MAX_X, ' ');
-	}
-	
-	
-	currentRoom = static_cast<int>(roomIndex::INSTRUCTIONS);//when start the game the first screen is menu
+	initializeRooms();
+	currentRoom = static_cast<int>(roomIndex::MENU);//when start the game the first screen is menu
 	if (seed == 0) {
 		seed = static_cast<long>(std::chrono::system_clock::now().time_since_epoch().count());
 	}
@@ -52,7 +45,11 @@ void Screen::loadMap(int roomNumber, Point& doorPos){
 		riddles = savedRooms[currentRoom].riddles;
 		
 		if (lastRoom != roomIndex::MENU) {
-			char targetDoorChar = static_cast<char>('0' + lastRoom); // e.g., if coming from Room 1, look for '1'
+			char targetDoorChar;
+			if (lastRoom == 0)
+				targetDoorChar = '9';
+			else
+			targetDoorChar = static_cast<char>('0' + lastRoom); // e.g., if coming from Room 1, look for '1'
 			bool found = false;
 
 			for (int y = 0; y < MAX_Y && !found; y++) {
@@ -67,6 +64,7 @@ void Screen::loadMap(int roomNumber, Point& doorPos){
 			}
 		}
 	}
+
 	else { //first time loading the room
 		for (int i = 0; i < MAX_Y; i++) {
 			board[i] = Rooms[roomNumber][i];
@@ -79,10 +77,11 @@ void Screen::loadMap(int roomNumber, Point& doorPos){
 		}
 		
 	}
-	if (roomNumber == roomIndex::ROOM3)
-		isDarkRoom = true;
+	if (roomDarkStatus.find(roomNumber)!=roomDarkStatus.end())
+		isDarkRoom = roomDarkStatus[roomNumber];
 	else
 		isDarkRoom = false;
+
 	if (roomNumber == roomIndex::VICTORY && colorToggle) {
 		if (!isSilent) { drawVictoryRoom();}
 	}
@@ -98,7 +97,7 @@ void Screen::drawMap() {
 		if (legendY != -1) {
 			for (int i = 0; i < LEGEND_SIZE; i++) {
 				gotoxy(0, legendY + i);
-				std::cout << board[legendY + i];
+				cout << board[legendY + i];
 			}
 		}
 	}
@@ -146,7 +145,7 @@ void Screen::drawVictoryRoom() {
 }
 
 bool Screen::isWall(const Point& p) const {
-	int legendY = roomLegendRows[currentRoom];
+	int legendY = roomLegendRows.at(currentRoom);
 
 	if (inLegendBounds(legendY, p.getY())) {
 		return true;
@@ -215,13 +214,13 @@ void Screen::setChar(const Point& p, char c) {
 	else
 		cout << c;
 }
+
 void Screen::setChar(const Point& p, objSigns sign) {
 	char c = static_cast<char>(sign);
 	setChar(p, c);
 }
 
-void Screen::showInstructionBinds() const
-{
+void Screen::showInstructionBinds() const{
 	int const OBJ_Y = 7;
 	int const OBJ_X = 1;
 	gotoxy(OBJ_X, OBJ_Y);
@@ -249,75 +248,102 @@ void Screen::showMessage(string msg) {
 
 	gotoxy(MESSAGES_POS::MES_X, roomLegendRows[currentRoom] + MESSAGES_POS::MES_Y);
 	string extraSpace(MAX_X - msg.length(), ' ');
-	std::cout << msg <<extraSpace <<std::flush;
+	cout << msg <<extraSpace <<std::flush;
 	MessageTimer = TIMER_MESSAGE;
 }
 
-void Screen::initializeRoomsArray() {
-	loadFilesByType(true);
-	
-	/*Rooms[static_cast<int>(roomIndex::MENU)] = Menu;
-	Rooms[static_cast<int>(roomIndex::INSTRUCTIONS)] = Instructions;
-	Rooms[static_cast<int>(roomIndex::ROOM1)] = Room1;
-	Rooms[static_cast<int>(roomIndex::ROOM2)] = Room2;
-	Rooms[static_cast<int>(roomIndex::ROOM3)] = Room3;
-	Rooms[static_cast<int>(roomIndex::VAULT)] = Vault;
-	Rooms[static_cast<int>(roomIndex::VICTORY)] = EndingScreen;*/
+void Screen::initializeRooms() {
+	attemptFunctionWithRetry([this]() {return this->loadAllRooms(); });
 }
 
-void Screen::loadFilesByType(bool type) {
-	string errorMsg;
-	bool valid = true;
-	while (valid) {
-		if (type) //true = read room, false = read riddle
-		{
-			std::vector<std::string> roomFilePaths;
-			getAllFilePaths(roomFilePaths, ROOM_EXTENSION, ROOM_FOLDER);
-			if (roomFilePaths.empty())
-				errorMsg = "Error: no files in directory that given";
-			for (const auto& fullPath : roomFilePaths) {
-				int legendLocation = -1;
-				std::vector<string> temp = ReadRoomFromFile(fullPath,legendLocation);
-				if (temp.size() == 1) {
-					errorMsg = temp[0];
-					break;
-				}
-				roomIndex roomNum;
-				try {
-					roomNum = getRoomNumber(fullPath);
-					ReadLegendFromFile(temp, legendLocation, i);
+void Screen::attemptFunctionWithRetry(std::function<string()> func) {
+	while (true) {
+		string errorMsg = func();
+		if (errorMsg.empty()) return;
 
-
-					Rooms[roomNum] = temp;
-
-
-					roomLegendRows[roomNum] = legendLocation;
-				}
-				catch (const std::exception& e) {
-					errorMsg = std::string(e.what());
-					break;
-				}
-			}
-			valid = false;
-		}
-		else {
-			errorMsg = loadRiddles();
-		}
-		if (!errorMsg.empty()) {
-			cls();
-			std::cout << "########################################################" << std::endl;
-			std::cout << "ERROR LOADING Game" << std::endl;
-			std::cout << "########################################################" << std::endl;
-			std::cout << errorMsg << std::endl << std::endl;
-			std::cout << "1. Fix the file externally." << std::endl;
-			std::cout << "2. Press 'r' to RETRY." << std::endl;
-			std::cout << "3. Press 'ESC' to EXIT Game." << std::endl;
-			char c = static_cast<char>(_getch());
-			if (c == ESC) {
-				throw std::runtime_error("Game stopped by user due to file error");
-			}
+		cls();
+		cout << "########################################################" << std::endl;
+		cout << "ERROR LOADING Game" << endl;
+		cout << "########################################################" << std::endl;
+		cout << errorMsg << endl;
+		cout << "1. Fix the file externally." << endl;
+		cout << "2. Press 'r' to RETRY." << endl;
+		cout << "3. Press 'ESC' to EXIT Game." << endl;
+		char c = static_cast<char>(_getch());
+		if (c == ESC) {
+			throw std::runtime_error("Game stopped by user due to file error");
 		}
 	}
+}
+
+string Screen::loadAllRooms() {
+	vector<string> roomFilePaths;
+	getAllFilePaths(roomFilePaths, ROOM_EXTENSION, ROOM_FOLDER);
+	
+	if (roomFilePaths.empty())
+		return "Error: No .screen files in " + ROOM_FOLDER;
+
+	for (const auto& fullPath : roomFilePaths) {
+		//האם צריך פה try catch?
+		try{
+			int roomNum = getRoomNumber(fullPath);
+			bool requiresLegend = isGameRoom(roomNum);
+			RoomData data = ReadRoomFromFile(fullPath, requiresLegend);
+			if (!data.errorMsg.empty()) {
+				return data.errorMsg;
+			}
+
+			Rooms[roomNum] = data.layout;
+			roomLegendRows[roomNum] = data.legendLoc;
+			roomDarkStatus[roomNum] = data.isDark;
+		}
+		catch (const std::exception& e) {
+			return "Error processing [" + fullPath + "]: " + e.what();
+		}
+	}
+	return "";
+}
+
+string Screen::loadRiddlesForCurrentRoom() {
+	if (riddles.empty()) {
+		return "";
+	}
+	vector<string> riddleFilePaths;
+	getAllFilePaths(riddleFilePaths, RIDDLES_EXTENSION, RIDDLES_FOLDER);
+	string targetPath = "";
+	bool found = false;
+
+	for (const auto& path : riddleFilePaths) {
+		try {
+			if (static_cast<int>(getRoomNumber(path)) == currentRoom) {
+				targetPath = path;
+				found = true;
+				break;
+			}
+		}
+		catch (...) {
+			continue;
+		}
+	}
+	if (!found) {
+		return "Error: No .riddle files for room " + std::to_string(currentRoom) + " in " + RIDDLES_FOLDER;
+	}
+	int riddleCounter = 0;
+	for (auto& riddlePair : riddles) {
+		string errorMsg = "";
+		Riddle temp;
+		if(currentRoom != static_cast<int>(roomIndex::VAULT))
+			temp = ReadRiddleFromFile(targetPath,riddlePair.first,riddleCounter, errorMsg);
+		else
+			temp = ReadVaultRiddleFromFile(targetPath,riddlePair.first, errorMsg); //vault riddle has no position index
+		
+		if (!errorMsg.empty()) {
+			return errorMsg;
+		}
+		riddlePair.second = std::move(temp);
+		riddleCounter++;
+	}
+	return "";
 }
 
 Obstacle* Screen::getObstacleAt(const Point& p) {
@@ -369,14 +395,14 @@ void Screen::refreshSpringsDisplay(const Point& p1, const Point& p2) const {
 void Screen::clearMessegeArea(bool forceClean){
 	if (forceClean) {
 		gotoxy(MESSAGES_POS::MES_X, roomLegendRows[currentRoom] + MESSAGES_POS::MES_Y);
-		std::cout << EMPTYLINE << std::flush;
+		cout << EMPTYLINE << std::flush;
 	}
 	else {
 		if (MessageTimer > 0) {
 			MessageTimer--;
 			if (MessageTimer == 0) {
 				gotoxy(MESSAGES_POS::MES_X, roomLegendRows[currentRoom] + MESSAGES_POS::MES_Y);
-				std::cout << EMPTYLINE << std::flush;
+				cout << EMPTYLINE << std::flush;
 			}
 		}
 	}
@@ -389,13 +415,16 @@ void Screen::loadItems(int doorIdOpen, Point&doorPos) {//enter the items from th
 	doorIDs.clear();
 	keys.clear();
 	riddles.clear();
+
 	int legendY = roomLegendRows[currentRoom];
 	for (int y = 0; y < MAX_Y; y++) { 
 		if (inLegendBounds(legendY,y)) { //skip legend lines from scanning
 			continue;
 		}
 		for (int x = 0; x < MAX_X; x++) {
-			char c = getCharAt(Point(x, y));
+			Point p(x, y);
+			char c = getCharAt(p);
+			
 			if (c == objSigns::SWITCH_OFF) {
 				switches.push_back(Switch(x, y, false));
 			}
@@ -405,34 +434,33 @@ void Screen::loadItems(int doorIdOpen, Point&doorPos) {//enter the items from th
 			else if (c == objSigns::OBSTACLE) {
 				obstacles[Point(x, y)] = Obstacle(x, y, this);
 			}
+			else if (c == objSigns::KEY) {
+				keys[Point(x, y)] = Key(x, y);
+			}
+			else if (c == objSigns::RIDDLE) {
+				riddles[Point(x, y)] = Riddle(Point(x, y, objSigns::RIDDLE));
+			}
 			else if (isdigit(static_cast<unsigned char>(c))) {
-				int door_id = c - '0';
-				if (door_id == 9) { door_id = 0; }
+				int door_id = normalizeDoorId(c-'0');
 				doors[door_id] = Door(x, y, c);
 				if (door_id == doorIdOpen) {
 					doors[door_id].open();
-					doorPos.setX(x);
-					doorPos.setY(y);
+					doorPos = p;
 				}
 				else {
 					doorIDs.push_back(door_id);
 				}
 			}
-			else if (c == objSigns::KEY) {
-				keys[Point(x, y)] = Key(x, y);
-			}
-			else if (c == objSigns::RIDDLE) {
-				riddles[Point(x, y)] = Riddle(Point(x, y,objSigns::RIDDLE));
-			}
+			
 		}
 	}
 	linkDoorsToKeysAndSwitches();
-	loadFilesByType(false); //loading riddles from files
+	attemptFunctionWithRetry([this]() {return this->loadRiddlesForCurrentRoom(); });
 	loadSprings();
 }
 
 void Screen::linkDoorsToKeysAndSwitches() { //the assumption is that the number of switches and  is equal to the number of doors
-	std::vector <int> doorIdCopy = doorIDs;  //make copy of doorIds vector 
+	vector <int> doorIdCopy = doorIDs;  //make copy of doorIds vector 
 
 	int currentIndex = 0;
 	std::shuffle(doorIdCopy.begin(), doorIdCopy.end(), rng);
@@ -658,7 +686,7 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 				if (erase) {
 					if (!RoundDistance(x, y, p1, r1) && !RoundDistance(x, y, p2, r2)) {
 						gotoxy(x, y);
-						std::cout << ' ';
+						cout << ' ';
 					}
 				}
 				else{
@@ -669,11 +697,11 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 					char c = board[y][x];
 					if (colorToggle) {
 						SetTextColor(getColorForChar(c));
-						std::cout << c;
+						cout << c;
 						SetTextColor(Color::WHITE);
 					}
 					else {
-						std::cout << c;
+						cout << c;
 					}
 				}
 			}
@@ -684,6 +712,7 @@ void Screen::ProcessLightning(int cx,int cy, int radius, bool erase, const Point
 bool Screen::isValid(const Point& p) const{ 
 	if (!p.InBounds(MAX_X - 1, MAX_Y - 1, 0, 0))
 		return false;
+
 	if (!isDestructible(p)) {
 		return false;
 	}
@@ -696,7 +725,7 @@ bool Screen::isDestructible(const Point& p) const
 	const int py = p.getY();
 
 	//check if point is in legend
-	int legendY = roomLegendRows[currentRoom];
+	int legendY = roomLegendRows.at(currentRoom);
 	if (inLegendBounds(legendY, py)) {
 		return false;
 	}
@@ -762,7 +791,7 @@ void Screen::deleteRiddle(Point position)
 
 void Screen::deleteSwitch(Point position){
 	bool flag = false;
-	std::vector<Switch>::iterator it = switches.begin();
+	vector<Switch>::iterator it = switches.begin();
 	while (it != switches.end() && !flag) {
 		if (it->getPosition() == position)
 		{
@@ -844,46 +873,10 @@ void Screen::decreaseLife() {
 	}
 }
 
-string Screen::loadRiddles(){
-	std::vector<string>RiddlePathWays;
-	auto it = riddles.begin();
-	int counter = 0;
-	string path;
-	
-	getAllFilePaths(RiddlePathWays, RIDDLES_EXTENSION, RIDDLES_FOLDER);
-	for (auto& fileName: RiddlePathWays)
-	{
-		if (getRoomNumber(fileName) == currentRoom)
-		{
-			path = fileName;
-			break;
-		}		
-	}
-
-	while (it != riddles.end()){
-		string errorMsg = "";
-		Riddle temp;
-		if (currentRoom != roomIndex::VAULT)
-			temp = ReadRiddleFromFile(path, it->first, counter, errorMsg);
-		else
-			temp = ReadVaultRiddleFromFile(path, it->first, errorMsg);
-
-		if (errorMsg.empty()) {
-			it->second = std::move(temp);
-			++it;
-			counter++;
-		}
-		else {
-			return errorMsg;
-		}
-	}
-	return "";
-}
-
 Riddle Screen::ReadRiddleFromFile(const string& filePath,const Point pos, int riddleIndex, string& errorMsg){
 	std::ifstream inFile(filePath);
-	std::string question;
-	std::vector<std::string> options;
+	string question;
+	vector<string> options;
 	int correctIndex = 0;
 
 	if (!inFile.is_open()) {
@@ -930,8 +923,8 @@ bool Screen::allRiddlesSolved() const{
 Riddle Screen::ReadVaultRiddleFromFile(const string& filePath, const Point pos, string& errorMsg) {
 	std::ifstream inFile(filePath);
 	
-	std::string question;
-	std::string correctAnswer;
+	string question;
+	string correctAnswer;
 	
 	if (!inFile.is_open()) {
 		errorMsg = "Error: Could not open file [" + filePath + " ]";
@@ -974,7 +967,7 @@ void Screen::saveRoom()
 
 void Screen::saveGame() 
 {
-	const std::string rootSaves = STATE_FOLDER;
+	const string rootSaves = STATE_FOLDER;
 	if (!std::filesystem::exists(rootSaves)) {
 		std::filesystem::create_directory(rootSaves);
 	}
@@ -983,7 +976,7 @@ void Screen::saveGame()
 		std::filesystem::remove_all(currentSaveDirectory); // Deletes folder and all files inside
 	}
 	else { //check if there is more than 10 files and if so erase the oldest one
-		std::vector<std::filesystem::path> existingSaves;
+		vector<std::filesystem::path> existingSaves;
 		for (const auto& entry : std::filesystem::directory_iterator(rootSaves)) {
 			if (entry.is_directory()) {
 				existingSaves.push_back(entry.path());
@@ -1007,13 +1000,13 @@ void Screen::saveGame()
 		}
 	}
 
-	std::string currentSaveName = getCurrentTimeStamp();
-	std::string fullSavePath = rootSaves + "/" + currentSaveName;
+	string currentSaveName = getCurrentTimeStamp();
+	string fullSavePath = rootSaves + "/" + currentSaveName;
 	std::filesystem::create_directory(fullSavePath);
 
 	currentSaveDirectory = fullSavePath;
 
-	std::string file = "";
+	string file = "";
 	for(auto& room: savedRooms){
 		setFileName(file, room.first, fullSavePath);
 		if (room.first == 1) {saveRoomState(room.second, file, true);}
@@ -1021,11 +1014,11 @@ void Screen::saveGame()
 	}
 }
 
-int Screen::loadGame(const std::string& folderPath)
+int Screen::loadGame(const string& folderPath)
 {
 	int current = static_cast<int>(roomIndex::INSTRUCTIONS);
-	std::vector<string>filesInFolder;
-	std::string errorMsg = "";
+	vector<string>filesInFolder;
+	string errorMsg = "";
 	if (folderPath.empty()) return current;
 	currentSaveDirectory = folderPath;
 	savedRooms.clear();
@@ -1033,7 +1026,7 @@ int Screen::loadGame(const std::string& folderPath)
 
 	for (auto& file : filesInFolder) {
 		while (true) {
-			int key = getRoomNumberForState(file);
+			int key = getRoomNumber(file);
 			if (key == -1) {
 				errorMsg = "Error: file isnt by designated format - [" + file + "]" ;
 			}
@@ -1043,13 +1036,13 @@ int Screen::loadGame(const std::string& folderPath)
 			if (errorMsg.empty())
 				break;
 			cls();
-			std::cout << "########################################################" << std::endl;
-			std::cout << "ERROR LOADING Game" << std::endl;
-			std::cout << "########################################################" << std::endl;
-			std::cout << errorMsg << std::endl << std::endl;
-			std::cout << "1. Fix the file externally." << std::endl;
-			std::cout << "2. Press 'r' to RETRY." << std::endl;
-			std::cout << "3. Press 'ESC' to EXIT Game." << std::endl;
+			cout << "########################################################" << std::endl;
+			cout << "ERROR LOADING Game" << std::endl;
+			cout << "########################################################" << std::endl;
+			cout << errorMsg << std::endl << std::endl;
+			cout << "1. Fix the file externally." << std::endl;
+			cout << "2. Press 'r' to RETRY." << std::endl;
+			cout << "3. Press 'ESC' to EXIT Game." << std::endl;
 			char c = static_cast<char>(_getch());
 			if (c == ESC) {
 				throw std::runtime_error("Game stopped by user due to file error");
@@ -1059,15 +1052,15 @@ int Screen::loadGame(const std::string& folderPath)
 	return current;
 }
 
-std::string Screen::selectSaveFile()
+string Screen::selectSaveFile()
 {
 	struct SaveFileEntry { //sort saving files
-		std::string filename;
+		string filename;
 		std::filesystem::file_time_type timestamp;
 	};
 
-	std::vector<SaveFileEntry> saves;
-	std::string rootFolder = STATE_FOLDER;
+	vector<SaveFileEntry> saves;
+	string rootFolder = STATE_FOLDER;
 
 	if (!std::filesystem::exists(rootFolder)) {
 		return "";
@@ -1087,19 +1080,19 @@ std::string Screen::selectSaveFile()
 
 	
 	system("cls"); 
-	std::cout << "Select a Saved Game:\n";
-	std::cout << "--------------------\n";
+	cout << "Select a Saved Game:\n";
+	cout << "--------------------\n";
 
 	for (size_t i = 0; i < saves.size() && i < 10; ++i) {
-		std::string displayName = std::filesystem::path(saves[i].filename).filename().string();
+		string displayName = std::filesystem::path(saves[i].filename).filename().string();
 		if (i == 9) {
-			std::cout << "0. " << displayName << "  (" << formatTime(saves[i].timestamp) << ")\n";
+			cout << "0. " << displayName << "  (" << formatTime(saves[i].timestamp) << ")\n";
 		}
 		else {
-			std::cout << (i + 1) << ". " << displayName << "  (" << formatTime(saves[i].timestamp) << ")\n";
+			cout << (i + 1) << ". " << displayName << "  (" << formatTime(saves[i].timestamp) << ")\n";
 		}
 	}
-	std::cout << "ESC. Cancel\n";
+	cout << "ESC. Cancel\n";
 
 	
 	while (true) {
@@ -1124,7 +1117,7 @@ std::string Screen::selectSaveFile()
 
 
 
-std::string Screen::loadRoomState(int key, const std::string& filename, int& current)
+string Screen::loadRoomState(int key, const string& filename, int& current)
 {
 	std::ifstream file(filename);
 	if (!file.is_open()) return "Error: Could not open file [" + filename + " ]";
@@ -1160,13 +1153,13 @@ std::string Screen::loadRoomState(int key, const std::string& filename, int& cur
 		return "Error reading file [" + filename + "]: Unexpected end of file or bad format.";
 	}
 	catch (const std::exception& e) {
-		return std::string("General Error: ") + e.what();
+		return string("General Error: ") + e.what();
 	}
 	file.close();
 	return "";
 }
 
-void Screen::saveRoomState(const RoomState& state, const std::string& filename, const bool first) const
+void Screen::saveRoomState(const RoomState& state, const string& filename, const bool first) const
 {
 	std::ofstream file(filename);
 	if (!file.is_open()) {
@@ -1195,11 +1188,12 @@ void Screen::saveRoomState(const RoomState& state, const std::string& filename, 
 
 
 
-void Screen::setFileName(std::string& file, const int key, const std::string& folderPath) const{
-	std::string roomNumber = (key < 10) ? "0" + std::to_string(key) : std::to_string(key);
+void Screen::setFileName(string& file, const int key, const string& folderPath) const{
+	string roomNumber = (key < 10) ? "0" + std::to_string(key) : std::to_string(key);
 	file = folderPath + "/" + "SavedScreen" + roomNumber + STATE_EXTENSION;
 }
-std::string Screen::getCurrentTimeStamp() const //use gemini for get time stamp
+
+string Screen::getCurrentTimeStamp() const //use gemini for get time stamp
 {
 	auto now = std::chrono::system_clock::now();
 	std::time_t now_c = std::chrono::system_clock::to_time_t(now);
@@ -1212,7 +1206,7 @@ std::string Screen::getCurrentTimeStamp() const //use gemini for get time stamp
 	return ss.str();
 }
 
-std::string Screen::formatTime(std::filesystem::file_time_type ftime) const //use gemini for get time format
+string Screen::formatTime(std::filesystem::file_time_type ftime) const //use gemini for get time format
 {
 	auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(ftime - std::filesystem::file_time_type::clock::now() + std::chrono::system_clock::now());
 
@@ -1224,22 +1218,23 @@ std::string Screen::formatTime(std::filesystem::file_time_type ftime) const //us
 	ss << std::put_time(&tm, "%d/%m/%y %H:%M");
 	return ss.str();
 }
+
 void Screen::cleanSavedGames()
 {
-	std::string rootFolder = STATE_FOLDER;
+	string rootFolder = STATE_FOLDER;
 
 	if (!std::filesystem::exists(rootFolder) || std::filesystem::is_empty(rootFolder)) {
 		system("cls");
-		std::cout << "No saved games found to delete.\n";
+		cout << "No saved games found to delete.\n";
 		Sleep(1500);
 		return;
 	}
 
 	system("cls");
-	std::cout << "!!! WARNING !!!\n";
-	std::cout << "You are about to delete ALL saved games.\n";
-	std::cout << "This action cannot be undone.\n\n";
-	std::cout << "Are you sure? (y/n): ";
+	cout << "!!! WARNING !!!\n";
+	cout << "You are about to delete ALL saved games.\n";
+	cout << "This action cannot be undone.\n\n";
+	cout << "Are you sure? (y/n): ";
 
 	char confirm =static_cast<char>( _getch());
 	if (tolower(confirm) == 'y') {
@@ -1249,14 +1244,14 @@ void Screen::cleanSavedGames()
 			std::filesystem::create_directory(rootFolder);
 			currentSaveDirectory = "";
 
-			std::cout << "\n\nAll saved games deleted successfully.\n";
+			cout << "\n\nAll saved games deleted successfully.\n";
 		}
 		catch (const std::exception& e) {
-			std::cout << "\n\nError deleting files: " << e.what() << "\n";
+			cout << "\n\nError deleting files: " << e.what() << "\n";
 		}
 	}
 	else {
-		std::cout << "\nOperation Cancelled.\n";
+		cout << "\nOperation Cancelled.\n";
 		Sleep(500);
 	}
 }

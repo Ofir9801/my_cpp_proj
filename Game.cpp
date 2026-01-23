@@ -97,7 +97,7 @@ void Game::run() {
 
 void Game::showMenu(bool& exitGame){
 
-	changeRoom(roomIndex::MENU);
+	changeRoom(static_cast<int>( roomIndex::MENU));
 	bool inMenu = true;
 	int a;
 	while (inMenu) {
@@ -105,12 +105,12 @@ void Game::showMenu(bool& exitGame){
 			int key = _getch();
 			switch (key) {
 			case '1':
-				changeRoom(roomIndex::ROOM1);
+				changeRoom(1);
 				inMenu = false;
 				break;
 			case '2':
 				SetColorfullGame();
-				changeRoom(roomIndex::ROOM1);
+				changeRoom(3);
 				inMenu = false;
 				break;
 			case '3': {
@@ -123,7 +123,6 @@ void Game::showMenu(bool& exitGame){
 					wait(2000); 
 					board.drawMap();  
 					break;
-
 				}
 				std::string selectedFile = board.selectSaveFile();
 
@@ -141,7 +140,7 @@ void Game::showMenu(bool& exitGame){
 				else {
 					int room = board.loadGame(selectedFile);
 					if (room != roomIndex::INSTRUCTIONS) {
-						changeRoom(static_cast<roomIndex>(room));
+						changeRoom(room);
 						inMenu = false;
 					}
 					else {
@@ -171,10 +170,10 @@ void Game::showMenu(bool& exitGame){
 				board.drawMap();
 				break;
 			case '8':
-				changeRoom(roomIndex::INSTRUCTIONS);
+				changeRoom(static_cast<int>(roomIndex::INSTRUCTIONS));
 				board.showInstructionBinds();
 				a = _getch();
-				changeRoom(roomIndex::MENU);
+				changeRoom(static_cast<int>(roomIndex::MENU));
 				break;
 			case '9':
 				exitGame = false;
@@ -185,30 +184,32 @@ void Game::showMenu(bool& exitGame){
 	}
 }
 
-void Game::changeRoom(roomIndex room){
+void Game::changeRoom(int room){
 	if (room != roomIndex::MENU) {
 		onGameEvent(Event(getIteration(), EventType::ROOM_CHANGE, ' ', "Move to Room " + std::to_string(static_cast<int>(room))));
 	}
 	int prevRoom = board.getCurrentRoom();
-	if (prevRoom < roomIndex::VICTORY) {
+
+	if (board.isGameRoom(prevRoom)) {
 		board.saveRoom();
 	}
+	
 	Point doorPos(PLAYER_1_START_X, PLAYER_1_START_Y);
-	int roomNumber = static_cast<int>(room);
-	board.loadMap(roomNumber, doorPos);
-	if (isPlayableRoom(room)) {
-		if (!isPlayableRoom(prevRoom)) {
+	board.loadMap(room, doorPos);
+
+	if (board.isGameRoom(room)) {
+		if (!board.isGameRoom(prevRoom)) { //starting new game to game room
 			player1.reset(Point(PLAYER_1_START_X, PLAYER_1_START_Y, objSigns::PLAYER1));
 			player2.reset(Point(PLAYER_2_START_X, PLAYER_2_START_Y, objSigns::PLAYER2));
 		}
-		else {
+		else { //moving between game rooms
 				doorPos.setChar(objSigns::PLAYER1);
 				player1.reset(doorPos);
 				doorPos.setChar(objSigns::PLAYER2);
 				player2.reset(doorPos);
 			}
 		}
-	if (room == roomIndex::ROOM3)
+	if (board.isDark())
 		board.showMessage("it is very dark in here, you will need something to light it up");
 }
 
@@ -236,11 +237,11 @@ void Game::SetColorfullGame() {
 void Game::performRestart(){
 	board.resetStats();
 	board.clearSavedRooms();
-	board.currentRoom = (size_t)roomIndex::MENU;
+	board.currentRoom = static_cast<int>(roomIndex::MENU);
 	board.setGameState(true);
 	player1.resetInventory();
 	player2.resetInventory();
-	changeRoom(roomIndex::ROOM1);
+	changeRoom(1);
 	gameCycle = 0;
 }
 
@@ -328,7 +329,7 @@ void Game::handleGameOver(bool& exitGame)
 }
 
 void Game::handleLevelCompletion() {
-	if (!messageShown &&board.getCurrentRoom() == roomIndex::ROOM2)
+	if (!messageShown &&board.getCurrentRoom() == 2)
 	{
 		if (board.allRiddlesSolved()){
 			board.showMessage("All riddles in this room have been solved. you both get extra inventory space!");
@@ -341,7 +342,7 @@ void Game::handleLevelCompletion() {
 	if (!player1.hasFinished() || !player2.hasFinished()) { return; }
 	int player1Room = player1.getRoomOpen(); //the room number of the door opened by player 1
 	int player2Room = player2.getRoomOpen(); //the room number of the door opened by player 2
-	if (player1Room == player2Room) { changeRoom(static_cast<roomIndex>( player1Room)); }//both players chose the same door
+	if (player1Room == player2Room) { changeRoom( player1Room); }//both players chose the same door
 	else {
 		string msg = "you chose different rooms!choose a room : " + std::to_string(static_cast<int>(player1Room)) + " / " + std::to_string(static_cast<int>(player2Room));
 		board.showMessage(msg);
@@ -349,10 +350,10 @@ void Game::handleLevelCompletion() {
 			if (_kbhit()) {
 				size_t key = _getch();
 				if (key <= '9' && key >= '0') {
-					size_t chosenRoom = key - '0';
+					int chosenRoom = static_cast<int>( key - '0');
 
 					if (chosenRoom == player1Room || chosenRoom == player2Room) {
-						changeRoom((roomIndex)chosenRoom);
+						changeRoom(chosenRoom);
 						break;
 					}
 					else {

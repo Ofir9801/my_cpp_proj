@@ -60,72 +60,102 @@ Color getColorForChar(objSigns sign){
 	return getColorForChar(static_cast<char>(sign));
 }
 
-std::vector<string> ReadRoomFromFile(const string& fileName, int& legendLoc) {
-	std::vector<string> roomFile;
+RoomData ReadRoomFromFile(const string& fileName,bool exceptLegend) {
+	RoomData result;
 	std::ifstream inFile(fileName);
-	if (!inFile.is_open()) {
-		roomFile.push_back("Error: Could not open file [" + fileName + " ]");
-		return roomFile;
-	}
-
-	string templine;
-
-	for (int i = 0; i < MAX_Y; i++) {
-		if (!std::getline(inFile, templine)) {
-			templine = "";
-		}
-		size_t lPos = templine.find('L');
-		if (lPos != string::npos) { //find in line the letter L that represent the legend
-			legendLoc = i;
-			//validation legend here
-
-
-			/*try {
-				ReadLegendFromFile(roomFile,lPos, i);
-				addLegend = true;
-			}
-			catch (const std::runtime_error& e) {
-				roomFile.clear();
-				roomFile.push_back("Error reading legend for [" + fileName + "]: " + string(e.what()));
-				return roomFile;
-			}
-			i += roomFile.size() - prevSize;
-			continue;
-		}*/
-		templine.resize(MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
-		roomFile.push_back(templine);			
-	}
-	inFile.close();
-
-	/*if (gameRoom && !addLegend) {
-		roomFile.clear();
-		roomFile.push_back("Error: L (represent for legend) is missing in [" + fileName + "]");
-		return roomFile;
-	}*/
-	return roomFile;
-}
 	
-void ReadLegendFromFile(std::vector<string>& roomFile, size_t lPos, int currentLine) {
-	std::ifstream inFile(LegendPathWay);
-	if (lPos != 0) {
-		throw "In line " + std::to_string(currentLine + 1) + ": Legend marker 'L' must be the start of the line";
+	// Read legend first
+	std::vector<string> legendLines;
+	if (exceptLegend) {
+		legendLines = ReadLegendFromFile();
+		if (legendLines.size() == 1 && legendLines[0].find("Error:") == 0) {
+			result.errorMsg = legendLines[0];
+			return result; // propagate the error
+		}
 	}
-	if (!inFile.is_open())
-		throw std::runtime_error("Something wrong with the file Legend.txt");
+
+	if (!inFile.is_open()) {
+		result.errorMsg = "Error: Could not open file [" + fileName + " ]";
+		return result;
+	}
 
 	string templine;
-	int linesRead = 0;
-	while (linesRead < LEGEND_SIZE && std::getline(inFile,templine)){
-		if (templine.length() > MAX_X) {
-			throw "In line " + std::to_string(linesRead + currentLine + 1) + ": Legend line is too long(max " + std::to_string(MAX_X) + " chars)";
+	int currentLineCount = 0;
+
+	while(std::getline(inFile,templine) && currentLineCount < MAX_Y) {
+		if (!templine.empty() && templine.back() == '\r') {
+			templine.pop_back();
 		}
-		templine.resize(MAX_X, ' ');//if the line is shorter then MAX_X, it add space bars to fill the missing places
-		roomFile.push_back(templine);
-		linesRead++;
+		if (exceptLegend) {
+			if (!templine.empty() && templine[0] == 'D') {
+				result.isDark = true;
+				continue; //skip this line
+			}
+			size_t lPos = templine.find('L');
+			if (lPos != string::npos) { //legend found
+				if (lPos != 0) { //legend marker not at start of line
+					result.errorMsg = "Error: Legend marker 'L' must be at the start of the line in [" + fileName + "]";
+					return result;
+				}
+				if (result.legendLoc != -1) { //legend already found before
+					result.errorMsg = "Error: Multiple legend markers 'L' found in [" + fileName + "]";
+					return result;
+				}
+				result.legendLoc = currentLineCount;
+
+				for (const string& legendLine : legendLines) { //insert legend lines
+					if (currentLineCount < MAX_Y) {
+						result.layout.push_back(legendLine);
+						currentLineCount++;
+					}
+				}
+				continue;
+			}
+		}
+		templine.resize(MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
+		result.layout.push_back(templine);
+		currentLineCount++;
 	}
-	if (inFile >> templine) //Check if the legend file contains more lines than the defined limit
-		throw std::runtime_error("The legend size exceeds the maximum defined lines: "+std::to_string(LEGEND_SIZE)+" lines");
+	
 	inFile.close();
+	//if there is no legend in the file but it is required
+	if (exceptLegend && result.legendLoc == -1) {
+		result.errorMsg = "Error: Legend marker 'L' not found in [" + fileName + "]";
+		return result;
+	}
+	if (result.layout.size() < MAX_Y) {
+		result.errorMsg = "Error: Room file [" + fileName + "] has fewer than " + std::to_string(MAX_Y) + " lines.";
+	}
+	return result;
+}
+
+vector<string> ReadLegendFromFile(){ //fix it
+	vector<string> legendLines;
+	std::ifstream inFile(LegendPathWay);
+
+	if (!inFile.is_open()) {
+		legendLines.push_back("Error: Could not open file [" + LegendPathWay + " ]");
+		return legendLines;
+	}
+
+	string templine;
+	int lineCount = 0;
+	while(std::getline(inFile,templine) && lineCount < LEGEND_SIZE) {
+		if (!templine.empty() && templine.back() == '\r') {
+			templine.pop_back();
+		}
+
+		templine.resize(MAX_X, ' ');//if the line is bigger then MAX_X, it truncates it, if the line is shorter then 80, it add space bars to fill the missing places
+		legendLines.push_back(templine);
+		lineCount++;
+	}
+	inFile.close();
+
+	// If the legend file has fewer than LEGEND_SIZE lines, fill the rest with empty lines
+	while (legendLines.size() < LEGEND_SIZE){
+		legendLines.push_back(string(MAX_X, ' '));
+	}
+	return legendLines;
 }
 
 void getAllFilePaths(std::vector<std::string>& vec_to_fill, std::string extension, std::string subFolder) {
@@ -142,43 +172,44 @@ void getAllFilePaths(std::vector<std::string>& vec_to_fill, std::string extensio
 	}
 }
 
-roomIndex getRoomNumber(std::string fileName) {
+int getRoomNumber(std::string fileName) {
 	std::string filename_prefix = std::filesystem::path(fileName).stem().string();
-	std::string lastTwoChars = "";
-
-	if (filename_prefix.length() > 2) {
-		lastTwoChars = filename_prefix.substr(filename_prefix.length() - 2);
-		if (std::isdigit(lastTwoChars[0])) {
-			int roomNum = (lastTwoChars[0] - '0') * 10 + (lastTwoChars[1] - '0');
-			return static_cast<roomIndex> (roomNum);
-		}
-	}
 
 	if (filename_prefix == MenuPrefix)
-		return roomIndex::MENU;
+		return static_cast<int>(roomIndex::MENU);
 	if (filename_prefix == InstructionsPrefix)
-		return roomIndex::INSTRUCTIONS;
+		return static_cast<int>(roomIndex::INSTRUCTIONS);
 	if (filename_prefix == VictoryPrefix)
-		return roomIndex::VICTORY;
+		return static_cast<int>(roomIndex::VICTORY);
 	if (filename_prefix == VaultPrefix)
-		return roomIndex::VAULT;
+		return static_cast<int>(roomIndex::VAULT);
+
+	std::string lastTwoChars = "";
+
+	if (filename_prefix.length() >= 2) {
+		lastTwoChars = filename_prefix.substr(filename_prefix.length() - 2);
+		if (std::isdigit(lastTwoChars[0]) && std::isdigit(lastTwoChars[1])) {
+			int roomNum = std::stoi(lastTwoChars);
+			return (roomNum);
+		}
+	}
 
 	throw std::runtime_error("Error: "+ fileName+" isn't written by the guidelines");
 }
 
-int getRoomNumberForState(std::string fileName)
-{
-	std::string filename_prefix = std::filesystem::path(fileName).stem().string();
-	std::string lastTwoChars = "";
-	int roomNum = -1;
-	if (filename_prefix.length() > 2) {
-		lastTwoChars = filename_prefix.substr(filename_prefix.length() - 2);
-		if (std::isdigit(lastTwoChars[0])) {
-			roomNum = (lastTwoChars[0] - '0') * 10 + (lastTwoChars[1] - '0');
-		}
-	}
-	if (roomNum > 0)
-		return roomNum;
-	return -1;
-}
+//int getRoomNumberForState(std::string fileName)
+//{
+//	std::string filename_prefix = std::filesystem::path(fileName).stem().string();
+//	std::string lastTwoChars = "";
+//	int roomNum = -1;
+//	if (filename_prefix.length() > 2) {
+//		lastTwoChars = filename_prefix.substr(filename_prefix.length() - 2);
+//		if (std::isdigit(lastTwoChars[0])) {
+//			roomNum = (lastTwoChars[0] - '0') * 10 + (lastTwoChars[1] - '0');
+//		}
+//	}
+//	if (roomNum > 0)
+//		return roomNum;
+//	return -1;
+//}
 

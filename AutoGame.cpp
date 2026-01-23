@@ -64,7 +64,7 @@ void AutoGame::printList() const
 void AutoGame::showMenu(bool& started)
 {
     started = true;
-    changeRoom(roomIndex::ROOM1);
+    changeRoom(1);
 }
 
 void AutoGame::drawMap() {

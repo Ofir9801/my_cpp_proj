@@ -6,7 +6,7 @@
 #include <map>
 #include <type_traits>
 
-using std::string;
+using std::string, std::vector;
 
 enum class INFO_SLOTS {//for players' display info
 	PLAYER1_SIGN_START_X = 10,
@@ -22,14 +22,11 @@ enum class MESSAGES_POS {//for message display area
 	MES_X = 0,
 	MES_Y = 2 
 };
-enum class roomIndex {//rooms indices
+enum class roomIndex {//special rooms indices
 	VAULT = 0,
-	ROOM1 = 1,
-	ROOM2 = 2,
-	ROOM3 = 3,
-	VICTORY = 4,
-	MENU = 5,
-	INSTRUCTIONS = 6,
+	MENU = -1,
+	INSTRUCTIONS = -2,
+	VICTORY = -3
 };
 enum class Keyboard_bind {//possible movement directions for players
 	UP,
@@ -82,6 +79,13 @@ enum class EventType {
 	GAME_OVER, 
 };
 
+struct RoomData {
+	vector<string> layout;
+	int legendLoc = -1;
+	bool isDark = false;
+	string errorMsg = "";
+};
+
 //constants of basic game handling
 inline constexpr char ESC = 27;
 inline const string EMPTYLINE = "                                                                                ";
@@ -93,7 +97,6 @@ inline constexpr int MAX_X = 80;
 inline constexpr int MAX_Y = 25;
 inline constexpr int INVENTORY_SIZE = 2; //Player can hold up to one item
 inline constexpr int NUM_KEYS = 6; //number of possible movement Keys
-//inline constexpr int NUM_ROOMS = 7; //number of rooms in the Game
 inline constexpr int LIGHT_RADIUS_TORCH = 7;
 inline constexpr int LIGHT_RADIUS_DEFAULT = 2;
 inline constexpr int EXPLODE_BOMB_TIME = 15;
@@ -110,16 +113,6 @@ inline constexpr int SUCCESS_SCORE = 100;
 inline constexpr int STARTING_LIVES = 4;
 inline int constexpr TIMER_MESSAGE = 15;
 inline int constexpr LEGEND_SIZE = 3;
-//inline int roomLegendRows[];
-inline std::map<roomIndex,int> roomLegendRows;
-
-//inline string Room1[MAX_Y];
-//inline string Room2[MAX_Y];
-//inline string Room3[MAX_Y];
-//inline string Vault[MAX_Y];
-//inline string EndingScreen[MAX_Y];
-//inline string Menu[MAX_Y];
-//inline string Instructions[MAX_Y];
 
 inline const string MenuPrefix = "Menu";
 inline const string InstructionsPrefix = "Instructions";
@@ -133,28 +126,26 @@ inline const string LegendPathWay = "Rooms/Legend.legend";
 inline const string STATE_FOLDER = "SavedGames";
 inline const string STATE_EXTENSION = ".state";
 
-
 //utility functions for screen handling
 void gotoxy(int x, int y);
 void hideCursor();
 void cls();
+
 //color functions
 void SetTextColor(Color color);
 Color getColorForChar(char c);
 Color getColorForChar(objSigns sign);
-//file reading functions
-void ReadLegendFromFile(std::vector<string>& roomFile, size_t lPos, int currentLine);
-std::vector<string> ReadRoomFromFile(const string& fileName);
-roomIndex getRoomNumber(std::string fileName);
-int getRoomNumberForState(std::string fileName);
-void getAllFilePaths(std::vector<std::string>& vec_to_fill, std::string extension, std::string subFolder="");
 
-inline void gotoxy(INFO_SLOTS x, INFO_SLOTS y) { gotoxy(static_cast<int>(x), static_cast<int>(y)); }
-inline void gotoxy(INFO_SLOTS x, int y) { gotoxy(static_cast<int>(x), y); }
-inline void gotoxy(MESSAGES_POS x, int y) { gotoxy(static_cast<int>(x), y); }
-inline bool isGameRoom(roomIndex room) {
-	return room == roomIndex::ROOM1 || room == roomIndex::ROOM2 || room == roomIndex::ROOM3 || room == roomIndex::VAULT;
-}
+//file reading functions
+RoomData ReadRoomFromFile(const string& fileName, bool exceptLegend);
+vector<string> ReadLegendFromFile();
+int getRoomNumber(string fileName);
+void getAllFilePaths(vector<std::string>& vec_to_fill, string extension, std::string subFolder = "");
+
+inline void gotoxy(INFO_SLOTS x, INFO_SLOTS y) { gotoxy(static_cast<int>(x), static_cast<int>(y)); } //overload for enum class
+inline void gotoxy(INFO_SLOTS x, int y) { gotoxy(static_cast<int>(x), y); } //overload for enum class
+inline void gotoxy(MESSAGES_POS x, int y) { gotoxy(static_cast<int>(x), y); } //overload for enum class
+
 //operator overloads for enum classes
 inline bool operator==(char c, objSigns sign) { //overload operator == for enum class objsign
 	return c == static_cast<char>(sign);

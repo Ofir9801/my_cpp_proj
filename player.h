@@ -13,7 +13,7 @@ class Player
 	string p_keys;
 	bool state = true; //Player state - can move or not
 	bool finishedLevel = false;
-	size_t roomOpen = 0; //to track which room's door the player open
+	int roomOpen = 0; //to track which room's door the player open
 	Color color = Color::CYAN;
 	int springCyclesLeft = 0;
 	int currentForce = 1; //acts as speed

@@ -10,28 +10,28 @@
 #include <vector>
 #include <map>
 #include <filesystem>
+#include <functional>
 #include <random>
 
 class Player; //forward declaration to avoid circular dependency
 class Game;
-using std::string;
+using std::string, std::vector, std::map;
 
 class Screen {
 private:
 	string board[MAX_Y];
-	std::map<roomIndex,std::vector<string>> Rooms;
-	//string* Rooms[NUM_ROOMS];
+	map<int,vector<string>> Rooms;
 	string finalMessage = "";
 	string currentSaveDirectory = "";
 	int currentRoom = 0;
-	std::vector<Spring> springs;
-	std::vector<Switch> switches;
-	std::map<int,Door>doors;
-	std::vector<int>doorIDs; //keys to the doors map
-	std::map<Point, Key> keys;
-	std::map<Point, Riddle> riddles;
-	std::map<Point, Obstacle> obstacles;
-	std::vector<Bomb> activeBombs;
+	vector<Spring> springs;
+	vector<Switch> switches;
+	map<int,Door>doors;
+	vector<int>doorIDs; //keys to the doors map
+	map<Point, Key> keys;
+	map<Point, Riddle> riddles;
+	map<Point, Obstacle> obstacles;
+	vector<Bomb> activeBombs;
 	bool colorToggle = false;
 	bool isDarkRoom = false;
 	bool gameState = true;
@@ -46,16 +46,18 @@ private:
 
 	struct RoomState { //to save the state of each room
 		bool visited = false;
-		std::vector<string> layout;          
-		std::vector<Spring> springs;         
-		std::vector<Switch> switches;        
-		std::map<Point,Obstacle> obstacles;
-		std::vector<Bomb> activeBombs;
-		std::map<Point, Riddle> riddles;
-		std::map<Point, Key> keys;           
-		std::map<int, Door> doors;	               
+		vector<string> layout;          
+		vector<Spring> springs;         
+		vector<Switch> switches;        
+		map<Point,Obstacle> obstacles;
+		vector<Bomb> activeBombs;
+		map<Point, Riddle> riddles;
+		map<Point, Key> keys;           
+		map<int, Door> doors;	               
 	};
-	std::map <int,RoomState> savedRooms; //array to hold the state of each room (excluding menu ,instructions and victory)
+	map <int,RoomState> savedRooms; //array to hold the state of each room (excluding menu ,instructions and victory)
+	map <int, bool> roomDarkStatus; //to hold if the room is dark or not
+	map<int, int> roomLegendRows;
 	
 public:
 	friend class Game;
@@ -106,7 +108,7 @@ public:
 	bool isDoorOpen(int door_id) const;
     void openDoor(int door_id, char player);
 	bool getConnectionStatus(int door_id) const;
-	bool isRealDoor(int doorId) const { return doorId >= roomIndex::VAULT && doorId <= roomIndex::VICTORY; }
+	bool isRealDoor(int doorId) const { return Rooms.find(doorId) != Rooms.end(); }
 	bool SwitchState(int doorId) const;
 	void handleSwitches(const Point& p1, const Point& p2);
 	int GetDoorIdByKey(char p) const;
@@ -132,19 +134,20 @@ public:
 	bool handleVaultRiddle(Point riddlePos);
 	//read and write from Files functions
 	void saveGame();
-	int loadGame(const std::string& file = "");
-	std::string selectSaveFile();
+	int loadGame(const string& file = "");
+	string selectSaveFile();
 	void cleanSavedGames();
 	void setSaveDirectory(string dir) { currentSaveDirectory = dir; }
 	
 private:
 	//gamecycle and initialization
-	void initializeRoomsArray();
+	void initializeRooms();
 	void linkDoorsToKeysAndSwitches();
 	void loadItems(int doorIdOpen, Point& doorPos);
-	string loadRiddles();
+	string loadAllRooms();
+	string loadRiddlesForCurrentRoom();
+	void attemptFunctionWithRetry(std::function<string()> func); //use ai
 	void CheckExplodeNecessaryObject(int doorId);
-	void loadFilesByType(bool type);
 	bool isDestructible(const Point& p)const;
 	bool inLegendBounds(const int legendY, const int y) const;
 	// display
@@ -159,9 +162,12 @@ private:
 	Riddle ReadRiddleFromFile(const string& filePath, const Point pos, int riddleIndex, string& errorMsg);
 	Riddle ReadVaultRiddleFromFile(const string& filePath, const Point pos, string& errorMsg);
 	//read and write from Files functions
-	std::string loadRoomState(int key, const std::string& filename, int& current); //change to string for error handling
-	void saveRoomState(const RoomState& state, const std::string& filename, const bool first) const;
-	void setFileName(std::string& file, const int key, const std::string& folderPath) const;
-	std::string getCurrentTimeStamp()const;
-	std::string formatTime(std::filesystem::file_time_type ftime)const;
+	string loadRoomState(int key, const string& filename, int& current); 
+	void saveRoomState(const RoomState& state, const string& filename, const bool first) const;
+	void setFileName(string& file, const int key, const string& folderPath) const;
+	string getCurrentTimeStamp()const;
+	string formatTime(std::filesystem::file_time_type ftime)const;
+	//helpers
+	int normalizeDoorId(int doorId) const {return (doorId == 9) ? 0 : doorId;}
+	bool isGameRoom(int roomNum) { return roomNum >= 0; }
 };
