@@ -446,7 +446,7 @@ void Screen::loadItems(int doorIdOpen, Point&doorPos) {//enter the items from th
 				riddles[Point(x, y)] = Riddle(Point(x, y, objSigns::RIDDLE));
 			}
 			else if (isdigit(static_cast<unsigned char>(c))) {
-				int door_id = normalizeDoorId(c-'0');
+				int door_id = c - '0';
 				doors[door_id] = Door(x, y, c);
 				if (door_id == doorIdOpen) {
 					doors[door_id].open();
@@ -592,13 +592,13 @@ bool Screen::handleRiddle(Point riddlePos, Player& p) {
 	auto it = riddles.find(riddlePos);
 	string answer = "";
 	if (it != riddles.end() && !it->second.isSolved()) {
-		bool solved = riddles[riddlePos].engage(p, answer);
-		drawMap(); //redraw the map after riddle engagement
+		bool solved = riddles[riddlePos].engage(p, answer,game);
+		game->drawMap();
 		if (solved) {
 			string msg = "Correct! + " + std::to_string(SUCCESS_SCORE) + " points!";
 			showMessage(msg);
 			if (game) {
-				game->onGameEvent(Event(game->getIteration(), EventType::RIDDLE_SOLVED, p.getChar(),answer + " - Correct Answer "));
+				game->onGameEvent(Event(game->getIteration(), EventType::RIDDLE_SOLVED, p.getChar(),"riddle - Correct Answer "));
 			}
 			return true;
 		}
@@ -606,7 +606,7 @@ bool Screen::handleRiddle(Point riddlePos, Player& p) {
 			string msg = "WRONG! You lost " + std::to_string(WRONG_ANSWER) + " points!";
 			showMessage(msg);
 			if (game) {
-				game->onGameEvent(Event(game->getIteration(), EventType::RIDDLE_WRONG_ANSWER, p.getChar(),answer + " - Wrong Answer "));
+				game->onGameEvent(Event(game->getIteration(), EventType::RIDDLE_WRONG_ANSWER, p.getChar(), "riddle - Wrong Answer "));
 			}
 			return false;
 		}
@@ -622,8 +622,8 @@ bool Screen::handleVaultRiddle(Point riddlePos) {
 	auto it = riddles.find(riddlePos);
 	string answer = "";
 	if (it != riddles.end() && !it->second.isSolved()) {
-		bool solved = riddles[riddlePos].engageVaultRiddle(answer);
-		drawMap(); //redraw the map after riddle engagement
+		bool solved = riddles[riddlePos].engageVaultRiddle(answer, game);
+		game->drawMap();
 		if (solved) {
 			string msg = "Congratulations! You solved the last challenge. Proceed to the final door";
 			setChar(riddlePos, objSigns::EMPTY);
@@ -762,7 +762,6 @@ void Screen::deleteSwitch(Point position){
 void Screen::deleteDoor(Point position){
 	int door_id = position.getChar() - '0';
 	auto it = doors.find(door_id);
-	if (door_id == 9) door_id = 0;
 	if (it != doors.end()) {
 		CheckExplodeNecessaryObject(door_id);
 		doors.erase(it);
@@ -986,7 +985,7 @@ string Screen::selectSavedFile()
 	while (true) {
 		if (_kbhit()) {
 			char key = static_cast<char>(_getch());
-			if (key == ESC) return "";
+			if (key == ESC) return "ESC";
 			if (isdigit(key)) {
 				size_t index = (key == '0') ? 9 : (key - '1');
 				if (index < saves.size()) {
@@ -1006,7 +1005,6 @@ int Screen::loadGame(const string& folderPath)
 {
 	currentSaveDirectory = folderPath;
 	savedRooms.clear();
-	//check this
 	attemptFunctionWithRetry([this, folderPath]() {return FileManager::loadGame(savedRooms, sharedLives, sharedScore, folderPath, currentRoom, colorToggle, this);});
 	return currentRoom;
 }
@@ -1020,20 +1018,29 @@ void Screen::cleanSavedGames()
 	cout << "This action cannot be undone.\n\n";
 	cout << "Are you sure? (y/n): ";
 
-	char confirm =static_cast<char>( _getch());
-	if (tolower(confirm) == 'y') {
-
-		try {
-			FileManager::cleanSavedGames();
-			cout << "\n\nAll saved games deleted successfully.\n";
+	while (true) {
+		char confirm = static_cast<char>(_getch());
+		if (tolower(confirm) == 'y') {
+			try {
+				FileManager::cleanSavedGames();
+				cout << "\n\nAll saved games deleted successfully.\n";
+				Sleep(1000);
+				break;
+			}
+			catch (const std::exception& e) {
+				cout << "\n\nError deleting files: " << e.what() << "\n";
+				Sleep(1000);
+				break;
+			}
 		}
-		catch (const std::exception& e) {
-			cout << "\n\nError deleting files: " << e.what() << "\n";
+		else if (tolower(confirm) == 'n') {
+			cout << "\nOperation Cancelled.\n";
+			Sleep(1000);
+			break;
 		}
-	}
-	else {
-		cout << "\nOperation Cancelled.\n";
-		Sleep(500);
+		else {
+			continue;
+		}
 	}
 }
 

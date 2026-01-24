@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "Player.h"
+class Gamme;
 
 class Riddle
 
@@ -25,8 +26,8 @@ public:
 	bool isSolved() const { return solved; };
 	std::string getCorrectAnswer() const { return correctAnswer; };
 	int getCorrectIndex() const { return correctIndex; };
-	bool engage(Player& player, std::string& answer);
-	bool engageVaultRiddle(std::string& str);//vault riddle has no options, player must type the answer
+	bool engage(Player& player, std::string& answer, Game* game);
+	bool engageVaultRiddle(std::string& str, Game* game);//vault riddle has no options, player must type the answer
 	void save(std::ofstream& file) const;
 	void load(std::ifstream& file);
 };

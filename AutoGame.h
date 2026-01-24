@@ -29,5 +29,6 @@ public:
 	void onGameEvent(const Event& e) override;
 	void run();
 	void handlePause(bool& exitGame) override;
+	bool isGameSilent() const override{ return isSilent; }
 };
 

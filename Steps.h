@@ -18,5 +18,6 @@ public:
 	bool isNextStepOnIteration(size_t iteration) const {return !steps.empty() && steps.front().first == iteration;}
 	char popStep();
 	bool isEmpty() { return steps.empty(); }
+	void clear() { steps.clear(); }
 };
 

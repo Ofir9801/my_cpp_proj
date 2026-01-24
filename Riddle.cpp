@@ -4,23 +4,25 @@
 #include "Utils.h"
 #include <algorithm>
 #include <fstream>
-#include <iostream>
-#include <fstream>
+#include "Game.h"
 
-bool Riddle::engage(Player& player, std::string& answer){
-	cls();
-	gotoxy(10, 10);
-	std::cout << "RIDDLE TIME!" << std::endl;
-	std::cout << "----------------" << std::endl;
-	std::cout << question << std::endl;
-	std::cout << "----------------" << std::endl;
-	std::cout << "Press 1-4 to answer..." << std::endl;
-	for(size_t i = 1; i <= options.size(); ++i) {
-		std::cout << i << ". " << options[i - 1] << std::endl;
+bool Riddle::engage(Player& player, std::string& answer, Game* game){
+	if (!game->isGameSilent()) {
+		cls();
+		gotoxy(10, 10);
+		std::cout << "RIDDLE TIME!" << std::endl;
+		std::cout << "----------------" << std::endl;
+		std::cout << question << std::endl;
+		std::cout << "----------------" << std::endl;
+		std::cout << "Press 1-4 to answer..." << std::endl;
+
+		for (size_t i = 1; i <= options.size(); ++i) {
+			std::cout << i << ". " << options[i - 1] << std::endl;
+		}
 	}
+	char key = 0;
 	while (true) {//waiting for a proper answer from user
-		if (_kbhit()) {
-			char key = static_cast<char>(_getch());
+		if (game->getInput(key, game->getIteration())) {
 			if (key >= '1' && key < '1' + options.size()) {
 				int choiceIndex = key - '1';
 				answer = options[choiceIndex];
@@ -38,20 +40,36 @@ bool Riddle::engage(Player& player, std::string& answer){
 	}
 }
 
-bool Riddle::engageVaultRiddle(std::string& str) {
-	cls();
-	gotoxy(10, 10);
-	std::cout << "RIDDLE TIME!" << std::endl;
-	std::cout << "----------------" << std::endl;
-	std::cout << question << std::endl;
-	std::cout << "----------------" << std::endl;
-	std::cout << "Enter the numbers sorted by room number" << std::endl;
-
-	string answer;
-	bool validInput = false;
-	while (!validInput) {
-		std::cin >> answer;
-		validInput = !answer.empty() && std::all_of(answer.begin(), answer.end(), ::isdigit);
+bool Riddle::engageVaultRiddle(std::string& str, Game* game) {
+	if (!game->isGameSilent()) {
+		cls();
+		gotoxy(10, 10);
+		std::cout << "RIDDLE TIME!" << std::endl;
+		std::cout << "----------------" << std::endl;
+		std::cout << question << std::endl;
+		std::cout << "----------------" << std::endl;
+		std::cout << "Press 1-4 to answer..." << std::endl;
+	}
+	string answer = "";
+	char key = 0;
+	while (true) {
+		if (game->getInput(key, game->getIteration())) {
+			if (key == ENTER) {
+				if(!answer.empty()) {
+					break; //enter pressed
+				}
+			}
+			else if (key == BACKSPACE) { 
+				if (!answer.empty()) {
+					answer.pop_back();
+					std::cout << "\b \b"; //handle backspace
+				}
+			}
+			else if(isdigit(key)) {
+				answer += key;
+				std::cout << key; //display the typed character
+			}
+		}
 	}
 	str = answer;
 	if (answer == correctAnswer) {

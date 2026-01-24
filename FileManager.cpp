@@ -94,15 +94,26 @@ string FileManager::getCurrentTimeStamp()
 	return ss.str();;
 }
 
-string FileManager::formatTime(fs::file_time_type ftime)
+string FileManager::formatTime(string fileName)
 {
-	auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(ftime - std::filesystem::file_time_type::clock::now() + std::chrono::system_clock::now());
-	std::time_t tt = std::chrono::system_clock::to_time_t(sctp);
-	std::tm tm;
-	localtime_s(&tm, &tt);
-	std::stringstream ss;
-	ss << std::put_time(&tm, "%d/%m/%y %H:%M");
-	return ss.str();
+	// Remove "Save_" prefix (first 5 characters)
+	if (fileName.find("Save_") == 0) {	fileName.erase(0, 5);}
+
+	size_t pos = fileName.find('-');
+	for (int i = 0; i < 2 && pos != std::string::npos; ++i) {
+		fileName[pos] = '/';
+		pos = fileName.find('-', pos + 1);
+	}
+	size_t underscorePos = fileName.find('_');
+	if (underscorePos != std::string::npos) {fileName[underscorePos] = ' ';	}
+
+	size_t timeHyphenPos = fileName.find('-');
+	if (timeHyphenPos != std::string::npos) {fileName[timeHyphenPos] = ':';}
+
+	size_t lastHyphenPos = fileName.find('-');
+	if (lastHyphenPos != std::string::npos) {fileName.erase(lastHyphenPos);}
+
+	return fileName;
 }
 
 string FileManager::saveGame(const map<int, RoomState>& rooms, int lives, int score, int currentRoom, bool colorToggle, const string& prevPath)
@@ -205,8 +216,8 @@ vector<FileManager::SaveFileEntry> FileManager::getSavedGamesList()
 			SaveFileEntry saveEntry;
 			saveEntry.folderName = entry.path().string();
 			saveEntry.displayName = entry.path().filename().string();
-			saveEntry.rawTime = entry.last_write_time();
-			saveEntry.timestampStr = formatTime(saveEntry.rawTime);
+			saveEntry.rawTime = fs::last_write_time(entry);
+			saveEntry.timestampStr = formatTime(saveEntry.displayName);
 			saves.push_back(saveEntry);
 		}
 	}

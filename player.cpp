@@ -144,16 +144,6 @@ void Player::SetSpringState(int force, Keyboard_bind direction)
 	position.setDirection(direction);
 }
 
-bool Player::ImportantKeyPressed(char c)
-{
-	for (char k : p_keys) {
-		if (std::tolower((unsigned char)k) == std::tolower(c)) {
-			return true;
-		}
-	}
-	return false;
-}
-
 int Player::computeStepsToTake() const {
 	return (springCyclesLeft > 0) ? currentForce : 1;
 }
@@ -284,7 +274,6 @@ void Player::reset(Point newPosition) {
 
 bool Player::atDoor(unsigned char nextTile, Point nextPos){
 	int doorId = nextTile - '0';
-	if (doorId == 9) { doorId = 0; } //door id 0 is represented by char '9' on the board and that is the end screen
 	if (board.getConnectionStatus(doorId)){ // connected to a switch
 		if (board.SwitchState(doorId)) {return OpenDoorWithKey(doorId, nextPos);}//true = switch is on 
 		else { //switch is off

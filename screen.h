@@ -106,7 +106,7 @@ public:
 	bool isDoorOpen(int door_id) const;
     void openDoor(int door_id, char player);
 	bool getConnectionStatus(int door_id) const;
-	bool isRealDoor(int doorId) const { return Rooms.find(doorId) != Rooms.end(); }
+	bool isRealDoor(int doorId) const { return Rooms.find(doorId) != Rooms.end() || doorId == roomIndex::VAULT || doorId == roomIndex::VICTORY; }
 	bool SwitchState(int doorId) const;
 	void handleSwitches(const Point& p1, const Point& p2);
 	int GetDoorIdByKey(char p) const;
@@ -158,6 +158,5 @@ private:
 	Riddle ReadRiddleFromFile(const string& filePath, const Point pos, int riddleIndex, string& errorMsg);
 	Riddle ReadVaultRiddleFromFile(const string& filePath, const Point pos, string& errorMsg);
 	//helpers
-	int normalizeDoorId(int doorId) const {return (doorId == 9) ? 0 : doorId;}
-	bool isGameRoom(int roomNum) { return roomNum >= 0; }
+	bool isGameRoom(int roomNum) { return roomNum > 0; }
 };

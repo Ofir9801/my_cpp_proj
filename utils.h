@@ -38,10 +38,10 @@ enum class MESSAGES_POS {//for message display area
 	MES_Y = 2 
 };
 enum class roomIndex {//special rooms indices
-	VAULT = 0,
 	MENU = -1,
 	INSTRUCTIONS = -2,
-	VICTORY = -3
+	VICTORY = 0,
+	VAULT = 9
 };
 enum class Keyboard_bind {//possible movement directions for players
 	UP,
@@ -104,6 +104,8 @@ struct RoomData {
 
 //constants of basic game handling
 inline constexpr char ESC = 27;
+inline constexpr char ENTER = 13;
+inline constexpr char BACKSPACE = 8;
 inline const string EMPTYLINE = "                                                                                ";
 inline const string keys1 = "wdsaeq";
 inline const string keys2 = "ilkjou";

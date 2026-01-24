@@ -32,8 +32,7 @@ bool SaveGame::getInput(char& c, size_t iteration)
 {
     if (_kbhit()) {
         c = static_cast<char>(_getch());
-        
-        if (ImportantkeyPressed(c)) {
+        if (isImportantKey(c)) {
             steps.addStep(iteration, c);
         }
         return true;
@@ -43,6 +42,28 @@ bool SaveGame::getInput(char& c, size_t iteration)
 
 void SaveGame::onGameEvent(const Event& e) {
     results.addResult(e);
+}
 
+void SaveGame::performRestart()
+{
+    steps.clear();
+    results.clear();
+	Game::performRestart();
+}
+
+void SaveGame::PerformGoToMenu(bool& exitGame)
+{
+    steps.clear();
+    results.clear();
+    Game::PerformGoToMenu(exitGame);
+}
+
+bool SaveGame::isImportantKey(char c) {
+	char check = static_cast<char>(std::tolower(c));
+    if (check == ESC || check == ENTER || check == BACKSPACE) { return true; }
+    if (keys1.find(check) != string::npos) { return true; }
+	if (keys2.find(check) != string::npos) { return true; }
+    if (check >= '0' && check <= '9') { return true; }
+    return false;
 }
 

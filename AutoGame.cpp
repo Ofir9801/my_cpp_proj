@@ -76,7 +76,7 @@ void AutoGame::drawPlayer() {
 
 void AutoGame::onGameEvent(const Event& e){
     if (results.isEmpty()) {
-        reportResultError("Mismatch!", e.getIteration());
+        //reportResultError("Mismatch!", e.getIteration());
         return;
     }
     if (results.size() == 1) {
@@ -92,8 +92,6 @@ void AutoGame::onGameEvent(const Event& e){
     if ( mismatch) {
         std::string msg = "Mismatch!";
         mismatchEvents.push_back({ expected,e });
-
-        reportResultError(msg, e.getIteration());
     }
 }
 

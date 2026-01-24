@@ -32,7 +32,6 @@ public:
 	//handle player movement
 	void move(); //function to move the Player in the current direction
 	void drawToScreen();
-	void stay();
 	Keyboard_bind getDirection() const { return position.getDirectionEnum(); }
 	int getForce() const { return (springCyclesLeft > 0) ? currentForce : 1; }
 	void handleKeyPressed(char key_pressed);
@@ -53,7 +52,6 @@ public:
 	int getRoomOpen() const { return static_cast<int>(roomOpen); }
 	//spring handlement
 	void SetSpringState(int force, Keyboard_bind direction);
-	bool ImportantKeyPressed(char c);
 private:
 	//handle player movement
 	int computeStepsToTake() const;

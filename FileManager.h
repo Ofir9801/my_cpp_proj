@@ -15,7 +15,7 @@ class FileManager
 	static string loadRoomState(int key, const string& filename, RoomState& state, int& currentRoom, int& lives, int& score, bool& colorToggle, Screen* screenContext);
 	static void setFileName(string& file, const int key, const string& folderPath);
 	static string getCurrentTimeStamp();
-	static string formatTime(std::filesystem::file_time_type ftime);
+	static string formatTime(string fileName);
 
 public:
     static string saveGame(const map<int, RoomState>& rooms, int lives, int score, int currentRoom, bool colorToggle, const string& prevPath);

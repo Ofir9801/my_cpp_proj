@@ -72,6 +72,7 @@ void Game::run() {
 		if (getInput(key, gameCycle)) {
 			if (key == ESC) { 
 				handlePause(exitGame);
+				if (gameCycle == 0) continue;
 			}
 			else if (isSpecialKey(key)) {
 				(void)_getch(); //ignore special keys like arrows
@@ -104,13 +105,15 @@ void Game::showMenu(bool& exitGame){
 			switch (static_cast<MenuKeys>(key)) {
 			case MenuKeys::START_GAME_BW:
 				board.resetStats();
+				board.clearSavedRooms();
 				changeRoom(1);
 				inMenu = false;
 				break;
 			case MenuKeys::COLOR_MODE:
 				SetColorfullGame();
 				board.resetStats();
-				changeRoom(2);
+				board.clearSavedRooms();
+				changeRoom(1);
 				inMenu = false;
 				break;
 			case MenuKeys::LOAD_GAME: {
@@ -163,7 +166,7 @@ void Game::showMenu(bool& exitGame){
 					const int y_coord = MAX_Y / 2;
 					gotoxy(X_coord, y_coord);
 					std::cout << msg << std::endl;
-					wait(2000);
+					wait(1000);
 					board.drawMap();
 					break;
 				}
@@ -214,10 +217,6 @@ void Game::changeRoom(int room){
 		board.showMessage("it is very dark in here, you will need something to light it up");
 }
 
-bool Game::ImportantkeyPressed(char c)
-{
-	return (c == ESC) || player1.ImportantKeyPressed(c)|| player2.ImportantKeyPressed(c);
-}
 // Base class version: no need of event e
 void Game::onGameEvent(const Event& /*e*/) {}
 
@@ -242,30 +241,36 @@ void Game::performRestart(){
 	board.setGameState(true);
 	player1.resetInventory();
 	player2.resetInventory();
-	changeRoom(1);
 	gameCycle = 0;
+	changeRoom(1);
+
 }
 
 void Game::PerformGoToMenu(bool& exitGame)
 {
-	board.clearSavedRooms();
 	board.resetStats();
+	board.clearSavedRooms();
 	board.setGameState(true);
+	player1.resetInventory();
+	player2.resetInventory();
 	board.colorToggle = false; //reset color mode when going to menu
 	bool gameActive = true;
+	gameCycle = 0;
 	showMenu(gameActive);
 	if (!gameActive) {
 		exitGame = false;
-	}
-	else {
-		gameCycle = 0;
 	}
 }
 
 void Game::handlePause(bool& exitGame)
 {
-	board.showMessage("PAUSED: ESC-Continue, H-Menu, R-Restart, S-Save game");
-
+	if (isSaveLoadAllowed())
+	{
+		board.showMessage("PAUSED: ESC-Continue, H-Menu, R-Restart, S-Save game");
+	}
+	else {
+		board.showMessage("PAUSED: ESC-Continue, H-Menu, R-Restart");
+	}
 	while (true) {
 		char choice = static_cast<char>(std::tolower(_getch()));
 		switch (static_cast<PauseKeys>(choice)) {
@@ -282,11 +287,13 @@ void Game::handlePause(bool& exitGame)
 			PerformGoToMenu(exitGame);
 			return;
 		case PauseKeys::SAVE_GAME:
-			board.saveRoom();
-			board.saveGame();
-			board.colorToggle = false;
-			PerformGoToMenu(exitGame);
-			return;
+			if (!isSaveLoadAllowed()) {
+				board.saveRoom();
+				board.saveGame();
+				board.colorToggle = false;
+				PerformGoToMenu(exitGame);
+				return;
+			}
 		}
 	}
 }
@@ -320,6 +327,7 @@ void Game::handleGameOver(bool& exitGame)
 			}
 			else if (choice == ESC) { // ESC -> Exit the game
 				exitGame = false;
+				cls();
 				break;
 			}
 		}

@@ -16,4 +16,5 @@ public:
 	bool isEmpty()const { return results.empty(); }
 	size_t size()const { return results.size(); }
 	Event TopResult()const;
+	void clear() { results.clear(); }
 };
