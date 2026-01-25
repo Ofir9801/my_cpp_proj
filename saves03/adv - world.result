@@ -1,0 +1,32 @@
+31
+0 4   Move to Room 1
+63 1   Bomb had exploded
+99 1   Bomb had exploded
+296 5   Life lost. Lives: 3
+296 1   Bomb had exploded
+409 1   Bomb had exploded
+424 2 $ riddle - Correct Answer 
+447 2 $ riddle - Correct Answer 
+725 0 $ door opened
+775 4   Move to Room 2
+824 2 & riddle - Correct Answer 
+933 1   Bomb had exploded
+944 2 & riddle - Correct Answer 
+1371 0 & door opened
+1471 4   Move to Room 1
+1530 2 $ riddle - Correct Answer 
+1669 0 & door opened
+1714 4   Move to Room 9
+1852 5   Life lost. Lives: 2
+1852 1   Bomb had exploded
+1862 1   Bomb had exploded
+1890 4   Move to Room 1
+1907 4   Move to Room 9
+2021 1   Bomb had exploded
+2034 1   Bomb had exploded
+2106 1   Bomb had exploded
+2124 2   132 - Correct Answer 
+2126 0 & door opened
+2146 0 $ door opened
+2146 4   Move to Room 0
+2147 7   Game Ended: The User win the game. The score is : 650

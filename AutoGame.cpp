@@ -5,6 +5,7 @@ AutoGame::AutoGame(bool isSilent) :isSilent(isSilent) {
     getFileNames();
     steps = Steps::loadSteps(stepsFileName);
     results = Results::loadResults(resultsFileName);
+    initialStepsCount = steps.size();
     unsigned int fileSeed = steps.getRandomSeed();
     board.setSeed(fileSeed);
     board.setSilentMode(isSilent);
@@ -71,12 +72,32 @@ void AutoGame::drawMap() {
     if (!isSilent) Game::drawMap();
 }
 void AutoGame::drawPlayer() {
-    if (!isSilent) Game::drawPlayer();
+    if (!isSilent) {
+        Game::drawPlayer();
+    }
+    else {
+		const int slowdownFactor = 100; // Adjust this value to control the speed of the animation
+        int numDots = ((animationIndex/ slowdownFactor) % 3) + 1;
+        size_t currentStep = initialStepsCount - steps.size();
+        int percentage = (initialStepsCount > 0) ? static_cast<int>((currentStep * 100) / initialStepsCount) : 100;
+        gotoxy(0, 0);
+        std::cout << "\r Test Processing";
+      
+        for (int i = 0; i < numDots; i++) {
+            std::cout << ".";
+        }
+        for (int i = 0; i < (3 - numDots); i++) {
+            std::cout << " ";
+        }
+        std::cout << " [" << percentage << "%]" << std::flush;
+
+        std::cout << std::flush;
+        animationIndex++;
+    }
 }
 
 void AutoGame::onGameEvent(const Event& e){
     if (results.isEmpty()) {
-        //reportResultError("Mismatch!", e.getIteration());
         return;
     }
     if (results.size() == 1) {
@@ -96,12 +117,17 @@ void AutoGame::onGameEvent(const Event& e){
 }
 
 void AutoGame::wait(int ms) {
-    if (!isSilent) Game::wait(ms / 2);
+    if (!isSilent) Game::wait(ms / REPLAY_SPEED_FACTOR);
 }
 
 void AutoGame::run() {
-    if(isSilent){ std::cout << "Test Processing..." << std::flush; }
-    Game::run(); // Run the normal game loop
+    if (isSilent) {
+        animationIndex = 0; 
+    }
+    Game::run(); 
+    if (isSilent) {
+        std::cout << "\r                         \r" << std::flush;
+    }
     cls();
     
     std::cout << "\r" << std::flush;

@@ -1,13 +1,13 @@
 ﻿#pragma once
-#include <conio.h> 
-#include <windows.h>
 #include "Game.h"
-#include "Utils.h"
 #include "Player.h"
 #include "Screen.h"
-#include <random>
+#include "Utils.h"
 #include <algorithm>
 #include <cctype> //  for tolower, isdigit
+#include <conio.h> 
+#include <random>
+#include <windows.h>
 
 Game::Game() :
 	board(0),
@@ -24,7 +24,6 @@ void Game::run() {
 	bool exitGame = true;
 
 	showMenu(exitGame);
-	drawMap();
 	drawPlayer();
 	
 	bool firstMessage = true;
@@ -32,20 +31,13 @@ void Game::run() {
 	while (exitGame) {
 		if (firstMessage) {
 			board.showMessage("Welcome to the Adventure Game!");
-			wait(1500);
+			wait(MESSAGE_DELAY_TIME_MS);
 			board.clearMessegeArea(true);
 			firstMessage = false;
 		}
 
 		if (board.currentRoom == roomIndex::VICTORY) {
-			board.showMessage("Press Any key to finish the game");
-			char c;
-			while (!getInput(c, gameCycle)) {
-				wait(100);
-				gameCycle++;
-			}
-			exitGame = false;
-			continue;
+			board.gameState = false;
 		}
 
 		Point p1Prev = player1.getPosition();
@@ -65,7 +57,7 @@ void Game::run() {
 			board.updateLighting(player1.getPosition(), p1Prev, player1,
 								player2.getPosition(), p2Prev, player2);
 		}
-		wait(100);
+		wait(CYCLE_DELAY_TIME_MS);
 		drawPlayer();
 
 		char key;
@@ -78,8 +70,8 @@ void Game::run() {
 				(void)_getch(); //ignore special keys like arrows
 			}
 			else {
-				player1.handleKeyPressed(key);
-				player2.handleKeyPressed(key);
+				player1.handleKeyPressed(key, this);
+				player2.handleKeyPressed(key, this);
 			}
 		}
 
@@ -123,7 +115,7 @@ void Game::showMenu(bool& exitGame){
 					const int y_coord = MAX_Y / 2;
 					gotoxy(X_coord, y_coord);
 					std::cout << msg << std::endl;
-					wait(2000); 
+					wait(MESSAGE_DELAY_TIME_MS);
 					board.drawMap();  
 					break;
 				}
@@ -166,7 +158,7 @@ void Game::showMenu(bool& exitGame){
 					const int y_coord = MAX_Y / 2;
 					gotoxy(X_coord, y_coord);
 					std::cout << msg << std::endl;
-					wait(1000);
+					wait(MESSAGE_DELAY_TIME_MS);
 					board.drawMap();
 					break;
 				}
@@ -287,7 +279,7 @@ void Game::handlePause(bool& exitGame)
 			PerformGoToMenu(exitGame);
 			return;
 		case PauseKeys::SAVE_GAME:
-			if (!isSaveLoadAllowed()) {
+			if (isSaveLoadAllowed()) {
 				board.saveRoom();
 				board.saveGame();
 				board.colorToggle = false;
@@ -302,36 +294,54 @@ void Game::handleGameOver(bool& exitGame)
 {
 	std::string winMsg = "";
 	cls();
-	std::cout << board.getFinalMessage() << std::endl;
-	std::cout <<"Game Over! you lost!"<<std::endl;
-	Sleep(1000);
-	std::cout << "Press 'R' to Restart,'H' to go to Main Menu, ESC to exit the game";
-	if (board.getCurrentRoom() == roomIndex::VICTORY) {
+	if(board.getCurrentRoom() == roomIndex::VICTORY) {
+		if (!board.IsSilent()) {
+			std::cout << "Congratulations! You have won the game!" << std::endl;
+			std::cout << "press Esc to exit the game" << std::endl;
+		}
 		winMsg = "The User win the game";
-	}
-	else {
-		winMsg = "The User lost the game";
-	}
-	onGameEvent(Event(gameCycle, EventType::GAME_OVER, ' ', "Game Ended: " + winMsg + ". The score is : " + std::to_string(board.getScore())));
-	while (true) {
-		char choice;
-		if (getInput(choice,gameCycle)) {
-			choice =static_cast<char>(std::tolower(choice));
-			if (choice == 'r') {
-				performRestart();
-				break;
-			}
-			else if (choice == 'h') {
-				PerformGoToMenu(exitGame);
-				break;
-			}
-			else if (choice == ESC) { // ESC -> Exit the game
-				exitGame = false;
-				cls();
-				break;
+		while (true) {
+			char choice;
+			if (getInput(choice, gameCycle)) {
+				choice = static_cast<char>(std::tolower(choice));
+				wait(MESSAGE_DELAY_TIME_MS);
+				if (choice == ESC) { // ESC -> Exit the game
+					exitGame = false;
+					cls();
+					break;
+				}
 			}
 		}
 	}
+	else {
+		if (!board.IsSilent()) {
+			std::cout << board.getFinalMessage() << std::endl;
+			std::cout << "Game Over! you lost!" << std::endl;
+			wait(MESSAGE_DELAY_TIME_MS);
+			std::cout << "Press 'R' to Restart,'H' to go to Main Menu, ESC to exit the game";
+		}
+		winMsg = "The User lost the game";
+		while (true) {
+			char choice;
+			if (getInput(choice, gameCycle)) {
+				choice = static_cast<char>(std::tolower(choice));
+				if (choice == 'r') {
+					performRestart();
+					break;
+				}
+				else if (choice == 'h') {
+					PerformGoToMenu(exitGame);
+					break;
+				}
+				else if (choice == ESC) { // ESC -> Exit the game
+					exitGame = false;
+					cls();
+					break;
+				}
+			}
+		}
+	}
+	onGameEvent(Event(gameCycle, EventType::GAME_OVER, ' ', "Game Ended: " + winMsg + ". The score is : " + std::to_string(board.getScore())));
 }
 
 void Game::handleLevelCompletion() {

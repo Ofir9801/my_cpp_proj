@@ -43,7 +43,7 @@ bool Riddle::engage(Player& player, std::string& answer, Game* game){
 bool Riddle::engageVaultRiddle(std::string& str, Game* game) {
 	if (!game->isGameSilent()) {
 		cls();
-		gotoxy(10, 10);
+		gotoxy(RIDDLE_X, RIDDLE_Y);
 		std::cout << "RIDDLE TIME!" << std::endl;
 		std::cout << "----------------" << std::endl;
 		std::cout << question << std::endl;
@@ -62,12 +62,17 @@ bool Riddle::engageVaultRiddle(std::string& str, Game* game) {
 			else if (key == BACKSPACE) { 
 				if (!answer.empty()) {
 					answer.pop_back();
-					std::cout << "\b \b"; //handle backspace
+					if (!game->isGameSilent()) {
+						std::cout << "\b \b"; //handle backspace
+					}
+					
 				}
 			}
 			else if(isdigit(key)) {
 				answer += key;
-				std::cout << key; //display the typed character
+				if (!game->isGameSilent()) {
+					std::cout << key; //display the typed character
+				}
 			}
 		}
 	}

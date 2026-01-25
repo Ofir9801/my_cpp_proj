@@ -20,18 +20,18 @@ void Point::setDirection(Keyboard_bind dir, bool state, int speed)
 		switch (dir) {
 		case Keyboard_bind::UP:
 			diff_x = 0;
-			diff_y = -1 * speed;
+			diff_y = -DIRECTION_STEP * speed;
 			break;
 		case Keyboard_bind::RIGHT:
-			diff_x = 1 * speed;
+			diff_x = DIRECTION_STEP * speed;
 			diff_y = 0;
 			break;
 		case Keyboard_bind::DOWN:
 			diff_x = 0;
-			diff_y = 1 * speed;
+			diff_y = DIRECTION_STEP * speed;
 			break;
 		case Keyboard_bind::LEFT:
-			diff_x = -1 * speed;
+			diff_x = -DIRECTION_STEP * speed;
 			diff_y = 0;
 			break;
 		case Keyboard_bind::STAY:

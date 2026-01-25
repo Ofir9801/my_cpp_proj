@@ -50,3 +50,8 @@ Save & Load Features:
 - To Load: In the menu, press '3' to load a specific checkpoint.
 - To Save: During gameplay, pause the game and press 's'.
 Note: When running in -save mode, the user cannot launch previous games; only new games can be started.
+
+we added 3 folders of recoreded games for example:
+saves01 - example of game the user loss
+saves02 - example of game the user loss while transfer between rooms and explode objects
+saves03 - example of game the user win 

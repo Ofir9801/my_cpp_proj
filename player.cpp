@@ -4,8 +4,9 @@
 #include <cctype>
 #include <conio.h>
 #include <windows.h>
+#include "Game.h"
 
-void Player::handleKeyPressed(char key_pressed) {
+void Player::handleKeyPressed(char key_pressed, Game* g) {
 	if (springCyclesLeft > 0) return; //disable changing direction during spring flight
 	size_t index = 0;
 	for (char k : p_keys) {
@@ -15,7 +16,7 @@ void Player::handleKeyPressed(char key_pressed) {
 				return;
 			}
 			else {
-				dispose();
+				dispose(g);
 				return;
 			}
 		}
@@ -51,57 +52,53 @@ bool Player::addToInventory(objSigns item, Point pos)
 	return true;
 }
 
-void Player::dispose()
+void Player::dispose(Game* g)
 {
-	if (ExtraInventory) { //player has two inventory slots
-		if(inventory[0] != ' ' && inventory[1] != ' ') //two slots are full
-		{ //let the player choose which item to dispose
+	int slotsCount = ExtraInventory ? INVENTORY_SIZE : 1;
+	vector<int> occupiedSlots;
+	for (int i = 0; i < slotsCount; ++i) {
+		if (inventory[i] != ' ') {
+			occupiedSlots.push_back(i);
+		}
+	}
+	if(occupiedSlots.empty()) {
+		board.showMessage("No item to dispose.");
+		return;
+	}
+	int slotToDispose = occupiedSlots[0];
+	if(occupiedSlots.size() > 1) {
+		//ask player which item to dispose
+		if (!board.IsSilent()) {
 			board.showMessage("Press 1 to dispose first item, 2 to dispose second item.");
-			int choice = _getch();
-			while (true) {
+		}
+		char choice = 0;
+		while (true) {
+			if (g->getInput(choice, g->getIteration())) {
 				if (choice == '1' || choice == '2') {
 					int index = choice - '1';
-					char c = inventory[index];
-					board.setChar(position, c);
-					if (c == objSigns::KEY) {board.DisposeKeyToScreen(this->getChar(), position);}
-					else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
-					drawToScreen();
-					inventory[index] = ' ';
-					return;
+					if (std::find(occupiedSlots.begin(), occupiedSlots.end(), index) != occupiedSlots.end()) {
+						slotToDispose = index;
+						break;
+					} else {
+						if (!board.IsSilent()){
+							board.showMessage("Invalid choice. Slot is empty. Press 1 or 2.");
+						}
+					}
 				}
 				else {
-					board.showMessage("Invalid choice. Press 1 or 2.");
-					choice = _getch();
+					if (!board.IsSilent()){
+						board.showMessage("Invalid choice. Press 1 or 2.");
+					}
 				}
 			}
 		}
-		else if (inventory[0] != ' ' || inventory[1] != ' ') { //only one slot is full
-			int index = (inventory[0] != ' ') ? 0 : 1;
-			char c = inventory[index];
-			board.setChar(position, c);
-			if (c == objSigns::KEY) {board.DisposeKeyToScreen(this->getChar(), position);}
-			else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
-			drawToScreen();
-			inventory[index] = ' ';
-			return;
-		}
-		else {
-			board.showMessage("No item to dispose.");
-			return;
-		}
 	}
-
-	if (inventory[0] != ' ') { //player has one inventory slot
-		char c = inventory[0];
-		board.setChar(position, c);
-		if (c == objSigns::KEY) {board.DisposeKeyToScreen(this->getChar(), position);}
-		else if (c == objSigns::BOMB) {board.addActiveBomb(position);}
-		drawToScreen();
-		inventory[0] = ' ';
-	}
-	else {
-		board.showMessage("No item to dispose.");
-	}
+	char c = inventory[slotToDispose];
+	board.setChar(position, c);
+	if (c == objSigns::KEY) { board.DisposeKeyToScreen(this->getChar(), position); }
+	else if (c == objSigns::BOMB) { board.addActiveBomb(position); }
+	drawToScreen();
+	inventory[slotToDispose] = ' ';
 }
 
 void Player::clearFromScreen()
@@ -306,9 +303,10 @@ bool Player::OpenDoorWithKey(int doorId, Point nextPos) {
 		return false;
 	}
 	int keyDoorId = board.GetDoorIdByKey(this->getChar());
+	int keyDoorId2 = board.GetDoorIdByKey(this->getChar(),keyDoorId);
 	bool RealDoor = board.isRealDoor(doorId);
 	
-	if (hasItem(objSigns::KEY) && keyDoorId == doorId) {
+	if (hasItem(objSigns::KEY) && (keyDoorId == doorId || keyDoorId2 == doorId)) {
 		board.openDoor(doorId, position.getChar());
 		board.DisposeKeyToScreen(this->getChar(), position);
 		RemoveKeyFromInventory(keyDoorId);

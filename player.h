@@ -34,7 +34,7 @@ public:
 	void drawToScreen();
 	Keyboard_bind getDirection() const { return position.getDirectionEnum(); }
 	int getForce() const { return (springCyclesLeft > 0) ? currentForce : 1; }
-	void handleKeyPressed(char key_pressed);
+	void handleKeyPressed(char key_pressed, Game* g);
 	void reset(Point newPosition);
 	void clearFromScreen();
 	//Inventory Handling
@@ -59,7 +59,7 @@ private:
 	void finalizeMovement();
 	//Inventory Handling
 	bool addToInventory(objSigns item, Point pos);
-	void dispose();
+	void dispose(Game* g);
 	void RemoveKeyFromInventory(int keyDoorId);
 	//interaction with other objects
 	bool handleSpecialObjects(char nextTile, Point nextPos, int force);

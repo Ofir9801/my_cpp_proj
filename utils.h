@@ -106,11 +106,9 @@ struct RoomData {
 inline constexpr char ESC = 27;
 inline constexpr char ENTER = 13;
 inline constexpr char BACKSPACE = 8;
-inline const string EMPTYLINE = "                                                                                ";
-inline const string keys1 = "wdsaeq";
-inline const string keys2 = "ilkjou";
+inline constexpr char BOMB_VISUAL = 'B';
+inline constexpr char FAKE_DOOR_CHAR = 'X';
 
-//constants of game design
 inline constexpr int MAX_X = 80;
 inline constexpr int MAX_Y = 25;
 inline constexpr int INVENTORY_SIZE = 2; //Player can hold up to one item
@@ -119,11 +117,14 @@ inline constexpr int LIGHT_RADIUS_TORCH = 7;
 inline constexpr int LIGHT_RADIUS_DEFAULT = 2;
 inline constexpr int EXPLODE_BOMB_TIME = 15;
 inline constexpr int BOMB_RADIUS = 2;
+inline constexpr int DIRECTION_STEP = 1;
 inline constexpr int BOMB_WALL_EFFECTIVE_RADIUS = 1;
 inline constexpr int PLAYER_1_START_X = 1;
 inline constexpr int PLAYER_1_START_Y = 4;
 inline constexpr int PLAYER_2_START_X = 75;
 inline constexpr int PLAYER_2_START_Y = 4;
+inline constexpr int RIDDLE_X = 10;
+inline constexpr int RIDDLE_Y = 10;
 inline constexpr int MIN_SCORE = 500;
 inline constexpr int FAKE_DOOR_SCORE = 50;
 inline constexpr int WRONG_ANSWER = 50;
@@ -133,10 +134,15 @@ inline constexpr int TIMER_MESSAGE = 15;
 inline constexpr int LEGEND_SIZE = 3;
 inline constexpr int MAX_SAVED_SLOTS = 10;
 inline constexpr int EXPLOSION_DELAY_MS = 300;
+inline constexpr int REPLAY_SPEED_FACTOR = 5;
+inline constexpr int BOMB_DELAY_TIME = 300;
+inline constexpr int CYCLE_DELAY_TIME_MS = 100;
+inline constexpr int MESSAGE_DELAY_TIME_MS = 1200;
+inline constexpr int LINES_PER_RIDDLE = 6;
 
-inline constexpr char BOMB_VISUAL = 'B';
-inline constexpr char FAKE_DOOR_CHAR = 'X';
-
+inline const string EMPTYLINE = "                                                                                ";
+inline const string keys1 = "wdsaeq";
+inline const string keys2 = "ilkjou";
 inline const string MenuPrefix = "Menu";
 inline const string InstructionsPrefix = "Instructions";
 inline const string VictoryPrefix = "Final";
@@ -148,6 +154,9 @@ inline const string RIDDLES_EXTENSION = ".riddle";
 inline const string LegendPathWay = "Rooms/Legend.legend";
 inline const string STATE_FOLDER = "SavedGames";
 inline const string STATE_EXTENSION = ".state";
+inline const string STEPS_FILE_NAME = "adv - world.steps";
+inline const string RESULTS_FILE_NAME = "adv - world.result";
+
 
 //utility functions for screen handling
 void gotoxy(int x, int y);

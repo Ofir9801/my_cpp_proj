@@ -24,3 +24,4 @@ doors - dark grey
 (the 10 games limits is because we let the user choose by line number)
 - added option to clear memory by pressing 7 on menu screen, meaning delete any saved games he have. if the user will choose that he will get alert to make he intended to do this action
 - notice that when game on -save mode, the user cant load previous games and need to start fresh new game.
+- added animation of loading while the game is on silent mode.

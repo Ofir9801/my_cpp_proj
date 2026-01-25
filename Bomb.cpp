@@ -87,7 +87,7 @@ void Bomb::handlePlayerHit(Player& player) {
 	player.decreaseLife();
 	objSigns c = (objSigns)player.getChar();
 	player.clearFromScreen();
-	Sleep(300);
+	Sleep(BOMB_DELAY_TIME);
 	switch (c) {
 		case objSigns::PLAYER1:
 			newPos.setX(PLAYER_1_START_X);

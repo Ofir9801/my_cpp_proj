@@ -16,5 +16,6 @@ public:
 	bool isSaveLoadAllowed() const override { return false; }
 	void performRestart() override;
 	void PerformGoToMenu(bool& exitGame) override;
+	void changeRoom(int room) override;
 };
 

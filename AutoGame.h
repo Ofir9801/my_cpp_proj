@@ -8,6 +8,8 @@
 class AutoGame :public Game
 {
 	bool isSilent;
+	size_t animationIndex = 0; //for showing animation during silent mode
+	size_t initialStepsCount = 0;
 	unsigned int random_seed;
 	Steps steps;
 	Results results;

@@ -109,7 +109,7 @@ public:
 	bool isRealDoor(int doorId) const { return Rooms.find(doorId) != Rooms.end() || doorId == roomIndex::VAULT || doorId == roomIndex::VICTORY; }
 	bool SwitchState(int doorId) const;
 	void handleSwitches(const Point& p1, const Point& p2);
-	int GetDoorIdByKey(char p) const;
+	int GetDoorIdByKey(char p, int keyDoorId = -1) const;
     void deleteDoor(Point position);
     void deleteSwitch(Point position);
     // game logic: Keys & Inventory
@@ -145,7 +145,7 @@ private:
 	void loadItems(int doorIdOpen, Point& doorPos);
 	string loadAllRooms();
 	string loadRiddlesForCurrentRoom();
-	void attemptFunctionWithRetry(std::function<string()> func); //use ai
+	void attemptFunctionWithRetry(std::function<string()> func); 
 	void CheckExplodeNecessaryObject(int doorId);
 	bool isDestructible(const Point& p)const;
 	// display

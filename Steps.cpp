@@ -52,10 +52,9 @@ std::string Steps::readStepsFromFile(const std::string& filename, Steps& outStep
 	size_t actualCount = 0;
 	while (!steps_file.eof()) {
 		size_t iteration;
-		char step;
-		steps_file >> iteration >> step;
-		if (steps_file.fail()) break;
-		outSteps.addStep(iteration, step);
+		int stepValue;
+		if(!(steps_file >> iteration >>stepValue)) break;
+		outSteps.addStep(iteration, static_cast<char>(stepValue));
 		actualCount++;
 	}
 	if (expectedSize != actualCount) return "Error: Invalid format - the number of steps: "+ std::to_string(actualCount) + ", don't match the size: " + std::to_string(expectedSize);
@@ -69,7 +68,7 @@ void Steps::saveSteps(const std::string& filename) const {
 	steps_file << randomSeed << ' ' << (colorMode ? 1 : 0) << '\n';
 	steps_file << steps.size();
 	for (const auto& step : steps) {
-		steps_file << '\n' << step.first << ' ' << step.second;
+		steps_file << '\n' << step.first << ' ' << static_cast<int>(step.second);
 	}
 	steps_file.close();
 }

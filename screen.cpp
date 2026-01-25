@@ -47,11 +47,7 @@ void Screen::loadMap(int roomNumber, Point& doorPos){
 		riddles = savedRooms[currentRoom].riddles;
 		
 		if (lastRoom != roomIndex::MENU) {
-			char targetDoorChar;
-			if (lastRoom == 0)
-				targetDoorChar = '9';
-			else
-			targetDoorChar = static_cast<char>('0' + lastRoom); // e.g., if coming from Room 1, look for '1'
+			char targetDoorChar = static_cast<char>('0' + lastRoom); // e.g., if coming from Room 1, look for '1'
 			bool found = false;
 
 			for (int y = 0; y < MAX_Y && !found; y++) {
@@ -150,7 +146,9 @@ void Screen::drawVictoryRoom() {
 	int printCoordx = MAX_X / 2 -static_cast<int>( msg.size()) / 2;
 	int printCoordy = MAX_Y - 5;
 	gotoxy(printCoordx, printCoordy);
-	cout << msg;
+	if (!isSilent) {
+		cout << msg;
+	}	
 }
 
 bool Screen::isWall(const Point& p) const {
@@ -289,7 +287,6 @@ string Screen::loadAllRooms() {
 		return "Error: No .screen files in " + ROOM_FOLDER;
 
 	for (const auto& fullPath : roomFilePaths) {
-		//האם צריך פה try catch?
 		try{
 			int roomNum = getRoomNumber(fullPath);
 			bool requiresLegend = isGameRoom(roomNum);
@@ -420,6 +417,7 @@ void Screen::loadItems(int doorIdOpen, Point&doorPos) {//enter the items from th
 	doorIDs.clear();
 	keys.clear();
 	riddles.clear();
+	activeBombs.clear();
 
 	int legendY = getLegendY();
 	for (int y = 0; y < MAX_Y; y++) { 
@@ -579,10 +577,11 @@ void Screen::RemoveKey(int doorId) {
 	}
 }
 
-int Screen::GetDoorIdByKey (char p) const{
+int Screen::GetDoorIdByKey (char p, int keyDoorId) const{
 	for (auto& k : keys) {
 		if (k.second.getPlayerUse() == p) {
-			return k.second.getTargetDoorId();
+			if (k.second.getTargetDoorId() != keyDoorId) //in case the players have two keys in his inventory
+				return k.second.getTargetDoorId();
 		}
 	}
 	return -1;
@@ -885,7 +884,7 @@ Riddle Screen::ReadRiddleFromFile(const string& filePath,const Point pos, int ri
 	}
 	string templine;
 	for (int i = 0; i < riddleIndex; i++) { //skip to the right riddle index
-		for (int j = 0; j < 6	; j++) { //every riddle is represnt by 6 lines in riddle text file
+		for (int j = 0; j < LINES_PER_RIDDLE; j++) { //every riddle is represnt by 6 lines in riddle text file
 			if (!std::getline(inFile, templine)) {
 				errorMsg = "Error: there is problem in [" + filePath + " ]";
 				return Riddle();

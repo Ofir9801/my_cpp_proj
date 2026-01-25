@@ -59,6 +59,7 @@ void Spring::draw(const Point& playerPos,const Screen& board, bool active)const 
             currentSegment.setX(startPos.getX() + i);
         else
             currentSegment.setY(startPos.getY() + i);
+		if (board.IsSilent()) continue;
         if (!active) {
             currentSegment.draw(objSigns::SPRING,board.IsColor() ? getColorForChar(objSigns::SPRING) : Color::WHITE);
             continue;

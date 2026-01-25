@@ -5,10 +5,11 @@
 SaveGame::SaveGame() :Game()
 {    
     setFileNames();
-    if (stepsFileName == "") { stepsFileName = "adv - world.steps "; }
-    if (resultsFileName == "") { resultsFileName = "adv - world.result "; }
+    if (stepsFileName == "") { stepsFileName = STEPS_FILE_NAME; }
+    if (resultsFileName == "") { resultsFileName = RESULTS_FILE_NAME; }
     unsigned int generatedSeed = board.getSeed();
     steps.setRandomSeed(generatedSeed);
+	board.setSeed(generatedSeed);
 }
 
 SaveGame::~SaveGame()
@@ -32,9 +33,7 @@ bool SaveGame::getInput(char& c, size_t iteration)
 {
     if (_kbhit()) {
         c = static_cast<char>(_getch());
-        if (isImportantKey(c)) {
-            steps.addStep(iteration, c);
-        }
+        steps.addStep(iteration, c);
         return true;
     }
     return false;
@@ -48,6 +47,7 @@ void SaveGame::performRestart()
 {
     steps.clear();
     results.clear();
+    board.setSeed(steps.getRandomSeed());
 	Game::performRestart();
 }
 
@@ -55,15 +55,15 @@ void SaveGame::PerformGoToMenu(bool& exitGame)
 {
     steps.clear();
     results.clear();
+    board.setSeed(steps.getRandomSeed());
     Game::PerformGoToMenu(exitGame);
 }
 
-bool SaveGame::isImportantKey(char c) {
-	char check = static_cast<char>(std::tolower(c));
-    if (check == ESC || check == ENTER || check == BACKSPACE) { return true; }
-    if (keys1.find(check) != string::npos) { return true; }
-	if (keys2.find(check) != string::npos) { return true; }
-    if (check >= '0' && check <= '9') { return true; }
-    return false;
+void SaveGame::changeRoom(int room)
+{
+    if (room == 1 && board.getCurrentRoom() == roomIndex::MENU) {
+		board.setSeed(steps.getRandomSeed());
+    }
+	Game::changeRoom(room);
 }
 
