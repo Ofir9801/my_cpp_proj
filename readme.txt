@@ -1,28 +1,39 @@
-# 🎮 Advanced World Explorer (C++ Project)
+# 🎮 Advanced World Explorer
 
-Welcome to our C++ gaming project! This is a feature-rich, 2-player grid-based puzzle adventure game featuring dynamic room navigation, riddle solving, item management, and an advanced game recording/checkpoint system.
+> A feature-rich, 2-player cooperative grid puzzle adventure built in C++, featuring dynamic room navigation, state recording, and a highly flexible file-driven level design.
+
+![C++](https://img.shields.io/badge/C%2B%2B-17%2B-blue?style=flat-square&logo=c%2B%2B)
+![Paradigm](https://img.shields.io/badge/Paradigm-OOP-green?style=flat-square)
+![Architecture](https://img.shields.io/badge/Architecture-Modular%20Engine-orange?style=flat-square)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
 
 ---
 
 ## 👥 Authors & Contact
-* **Liran Malka** |
-* **Ofir Eren** |
+
+* **Ofir Eren**
+* **Liran Malka**
 
 ---
 
-## 🛠️ Technical Details & Acknowledgments
-* **Color Implementation:** Based on the color implementation guidelines from Keren Kalif's instructional video provided with the assignment.
-* **AI Tools Utilization:** We utilized AI tools (Google Gemini and Microsoft Copilot integrated with Git) primarily to optimize our program structure and improve overall code readability.
-* **Robust Error Handling:** Implemented comprehensive exception handling across the engine to prevent unexpected crashes. The program dynamically identifies specific runtime errors, alerts the user, and allows them to resolve the issue and reload safely.
+## ✨ Features
+
+- **2-Player Co-op Engine** - Simultaneous keyboard input tracking for independent player mechanics.
+- **Dynamic Level Architecture** - Rooms, riddles, and configuration profiles are parsed fully from external custom files.
+- **State Recording & Playback** - CLI-driven macros to record gameplay frames and replay them deterministically.
+- **Checkpoint System** - Built-in slot allocation allowing users to save and load active memory states mid-game.
+- **Robust Exception Handling** - Structured engine-level error mitigation that intercepts corrupt layouts, alerts the user, and reloads safely without memory leaks.
 
 ---
 
 ## 🕹️ Controls & Setup
 
-> ⚠️ **Important:** Please ensure your keyboard input language is set to **English** before playing; otherwise, movement controls will not function.
+> ⚠️ **Important:** Keyboard input language must be set to **English** for the movement mapping and game logic to function correctly.
+
+### Player Keybindings
 
 | Action | Player 1 | Player 2 |
-| :--- | :---: | :---: |
+|--------|----------|----------|
 | **Move Up** | `W` | `I` |
 | **Move Down** | `S` | `K` |
 | **Move Left** | `A` | `J` |
@@ -32,26 +43,33 @@ Welcome to our C++ gaming project! This is a feature-rich, 2-player grid-based p
 
 ---
 
-## 🧠 Game Mechanics & Room Design
+## 🧠 Game Mechanics & Room Logic
 
-* **Door & Room Navigation:** Door numbers correspond directly to room numbers (e.g., entering Door 2 always leads to Room 2). Players spawn at the location of the door they entered through, and can return to the previous room by stepping back into the same door. When transitioning between rooms, both players move together.
-* **Switches & Keys Puzzle:** Every switch is linked to a specific door via a unique ID. In puzzle rooms, players must activate the designated switch and unlock the door using a key. Dynamic in-game messages guide the players through the required actions.
-* **Design Assumption:** The map design assumes a balanced ecosystem, meaning an equal number of switches and keys relative to the number of doors.
-* **Riddle Persistence:** Solved riddles remain visible on the screen. Bumping into a previously solved riddle will display the answer again to assist players later in the game.
-* **Inventory Rewards:** Completing all riddles in Room 2 rewards players with an extra inventory slot. If players need to discard an item, a prompt will appear asking them to select which item to remove.
-* **Game Over Logic:** If an explosion or bomb destroys a critical item required to progress (such as an essential key or door), the game will automatically alert the user and terminate safely.
+- **Synchronized Transitions** - Players transition between rooms seamlessly as a single unit, spawning at the coordinating entrance threshold.
+- **Switch & Key Cryptography** - Doors are uniquely mapped to matching switch/key IDs. Mechanics assume a balanced ecosystem (equal weights of switches, keys, and target doors).
+- **Riddle Persistence Engine** - Resolved interactive puzzle states are cached visually. Retrying or colliding with a solved riddle renders the historic solution to assist with the endgame.
+- **Inventory Scaling Logic** - Fully solving Room 2 rewards players with extended storage allocations. Overflow management triggers an explicit choice-driven item discard prompt.
+- **Permadeath Game Over** - If a dynamic element (e.g. bomb blast) eliminates a critical progress dependency like a master key or map node, the engine halts state and terminates execution safely.
 
-### Special Rooms Showcase
-* **Room 3 (The Dark Room):** Designed as a "dark room" maze. Player 1 spawns next to a torch, but the second torch is blocked. Players must strategically plant a bomb to reach the second torch and clear the room. *(Note: Any room can be configured as a dark room via the design file).*
-* **Room 4 (The Vault):** The final challenge. It involves destroying multiple obstacles and solving a unique "Master Riddle." This riddle requires players to combine three separate digits (answers gathered from riddles in previous rooms) into a final code. *(Hint: If you get stuck, the correct master code is '132').*
+### Highlighted Rooms
+- **Room 3 (The Dark Room)** - A sensory-blind maze. Player 1 handles a localized light field, while Player 2's torch is isolated. Progress requires coordinated demolition to unite players.
+- **Room 4 (The Vault)** - The climax zone. Implements a multi-layered barrier matrix and a complex "Master Riddle" requiring a 3-digit key combination synthesized from historical room answers (Hint: `132`).
 
 ---
 
-## 📁 File Structures & Custom Formats
+## 📁 Project Structure
 
-### 1. Riddle Files (`.riddle`)
-Each riddle file is named according to its room number (e.g., `Riddles02.riddle`) and must be saved in the designated folder using the following structural format:
 ```text
-Riddle: <riddle question>
-Index of correct Answer: <number of the correct answer>
-4 possible answers: <options[0:3]>
+advanced-world-explorer/
+├── Rooms/
+│   ├── adv-world01.screen     # Room 1 grid design and parameters
+│   ├── adv-world02.screen     # Room 2 grid design
+│   └── adv-world03.screen     # Room 3 configuration (Dark Room)
+├── Riddles/
+│   ├── Riddles02.riddle       # Puzzle dataset for Room 2
+│   └── Riddles04.riddle       # Master Riddle dataset
+├── saves01/                   # Session recording: Defeat state sample
+├── saves02/                   # Session recording: Mid-transition explosion loss
+├── saves03/                   # Session recording: Successful victory state
+├── src/                       # Source files (.cpp, .h modules)
+└── README.md
