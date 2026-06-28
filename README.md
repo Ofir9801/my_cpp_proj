@@ -11,8 +11,8 @@
 
 ## 👥 Authors & Contact
 
-* **Ofir Eren**
 * **Liran Malka**
+* **Ofir Eren**
 
 ---
 
