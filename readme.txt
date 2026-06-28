@@ -2,10 +2,10 @@
 
 > A feature-rich, 2-player cooperative grid puzzle adventure built in C++, featuring dynamic room navigation, state recording, and a highly flexible file-driven level design.
 
-![C++](https://img.shields.io/badge/C%2B%2B-17%2B-blue?style=flat-square&logo=c%2B%2B)
-![Paradigm](https://img.shields.io/badge/Paradigm-OOP-green?style=flat-square)
-![Architecture](https://img.shields.io/badge/Architecture-Modular%20Engine-orange?style=flat-square)
-![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
+<img src="https://img.shields.io/badge/C%2B%2B-17%2B-blue?style=flat-square&logo=cplusplus" alt="C++">
+<img src="https://img.shields.io/badge/Paradigm-OOP-green?style=flat-square" alt="Paradigm">
+<img src="https://img.shields.io/badge/Architecture-Modular%20Engine-orange?style=flat-square" alt="Architecture">
+<img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="License">
 
 ---
 
